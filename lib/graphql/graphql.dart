@@ -70,6 +70,7 @@ class Graphql {
       query($alunoId: Int!, $diaSemanaId: Int!){
         obterTreinoAlunoPorDia(alunoId:$alunoId, diaSemanaId: $diaSemanaId){
           exercicio{
+            id,
             descricao,
             urlImagem
           },

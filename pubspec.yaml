@@ -43,6 +43,8 @@ dev_dependencies:
 
   circular_countdown: ^2.1.0
 
+  scrollable_positioned_list: ^0.3.2
+
   timer_controller: ^0.1.0
 
   numberpicker: ^2.1.1

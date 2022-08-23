@@ -3,6 +3,7 @@ import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_novo_exercicio.dart';
 import  'package:circular_countdown/circular_countdown.dart';
 import 'package:timer_controller/timer_controller.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 enum SingingCharacter { nome, cnpj }
 
@@ -90,6 +91,8 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
   String clienteNome = "";
   String instrucao = "";
   String descansoQuery = "";
+  int exercicioSelecionado = 0;
+  String nomeExercicio = "";
   //String entidadeIdQuery = entidadeId; 
 
   bool loading = false;
@@ -104,6 +107,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
   bool fimDeSerie= false;
 
   List treinos = [];
+  List<int> exerciciosFinalizados = [];
 
   final pageController = PageController(
     initialPage: 0,
@@ -111,8 +115,10 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
   );
 
   late final TimerController _controller;
+  final _scrollController = ScrollController();
+  final ItemScrollController itemScrollController = ItemScrollController();
 
-  Future<void> _treinosPorMusculoAluno() async {
+  Future<void> _treinosPorAlunoPorDia() async {
 
     setState(() {
       loading = true;
@@ -192,7 +198,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
       loading = true;
       termoMaiorTres = true;
     });
-    _treinosPorMusculoAluno();
+    _treinosPorAlunoPorDia();
   }
 
   @override
@@ -281,16 +287,17 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                       RaisedButton(
                         onPressed: () async {
 
-                          setState(() {
-                            iniciarTreino = true;
-                          });
-
+                          if(!iniciarTreino){
+                            setState(() {
+                              iniciarTreino = true;
+                            });
+                          }
                         },
-                        color: Colors.black,
+                        color: iniciarTreino ? Colors.grey : Colors.black,
                         child: Text(
                           'Iniciar Treino',
                           style: TextStyle(
-                            color: Colors.white
+                            color: iniciarTreino ? Colors.black : Colors.white
                           ),
                         ),
                         shape: RoundedRectangleBorder(
@@ -299,13 +306,15 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                       ),
                       RaisedButton(
                         onPressed: () async {
-                          Navigator.pop(context);
+                          if((treinos.length == exerciciosFinalizados.length)){
+                            Navigator.pop(context);
+                          }
                         },
-                        color: Colors.black,
+                        color: (treinos.length == exerciciosFinalizados.length) ? Colors.black : Colors.grey,
                         child: Text(
                           'Finalizar Treino',
                           style: TextStyle(
-                            color: Colors.white
+                            color: (treinos.length == exerciciosFinalizados.length) ? Colors.white : Colors.black
                           ),
                         ),
                         shape: RoundedRectangleBorder(
@@ -376,8 +385,8 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                 ),
               ),
             ),
-          ): 
-          iniciarTreino ? 
+          ): Container()
+          /*iniciarTreino ? 
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -550,7 +559,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
               ),
             ),
           )
-          :Container()
+          :Container()*/
           ]
         )
     );
@@ -564,11 +573,20 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
             child: RefreshIndicator(
               color: Colors.blue[400],
               onRefresh: (){
-                return _treinosPorMusculoAluno();
+                return _treinosPorAlunoPorDia();
               },
-              child: ListView.builder(
+              child: ScrollablePositionedList.builder(
+                physics: fimDeSerie ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+                itemScrollController: itemScrollController,
                   itemBuilder: (BuildContext context, int index) {
                     print("URL: $urlImagemLocal");
+                    descansoQuery =  treinos[index]['descanso'];
+                    tempoDescanso = (60*int.parse(descansoQuery.substring(0,1))) + int.parse(descansoQuery.substring(2,4));
+
+                    nomeExercicio = treinos[index]['variacaoExercicio'] == null ? 
+                                      treinos[index]['exercicio']['descricao'] :
+                                      treinos[index]['variacaoExercicio']['descricao'];
+                    
                     return ListTile(
                         title: Container(
                           child: Padding(
@@ -576,7 +594,8 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                             child: Column(
                               children: [
                                 Container(
-                                    //height: 70,
+                                    height: (fimDeSerie && (exercicioSelecionado == treinos[index]['exercicio']['id'])) ? 
+                                              MediaQuery.of(context).size.height/1.35 : MediaQuery.of(context).size.height/1.64,
                                     width: MediaQuery.of(context).size.width/1.127,
                                     decoration: BoxDecoration(
                                       color: (alunoSelecionado && idSelecionado == treinos[index]['musculoAlvo']['id']) ? Colors.blue[400] : Colors.white,
@@ -589,155 +608,164 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                     ),
                                     //padding: EdgeInsets.all(2.0),
                                     padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                                    child: IntrinsicHeight(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                                        children: [
-                                          Container(
-                                            width: MediaQuery.of(context).size.width/6,
-                                            height: 200,
-                                            padding: EdgeInsets.all(2.0),
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage(treinos[index]['exercicio']['urlImagem'] == null ? 
-                                                "assets/Erro.png" :
-                                                treinos[index]['exercicio']['urlImagem']
+                                    child: Stack(
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            Container(
+                                              width: MediaQuery.of(context).size.width/6,
+                                              height: 200,
+                                              padding: EdgeInsets.all(2.0),
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: AssetImage(treinos[index]['exercicio']['urlImagem'] == null ? 
+                                                  "assets/Erro.png" :
+                                                  treinos[index]['exercicio']['urlImagem']
+                                                ),
+                                                  fit: BoxFit.contain
+                                                ),
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(4.0),
+                                                  bottomLeft: Radius.circular(4.0)
+                                                ),
+                                                color: Colors.white
                                               ),
-                                                fit: BoxFit.contain
-                                              ),
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(4.0),
-                                                bottomLeft: Radius.circular(4.0)
-                                              ),
-                                              color: Colors.white
                                             ),
-                                          ),
-                                          Flexible(
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                  children: [
-                                                    Text(
-                                                      treinos[index]['variacaoExercicio'] == null ? 
-                                                      treinos[index]['exercicio']['descricao'] :
-                                                      treinos[index]['variacaoExercicio']['descricao'],  
-                                                      overflow: TextOverflow.fade,                          
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 30.0,
-                                                        fontWeight: FontWeight.bold
-                                                      ),
-                                                    ),
-                                                    RaisedButton(
-                                                      onPressed: () async {
-                                                        setState(() {
-                                                          mostrarExplicacao = true;
-                                                          instrucao = treinos[index]['instrucao'] == null ? "Sem Instrução" : treinos[index]['instrucao'];
-                                                        });
-                                                      },
-                                                      color: Color.fromARGB(255, 238, 238, 238),
-                                                      child: Text(
-                                                        'Explicação Detalhada',
+                                            Container(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                    children: [
+                                                      Text(
+                                                        nomeExercicio,  
+                                                        overflow: TextOverflow.fade,                          
                                                         style: TextStyle(
-                                                          color: Colors.blue[400]
+                                                          color: Colors.black,
+                                                          fontSize: 30.0,
+                                                          fontWeight: FontWeight.bold
                                                         ),
                                                       ),
-                                                      shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(5.0)
+                                                      RaisedButton(
+                                                        onPressed: () async {
+                                                          setState(() {
+                                                            mostrarExplicacao = true;
+                                                            instrucao = treinos[index]['instrucao'] == null ? "Sem Instrução" : treinos[index]['instrucao'];
+                                                          });
+                                                        },
+                                                        color: Color.fromARGB(255, 238, 238, 238),
+                                                        child: Text(
+                                                          'Explicação Detalhada',
+                                                          style: TextStyle(
+                                                            color: Colors.blue[400]
+                                                          ),
+                                                        ),
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5.0)
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                      RaisedButton(
+                                                        onPressed: () async {
+
+                                                          if(exercicioSelecionado == treinos[index]['exercicio']['id'] || exercicioSelecionado == 0){
+                                                            if(!clicouIniciarExercicio){
+                                                              setState(() {
+                                                                clicouIniciarExercicio = true;
+                                                                exercicioSelecionado = treinos[index]['exercicio']['id'];
+                                                              });
+                                                            }else{
+                                                              setState(() {
+                                                                fimDeSerie = true;
+                                                                exercicioSelecionado = treinos[index]['exercicio']['id'];
+                                                              });
+                                                            }
+                                                          }
+                                                          
+                                                        },
+                                                        color: ((clicouIniciarExercicio && fimDeSerie) || (exercicioSelecionado != 0 && exercicioSelecionado != treinos[index]['exercicio']['id'])) ? Colors.grey : Color.fromARGB(255, 238, 238, 238),
+                                                        child: Text(
+                                                          clicouIniciarExercicio ? 'Fim da ${numeroSeries}º série' : 'Iniciar Exercicio',
+                                                          style: TextStyle(
+                                                            color: ((clicouIniciarExercicio && fimDeSerie) || (exercicioSelecionado != 0 && exercicioSelecionado != treinos[index]['exercicio']['id'])) ? Colors.white : Colors.blue[400]
+                                                          ),
+                                                        ),
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(5.0)
+                                                        ),
+                                                      ),
+                                                      (fimDeSerie && (exercicioSelecionado == treinos[index]['exercicio']['id'])) ? 
+                                                      TimeCircularCountdown(
+                                                        unit: CountdownUnit.second,
+                                                        textStyle: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 20
+                                                        ),
+                                                        countdownTotal: 5,//tempoDescanso,
+                                                        onUpdated: (unit, remainingTime) => print('Updated'),
+                                                        onFinished: () => setState(() {
+                                                          fimDeSerie = false;
+                                    
+                                                          if(numeroSeries == int.parse(treinos[index]['series'])){
+                                    
+                                                            numeroSeries = 1;
+
+                                                            exerciciosFinalizados.add(exercicioSelecionado);
+
+                                                            clicouIniciarExercicio = false;
+
+                                                            exercicioSelecionado = 0;
+                                    
+                                                            if(index + 1 < treinos.length){
+
+                                                              setState(() {
+                                                                itemScrollController.scrollTo(
+                                                                  index: index+1,
+                                                                  duration: Duration(seconds: 1),
+                                                                  curve: Curves.easeInOutCubic);
+                                                              });
+
+                                                            }else{
+                                                              iniciarTreino = false;
+                                                            }
+                                                            
+                                                          }else{
+                                                            numeroSeries++;
+                                                          }
+                                                          
+                                                        }),
+                                                        countdownRemainingColor: Colors.blue,
+                                                        countdownCurrentColor: Colors.blue,
+                                                        countdownTotalColor: Colors.grey,
+                                                        repeat: false,
+                                                      ) : Container()
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                          ),
-                                          Flexible(
-                                              child: Container(
-                                                color: Color.fromARGB(255, 235, 229, 229),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Column(
-                                                          children: [
-                                                            Icon(
-                                                              Icons.check,
-                                                              color: Colors.blue[400],
-                                                              size: 30,
-                                                            ),
-                                                            Text(
-                                                              treinos[index]['series'],  
-                                                              overflow: TextOverflow.fade,                          
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 20.0,
-                                                                fontWeight: FontWeight.normal
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              "SÉRIES",  
-                                                              overflow: TextOverflow.fade,                          
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 10.0,
-                                                                fontWeight: FontWeight.normal
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(context).size.width/4,
-                                                        ),
-                                                        Column(
-                                                          children: [
-                                                            Icon(
-                                                              Icons.repeat,
-                                                              color: Colors.blue[400],
-                                                              size: 30,
-                                                            ),
-                                                            Text(
-                                                              treinos[index]['repeticoes'],  
-                                                              overflow: TextOverflow.fade,                          
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 20.0,
-                                                                fontWeight: FontWeight.normal
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              "REPETIÇÕES",  
-                                                              overflow: TextOverflow.fade,                          
-                                                              style: TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 10.0,
-                                                                fontWeight: FontWeight.normal
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Padding(
-                                                          padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
-                                                          child: Column(
+                                            ),
+                                            Flexible(
+                                                child: Container(
+                                                  color: Color.fromARGB(255, 235, 229, 229),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                    children: [
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Column(
                                                             children: [
                                                               Icon(
-                                                                Icons.speed,
+                                                                Icons.check,
                                                                 color: Colors.blue[400],
                                                                 size: 30,
                                                               ),
                                                               Text(
-                                                                treinos[index]['velocidade'],  
+                                                                treinos[index]['series'],  
                                                                 overflow: TextOverflow.fade,                          
                                                                 style: TextStyle(
                                                                   color: Colors.black,
@@ -746,7 +774,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                                                 ),
                                                               ),
                                                               Text(
-                                                                "VELOCIDADE",  
+                                                                "SÉRIES",  
                                                                 overflow: TextOverflow.fade,                          
                                                                 style: TextStyle(
                                                                   color: Colors.black,
@@ -756,21 +784,18 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                                               ),
                                                             ],
                                                           ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: treinos[index]['velocidade'] == "Cadenciado" ? 5 : 20,
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
-                                                          child: Column(
+                                                          SizedBox(
+                                                            width: MediaQuery.of(context).size.width/4,
+                                                          ),
+                                                          Column(
                                                             children: [
                                                               Icon(
-                                                                Icons.timer,
+                                                                Icons.repeat,
                                                                 color: Colors.blue[400],
                                                                 size: 30,
                                                               ),
                                                               Text(
-                                                                treinos[index]['descanso'],  
+                                                                treinos[index]['repeticoes'],  
                                                                 overflow: TextOverflow.fade,                          
                                                                 style: TextStyle(
                                                                   color: Colors.black,
@@ -779,7 +804,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                                                 ),
                                                               ),
                                                               Text(
-                                                                "DESCANSO",  
+                                                                "REPETIÇÕES",  
                                                                 overflow: TextOverflow.fade,                          
                                                                 style: TextStyle(
                                                                   color: Colors.black,
@@ -789,18 +814,102 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                                               ),
                                                             ],
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                  ],
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Padding(
+                                                            padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
+                                                            child: Column(
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.speed,
+                                                                  color: Colors.blue[400],
+                                                                  size: 30,
+                                                                ),
+                                                                Text(
+                                                                  treinos[index]['velocidade'],  
+                                                                  overflow: TextOverflow.fade,                          
+                                                                  style: TextStyle(
+                                                                    color: Colors.black,
+                                                                    fontSize: 20.0,
+                                                                    fontWeight: FontWeight.normal
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "VELOCIDADE",  
+                                                                  overflow: TextOverflow.fade,                          
+                                                                  style: TextStyle(
+                                                                    color: Colors.black,
+                                                                    fontSize: 10.0,
+                                                                    fontWeight: FontWeight.normal
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: treinos[index]['velocidade'] == "Cadenciado" ? 5 : 20,
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                                                            child: Column(
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.timer,
+                                                                  color: Colors.blue[400],
+                                                                  size: 30,
+                                                                ),
+                                                                Text(
+                                                                  treinos[index]['descanso'],  
+                                                                  overflow: TextOverflow.fade,                          
+                                                                  style: TextStyle(
+                                                                    color: Colors.black,
+                                                                    fontSize: 20.0,
+                                                                    fontWeight: FontWeight.normal
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "DESCANSO",  
+                                                                  overflow: TextOverflow.fade,                          
+                                                                  style: TextStyle(
+                                                                    color: Colors.black,
+                                                                    fontSize: 10.0,
+                                                                    fontWeight: FontWeight.normal
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      exerciciosFinalizados.contains(treinos[index]['exercicio']['id']) ?
+                                      Container(
+                                        height: MediaQuery.of(context).size.height,
+                                        width: MediaQuery.of(context).size.width,
+                                        color: Colors.green.withOpacity(0.3),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.check,
+                                            color: Colors.green,
+                                            size: 300,
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ) : Container()
+                                      ]
                                     ),
                                 ),
                               ],
@@ -824,7 +933,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
             child: RefreshIndicator(
               color: Colors.blue[400],
               onRefresh: (){
-                return _treinosPorMusculoAluno();
+                return _treinosPorAlunoPorDia();
               },
               child: ListView.builder(
                   itemBuilder: (BuildContext context, int index) {
