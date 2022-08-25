@@ -63,6 +63,62 @@ class Graphql {
     }
   }
 
+  static Future<Map<String, dynamic>> login(String login, String senha) async {
+    GraphQLClient client = getClient();
+    QueryResult result = await client.query(QueryOptions(
+      document: gql(r'''
+      query($login: String!, $senha: String!){
+        obterUsuario(login: $login, senha: $senha){
+          id,
+          pessoa{
+            nome,
+            cref,
+            cpf,
+            aluno{
+              id,
+              nome,
+              cpf,
+              sexo,
+              idade,
+              personal{
+                id,
+                nome,
+                cref
+              },
+              objetivo{
+                id,
+                objetivo
+              }
+            },
+            personal{
+              id,
+              cref,
+              nome,
+              cpf,
+              sexo,
+              email,
+              idade        
+            }
+          }
+        }
+      }
+      '''),
+      variables: {
+        "login": login,
+        "senha": senha
+      },
+    ));
+    if(result.isLoading){
+      print("Carregando...");
+    }
+    if (result.hasException) {
+      throw result.exception!;
+      //return null;
+    } else {
+      return result.data!;
+    }
+  }
+
   static Future<Map<String, dynamic>> treinoPorAlunoPorDia(int alunoId, int dia) async {
     GraphQLClient client = getClient();
     QueryResult result = await client.query(QueryOptions(

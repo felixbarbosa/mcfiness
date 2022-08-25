@@ -39,6 +39,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_localizations:
+    sdk: flutter
+
   flutter_secure_storage: ^5.0.2
 
   circular_countdown: ^2.1.0
