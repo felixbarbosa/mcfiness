@@ -4,6 +4,8 @@ class Exercicio {
   int? musculo;
   int? professor;
   String? urlImagem;
+  String? urlVideo;
+  String? instrucao;
 
   Exercicio(
       {
@@ -11,7 +13,9 @@ class Exercicio {
         this.nome,
         this.musculo,
         this.professor,
-        this.urlImagem
+        this.urlImagem,
+        this.urlVideo,
+        this.instrucao
       }
   );
 }

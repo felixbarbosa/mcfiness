@@ -1,10 +1,14 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/model/aluno.dart';
 import 'package:mcfitness/model/treino.dart';
 import 'package:numberpicker/numberpicker.dart';
 
-enum SingingCharacter { padrao, personalizado }
+enum SingingCharacter { padrao, personalizado, midia }
 
 class AlunosNovoTreino extends StatefulWidget {
 
@@ -52,6 +56,7 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
   );
 
   SingingCharacter? _character = SingingCharacter.padrao;
+  SingingCharacter? _characterMidia = SingingCharacter.midia;
 
   final _formKey = GlobalKey<FormState>();
   final nome = TextEditingController();
@@ -103,8 +108,9 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
   int idade = 0;
   DateTime dataSelecionada = DateTime.now();
 
-  bool isCheck = false;
+  bool isCheckMidia = false;
   bool nomePadrao = true;
+  bool addMidia = false;
   bool nomePersonalizado = false;
 
   int numeroSeries = 3;
@@ -112,6 +118,7 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
   int numeroDescansoMin = 1;
   int numeroDescansoSec = 0;
   int exercicioIdSelecionado = 0;
+  int notificarMidia = 0;
 
   List<String> exercicios = [];
   List<String> musculos = [];
@@ -124,6 +131,8 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
   List<String> velocidade = [
     'Cadenciado', 'Normal', 'Rápido'
   ];
+
+  
 
   final GlobalKey<FormFieldState> _keyExercicio = GlobalKey<FormFieldState>();
 
@@ -481,8 +490,6 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
       );
 
     }
-
-    
   }
 
   @override
@@ -907,12 +914,11 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
                                             if(valorSelecionado != null){
                       
                                               FocusScope.of(context).requestFocus(new FocusNode());
-                                              
-                                              exercicioSelecionado = valorSelecionado;
             
                                               List <String> valorSeparado = valorSelecionado.split(" - ");
                                               print("\"${valorSeparado[0]}\"");
                                               exercicioIdSelecionado = int.parse(valorSeparado[0]);
+                                              exercicioSelecionado = valorSeparado[1];
                                             }
                                             
                                             
@@ -934,40 +940,6 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
                                             )
                                           ),
                                         )
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Text(
-                                        "Instrução do Exercicio",
-                                        style: TextStyle(
-                                          fontSize: 23
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                      SizedBox(
-                                        height: 100.0,
-                                        child: TextFormField(
-                                          controller: instrucao,
-                                          maxLines: 5,
-                                          style: TextStyle(
-                                            color: Colors.black
-                                          ),
-                                          decoration: InputDecoration(
-                                            fillColor: Colors.white,
-                                            filled: true,
-                                            hintText: "Instrução de como executar o exercicio",
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey[400],
-                                              fontSize: 12.0
-                                            ),
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(10.0),
-                                            ),
-                                          ),
-                                        ),
                                       ),
                                       SizedBox(
                                         height: 20,
@@ -1398,7 +1370,9 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
                     ],
                   ),
                 )
-              ) : Container()
+              ) : Container(),
+              loading ? 
+              indicadorProgresso(): Container()
             ]
           ),
       );
@@ -1409,20 +1383,42 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
   }
 
   indicadorProgresso(){
-  return Expanded(
-      child: Padding(
-      padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
-      child: Container(
-        child: Center(
-          child: CircularProgressIndicator(
-            color: Colors.black,
-          )
-        )
+    return Container(
+      color: Colors.black45,
+      child: Center(
+        child: Container(
+          height: MediaQuery.of(context).size.height/7,
+          width: MediaQuery.of(context).size.width/2,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: Colors.black
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 18,
+                  ),
+                  Text(
+                    'Uploading...',
+                    style: TextStyle(
+                      color: Colors.blue[400]
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
+  
 }
 
  

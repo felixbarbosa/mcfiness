@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "827660174970",
+    "project_id": "midiasmcfitness",
+    "storage_bucket": "midiasmcfitness.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:827660174970:android:e4e7b866f2d22c73419dc3",
+        "android_client_info": {
+          "package_name": "com.example.mcfitness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "827660174970-v0tj83l14fatdtl9halaalhao9nv807v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTbCHuNHvvzqIXkTRmbbTOwezcXQ76Rjw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "827660174970-v0tj83l14fatdtl9halaalhao9nv807v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

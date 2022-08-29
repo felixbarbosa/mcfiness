@@ -33,7 +33,9 @@ class Graphql {
         obterTreinoAlunoPorMusculo(alunoId:$alunoId, musculoId: $musculoId){
           exercicio{
             descricao,
-            urlImagem
+            urlImagem,
+            urlVideo,
+            instrucao
           },
           series,
           repeticoes,
@@ -43,7 +45,6 @@ class Graphql {
             id,
             descricao
           },
-          instrucao
         }
       }
       '''),
@@ -128,7 +129,9 @@ class Graphql {
           exercicio{
             id,
             descricao,
-            urlImagem
+            urlImagem,
+            urlVideo,
+            instrucao
           },
           series,
           repeticoes,
@@ -138,7 +141,6 @@ class Graphql {
             id,
             descricao
           },
-          instrucao
         }
       }
       '''),
@@ -294,7 +296,9 @@ class Graphql {
           professor{
             id
           },
-          urlImagem
+          urlImagem,
+          urlVideo,
+          instrucao
         }
       }
       '''),
@@ -419,7 +423,9 @@ class Graphql {
           professor{
             id
           },
-          urlImagem
+          urlImagem,
+          urlVideo,
+          instrucao
         }
       }
       ''')
@@ -561,7 +567,6 @@ class Graphql {
           "musculoAlvo": treino.musculo,
           "diaSemana": treino.diaSemana,
           "series": treino.series,
-          "instrucao": treino.instrucao,
           "variacaoExercicio": treino.variacaoExercicio
         }
       },
@@ -590,7 +595,9 @@ class Graphql {
           "descricao": exercicio.nome,
           "musculo": exercicio.musculo,
           "professor": exercicio.professor,
-          "urlImagem": exercicio.urlImagem
+          "urlImagem": exercicio.urlImagem,
+          "urlVideo": exercicio.urlVideo,
+          "instrucao": exercicio.instrucao
         }
       },
     ));

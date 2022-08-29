@@ -1,7 +1,10 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_anamnese_aluno.dart';
 import 'package:mcfitness/pages/alunos/alunos_novo_aluno.dart';
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 import 'package:mcfitness/pages/alunos/alunos_novo_exercicio.dart';
 
 enum SingingCharacter { nome, cnpj }
@@ -88,14 +91,82 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
   String abertura = "";
   String fechamento = "";
   String clienteNome = "";
+  String urlPassada = "";
+  String instrucao = "";
   //String entidadeIdQuery = entidadeId; 
 
   bool loading = false;
   bool alunoSelecionado = false;
+  bool mostrarExplicacao = false;
+  bool abrirVideo = false;
   int idSelecionado = 0;
   bool isButtonDisable = false;
 
   List treinos = [];
+
+  late VoidCallback listener;
+  late ChewieController chewieController;
+  late VideoPlayerController _controllerLocal;
+
+  carregarUrlVideo(String urlPassada) async {
+
+    if(urlPassada != ""){
+
+      setState(() {
+        loading = true;
+        _controllerLocal = VideoPlayerController.network(urlPassada);
+        
+      });
+
+      await _controllerLocal.initialize();
+
+      setState(() {
+
+        chewieController = ChewieController(
+          videoPlayerController: _controllerLocal,
+          autoPlay: true,
+          looping: true
+        );
+
+        if(mostrarExplicacao == true){
+          if(chewieController.videoPlayerController.value.isInitialized){
+            print("Inicializado");
+            abrirVideo = true;
+            loading = false;
+          }else{
+            print("Não Inicializado");
+          }
+          //clicouVideo = false;
+        }
+        
+      });
+
+    }else{
+      setState(() {
+        abrirVideo = false;
+      });
+    }
+
+    
+  }
+
+  video(String urlPassada) {
+
+    return Container(
+      height: 250,
+      child: Center(
+          child: (
+            AspectRatio(
+              aspectRatio: 1,
+              child: Chewie(
+                controller: chewieController
+              ),
+            )
+          ),
+        ),
+    );
+    
+  }
 
   Future<void> _treinosPorMusculoAluno() async {
 
@@ -293,6 +364,24 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
     super.dispose();
   }
 
+  loadImages() async {
+    // final SharedPreferences prefs = await _prefs;
+    // arquivos = prefs.getStringList('images') ?? [];
+
+    // if (arquivos.isEmpty) {
+    //refs = (await storage.ref('images').listAll()).items;
+    Reference ref = FirebaseStorage.instance.ref().child('videos/Victor-Puxada Alta');
+
+    print("URL = ${ref.getDownloadURL()}");
+    /*for (var ref in refs) {
+      final arquivo = await ref.getDownloadURL();
+      arquivos.add(arquivo);
+    }*/
+    // prefs.setStringList('images', arquivos);
+    // }
+    setState(() => loading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -367,87 +456,154 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
           centerTitle: true,
           elevation: 0,
         ),
-        body: Container(
-          child: Column(children: [
-            SizedBox(
-              height: 5,
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                color: Colors.blue[400],
-                child: Center(
-                  heightFactor: 1.5,
-                  child: Column(
-                    children: [
-                      Text(
-                        "Treinos - $alunoNomeLocal",
-                        style: TextStyle(
-                          fontSize: 20
+        body: Stack(
+          children: [
+            Container(
+            child: Column(children: [
+              SizedBox(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 18, 8, 8),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  color: Colors.blue[400],
+                  child: Center(
+                    heightFactor: 1.5,
+                    child: Column(
+                      children: [
+                        Text(
+                          "Treinos - $alunoNomeLocal",
+                          style: TextStyle(
+                            fontSize: 20
+                          ),
                         ),
-                      ),
-                      Text(
-                        "$musculoNomeLocal",
-                        style: TextStyle(
-                          fontSize: 20
+                        Text(
+                          "$musculoNomeLocal",
+                          style: TextStyle(
+                            fontSize: 20
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              loading ? indicadorProgresso() : widgetListaRolagem(),
+              SizedBox(
+                height: 2,
+              ),
+              ButtonTheme(
+                child: Container(
+                  color: Colors.blue[400],
+                  child: ButtonBar(
+                    buttonMinWidth: 100,
+                    alignment: MainAxisAlignment.center,
+                    children: [
+                      RaisedButton(
+                        onPressed: () async {
+                          
+                          var tela = await Navigator.push(
+                            context, MaterialPageRoute(
+                              builder: (context) => AlunosNovoExercicio(
+                                alunoIdGlobal: alunoIdLocal,
+                                musculoIdGlobal: musculoIdLocal,
+                                musculoNomeGlobal: musculoNomeLocal,
+                                diaSemanaIdGlobal: diaSemanaIdLocal,
+                                objetivoGlobal: objetivoLocal,
+                                nomeTreinoGlobal: nomeTreinoLocal,
+                              )
+                            )
+                          );
+        
+                          if(tela == 1){
+                            _treinosPorMusculoAluno();
+                          }
+                        },
+                        color: Colors.black,
+                        child: Text(
+                          'Adicionar Exercicio',
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+            ]
             ),
-            loading ? indicadorProgresso() : widgetListaRolagem(),
-            SizedBox(
-              height: 2,
-            ),
-            ButtonTheme(
-              child: Container(
-                color: Colors.blue[400],
-                child: ButtonBar(
-                  buttonMinWidth: 100,
-                  alignment: MainAxisAlignment.center,
-                  children: [
-                    RaisedButton(
-                      onPressed: () async {
-                        
-                        var tela = await Navigator.push(
-                          context, MaterialPageRoute(
-                            builder: (context) => AlunosNovoExercicio(
-                              alunoIdGlobal: alunoIdLocal,
-                              musculoIdGlobal: musculoIdLocal,
-                              musculoNomeGlobal: musculoNomeLocal,
-                              diaSemanaIdGlobal: diaSemanaIdLocal,
-                              objetivoGlobal: objetivoLocal,
-                              nomeTreinoGlobal: nomeTreinoLocal,
+          ),
+          mostrarExplicacao ?
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.black87.withOpacity(0.8),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Container(
+                  height: MediaQuery.of(context).size.height/2,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.blue[400],
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 35,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: (){
+                                setState(() {
+                                  mostrarExplicacao = false;
+                                  abrirVideo = false;
+                                  chewieController.pause();
+                                });
+                              }, 
+                              icon: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              )
                             )
-                          )
-                        );
-
-                        if(tela == 1){
-                          _treinosPorMusculoAluno();
-                        }
-                      },
-                      color: Colors.black,
-                      child: Text(
-                        'Adicionar Exercicio',
-                        style: TextStyle(
-                          color: Colors.white
+                          ],
+                        )
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
+                        child: loading ? indicadorProgresso() : abrirVideo ? video(urlPassada) : semVideo()
+                      ),
+                      Container(
+                        height: 100,
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.grey.withOpacity(0.7),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            instrucao,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
                         ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                    ),
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
+          ): Container()
           ]
-          ),
         )
     );
   }
@@ -529,22 +685,13 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
                                                     RaisedButton(
                                                       onPressed: () async {
                                                         
-                                                        var tela = await Navigator.push(
-                                                          context, MaterialPageRoute(
-                                                            builder: (context) => AlunosNovoExercicio(
-                                                              alunoIdGlobal: alunoIdLocal,
-                                                              musculoIdGlobal: musculoIdLocal,
-                                                              musculoNomeGlobal: musculoNomeLocal,
-                                                              diaSemanaIdGlobal: diaSemanaIdLocal,
-                                                              objetivoGlobal: objetivoLocal,
-                                                              nomeTreinoGlobal: nomeTreinoLocal,
-                                                            )
-                                                          )
-                                                        );
+                                                        setState(() {
+                                                          urlPassada = treinos[index]['exercicio']['urlVideo'] == null ? "" : treinos[index]['exercicio']['urlVideo'];
+                                                          carregarUrlVideo(urlPassada);
+                                                          mostrarExplicacao = true;
+                                                          instrucao = treinos[index]['exercicio']['instrucao'] == null ? "Sem Instrução" : treinos[index]['exercicio']['instrucao'];
+                                                        });
 
-                                                        if(tela == 1){
-                                                          _treinosPorMusculoAluno();
-                                                        }
                                                       },
                                                       color: Color.fromARGB(255, 238, 238, 238),
                                                       child: Text(
@@ -920,16 +1067,32 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
 }
 
 indicadorProgresso(){
-  return Expanded(
-      child: Padding(
-      padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
-      child: Container(
-        child: Center(
-          child: CircularProgressIndicator()
-        )
-      ),
-    ),
-  );
+  return Padding(
+  padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+  child: Container(
+    height: 250,
+    child: Center(
+      child: CircularProgressIndicator()
+    )
+  ),
+    );
+}
+
+semVideo(){
+  return Padding(
+  padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+  child: Container(
+    height: 250,
+    child: Center(
+      child: Text(
+        "Nenhum vídeo para esse exercicio",
+        style: TextStyle(
+          color: Colors.red
+        ),
+      )
+    )
+  ),
+    );
 }
 
  
