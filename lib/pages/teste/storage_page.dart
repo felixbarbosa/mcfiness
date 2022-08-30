@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/route_manager.dart';
 import 'package:image_picker/image_picker.dart';
 
 class StoragePage extends StatefulWidget {
@@ -86,7 +88,7 @@ class _StoragePageState extends State<StoragePage> {
   @override
   void initState() {
     super.initState();
-    loadImages();
+    //loadImages();
   }
 
   loadImages() async {
@@ -119,24 +121,20 @@ class _StoragePageState extends State<StoragePage> {
         centerTitle: true,
         title: uploading ? Text('${total.round()}% enviado') : const Text('Firebase Storage'),
         actions: [
-          uploading
-              ? const Padding(
-                  padding: EdgeInsets.only(right: 12.0),
-                  child: Center(
-                    child: SizedBox(
-                      width: 20.0,
-                      height: 20.0,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                )
-              : IconButton(
-                  icon: const Icon(Icons.upload),
-                  onPressed: pickAndUploadImage,
-                )
+          IconButton(
+            icon: const Icon(Icons.upload),
+            onPressed: (){
+              Get.to(
+                (){
+                  CameraCamera(
+                    onFile: (file){
+                      print(file);
+                    },
+                  );
+                }
+              );
+            },
+          )
         ],
         elevation: 0,
       ),

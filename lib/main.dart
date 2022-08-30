@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mcfitness/model/user.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:mcfitness/pages/home/home_page.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/teste/firebase_options.dart';
 import 'package:mcfitness/pages/teste/storage_page.dart';
+import 'package:mcfitness/pages/teste/teste_camera.dart';
 import 'package:mcfitness/pages/widgets/error_page.dart';
 import 'package:mcfitness/pages/widgets/loading_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -67,7 +69,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'MC Fitness',
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
@@ -96,7 +98,10 @@ class App extends StatelessWidget {
         future: _inicializacao,
         builder: (context, app) {
           if (app.connectionState == ConnectionState.done) {
-            return const Login();
+            return AvaliacaoFisicaNovaAvaliacao(
+              alunoIdGlobal: 1,
+              alunoNomeGlobal: "Victor Barbosasd",
+            );
           }
 
           if (app.hasError) return const ErrorPage();

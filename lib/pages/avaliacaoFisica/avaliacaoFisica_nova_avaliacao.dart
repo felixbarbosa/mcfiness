@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:camera_camera/camera_camera.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/model/treino.dart';
+import 'package:mcfitness/pages/teste/preview_page.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 enum SingingCharacter { padrao, personalizado }
@@ -61,6 +66,9 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
   final dores = TextEditingController();
   final problemaOrtopedico = TextEditingController();
   final observacoes = TextEditingController();
+  final fotoFrente = TextEditingController();
+  final fotoLado = TextEditingController();
+  final fotoCostas = TextEditingController();
   //final entidade = 5;
 
   int idLocal = 0;
@@ -104,6 +112,9 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
   String ano = "0";
   String exercicioSelecionado = "";
   String velocidadeSelecionada = "";
+  String urlFrente = "";
+  String urlLado = "";
+  String urlCostas = "";
   int idade = 0;
   DateTime dataSelecionada = DateTime.now();
 
@@ -116,6 +127,8 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
   int numeroDescansoMin = 1;
   int numeroDescansoSec = 0;
   int exercicioIdSelecionado = 0;
+  int count = 0;
+  int aux = 0;
 
   List<String> exercicios = [];
   List<String> musculos = [];
@@ -128,6 +141,8 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
   List<String> velocidade = [
     'Cadenciado', 'Normal', 'Rápido'
   ];
+
+  List<String> paths = [];
 
   final GlobalKey<FormFieldState> _keyExercicio = GlobalKey<FormFieldState>();
 
@@ -233,262 +248,97 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
     }
   }
 
-  Future<void> _buscarMusculos() async {
+  showPreview(file, String foto) async {
 
-    setState(() {
-      loading = true;
-    });
+    File? arq =  await Navigator.push(
+      context, MaterialPageRoute(
+        builder: (context) => PreviewPage(file: file)
+      )
+    );
 
-    try{
+    if (arq != null) {
+      print("Arquivo (Path) = ${arq.path}");
+      print("Arquivo = ${arq}");
 
-      Map<String, dynamic> result = await Graphql.obterTodosOsMusculos();
-
-      print("aqui");
-      
-
-      if (result['obterMusculos'].length > 0) {
-        print("Resultado buscado");
-
-        int count = 0;
-        String addMusculo = "";
-
-        while(count < result['obterMusculos'].length){
-
-          addMusculo = result['obterMusculos'][count]['id'].toString() + " - " + result['obterMusculos'][count]['descricao'];
-          setState(() {
-            musculos.add(addMusculo);
-          });
-          
-          count++;
-        }
-
-        setState(() {
-          loading = false;
-        });
-
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Nenhum musculo cadastrado'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    loading = false;
-                  });
-                },
-                child: const Text('Fechar'),
-              ),
-            ],
-          )
-        );
+      if(foto == "frente"){
+        fotoFrente.text = arq.path;
+      }else if(foto == "lado"){
+        fotoLado.text = arq.path;
+      }else{
+        fotoCostas.text = arq.path;
       }
 
-    }catch(erro){
+      aux = 0;
 
-      print("Erro = ${erro.toString()}");
+      while(aux < paths.length){
+        if(foto == paths[aux].split("-")[0]){
+          paths.removeAt(aux);
+        }else{
+          aux++;
+        }
+      }
 
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro na base de dados'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  loading = false;
-                });
-              },
-              child: const Text('Fechar'),
-            ),
-          ],
-        )
-      );
-
+      paths.add("$foto-${arq.path}");
+      
+      Navigator.pop(context);
     }
-
-    
   }
 
-  Future<void> _buscarDiasSemana() async {
+  pickAndUploadImage(String file, String foto) async {
+    if (file != null) {
+      UploadTask task = await upload(file);
 
-    setState(() {
-      loading = true;
-    });
-
-    try{
-
-      Map<String, dynamic> result = await Graphql.obterDiasSemana();
-
-      print("aqui");
-      
-
-      if (result['obterDiasSemana'].length > 0) {
-        print("Resultado buscado");
-
-        int count = 0;
-        String addDia = "";
-
-        while(count < result['obterDiasSemana'].length){
-
-          addDia = result['obterDiasSemana'][count]['id'].toString() + " - " + result['obterDiasSemana'][count]['dia'];
+      task.snapshotEvents.listen((TaskSnapshot snapshot) async {
+        if (snapshot.state == TaskState.running) {
           setState(() {
-            diasSemana.add(addDia);
+
           });
-          
-          count++;
+        } else if (snapshot.state == TaskState.success) {
+          final photoRef = snapshot.ref;
+
+          print("Url gerada = ${await photoRef.getDownloadURL()}");
+
+          if(foto == "frente"){
+            urlFrente = await photoRef.getDownloadURL();
+          }else if(foto == "lado"){
+            urlLado= await photoRef.getDownloadURL();
+          }else{
+            urlCostas = await photoRef.getDownloadURL();
+          }
+
+          setState((){});
         }
-
-        setState(() {
-          loading = false;
-        });
-
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Nenhum musculo cadastrado'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    loading = false;
-                  });
-                },
-                child: const Text('Fechar'),
-              ),
-            ],
-          )
-        );
-      }
-
-    }catch(erro){
-
-      print("Erro = ${erro.toString()}");
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro na base de dados'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  loading = false;
-                });
-              },
-              child: const Text('Fechar'),
-            ),
-          ],
-        )
-      );
-
+      });
     }
-
-    
   }
 
-  Future<void> _buscarExerciciosPorMusculo() async {
+  Future<UploadTask> upload(String path) async {
+    File file = File(path);
+    try {
+      String ref = 'images/img-${DateTime.now().toString()}.jpeg';
 
-    setState(() {
-      loading = true;
-    });
+      final storageRef = FirebaseStorage.instance.ref();
 
-    try{
-
-      Map<String, dynamic> result = await Graphql.exerciciosPorMusculo(musculoIdLocal);
-
-      print("aqui");
-      
-
-      if (result['obterExerciciosPorMusculo'].length > 0) {
-        print("Resultado buscado");
-
-        exercicios.clear();
-
-        int count = 0;
-        String addExercicio = "";
-
-        while(count < result['obterExerciciosPorMusculo'].length){
-          print("Dentro do while");
-          print("Id = ${result['obterExerciciosPorMusculo'][count]['id']}");
-          print("Descricao = ${result['obterExerciciosPorMusculo'][count]['descricao']}");
-
-          addExercicio = result['obterExerciciosPorMusculo'][count]['id'].toString() + " - " + result['obterExerciciosPorMusculo'][count]['descricao'];
-          
-          exercicios.add(addExercicio);
-          
-          count++;
-        }
-
-        setState(() {
-          loading = false;
-          selecionouMusculo = true;
-        });
-
-      } else {
-
-        setState(() {
-          loading = false;
-          selecionouMusculo = false;
-        });
-
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Nenhum treino cadastrado para esse aluno'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    loading = false;
-                  });
-                },
-                child: const Text('Fechar'),
-              ),
-            ],
-          )
-        );
-      }
-
-    }catch(erro){
-
-      print("Erro = ${erro.toString()}");
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro na base de dados'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  loading = false;
-                });
+      return storageRef.child(ref).putFile(
+            file,
+            SettableMetadata(
+              cacheControl: "public, max-age=300",
+              contentType: "image/jpeg",
+              customMetadata: {
+                "user": "123",
               },
-              child: const Text('Fechar'),
             ),
-          ],
-        )
-      );
-
+          );
+    } on FirebaseException catch (e) {
+      throw Exception('Erro no upload: ${e.code}');
     }
-
-    
   }
 
   @override
   void initState() {
     super.initState();
-    _buscarDiasSemana();
-    _buscarMusculos();
+    //_buscarDiasSemana();
+    //_buscarMusculos();
   }
 
   @override
@@ -1156,7 +1006,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             height: 8.0,
                                           ),
                                           TextFormField(
-                                            controller: pulmonar,
+                                            controller: fotoFrente,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -1175,7 +1025,15 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                   color: Colors.blue[400]
                                                 ),
                                                 onPressed: (){
-                                                  print("Clicou Foto");
+                                                  Navigator.push(
+                                                    context, MaterialPageRoute(
+                                                      builder: (context) => CameraCamera(
+                                                        onFile: (file){
+                                                          showPreview(file, "frente");
+                                                        },
+                                                      )
+                                                    )
+                                                  );
                                                 },
                                               ),
                                               fillColor: Colors.white,
@@ -1202,7 +1060,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             height: 8.0,
                                           ),
                                           TextFormField(
-                                            controller: pulmonar,
+                                            controller: fotoLado,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -1221,7 +1079,15 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                   color: Colors.blue[400]
                                                 ),
                                                 onPressed: (){
-                                                  print("Clicou Foto");
+                                                  Navigator.push(
+                                                    context, MaterialPageRoute(
+                                                      builder: (context) => CameraCamera(
+                                                        onFile: (file){
+                                                          showPreview(file, "lado");
+                                                        },
+                                                      )
+                                                    )
+                                                  );
                                                 },
                                               ),
                                               fillColor: Colors.white,
@@ -1248,7 +1114,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             height: 8.0,
                                           ),
                                           TextFormField(
-                                            controller: pulmonar,
+                                            controller: fotoCostas,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -1267,7 +1133,15 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                   color: Colors.blue[400]
                                                 ),
                                                 onPressed: (){
-                                                  print("Clicou Foto");
+                                                  Navigator.push(
+                                                    context, MaterialPageRoute(
+                                                      builder: (context) => CameraCamera(
+                                                        onFile: (file){
+                                                          showPreview(file, "costas");
+                                                        },
+                                                      )
+                                                    )
+                                                  );
                                                 },
                                               ),
                                               fillColor: Colors.white,
@@ -1291,8 +1165,22 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             minWidth: double.infinity,
                                             height: 42,
                                             onPressed: () {
-                                              if(exercicioSelecionado != "" && velocidadeSelecionada != ""){
-                                                _novoExercicio();
+                                              if(fotoFrente.text != ""){
+                                                count = 0;
+
+                                                while(count < paths.length){
+                                                  
+                                                  setState(() {
+                                                    loading = true;
+                                                  });
+
+                                                  List <String> valorSeparado = paths[count].split("-");
+                                                  //print("Foto: ${valorSeparado[0]}");
+                                                  //print("Path: ${valorSeparado[1]}");
+                                                  pickAndUploadImage(valorSeparado[1], valorSeparado[0]);
+                                                  count++;
+                                                }
+
                                               }else{
                                                 showDialog(
                                                   context: context,
