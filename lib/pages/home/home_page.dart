@@ -164,7 +164,7 @@ class _Homemodulestate extends State<Home_Page> {
                             Navigator.push(
                               context, MaterialPageRoute(
                                 builder: (context) => TreinosListarTreino(
-                                  alunoIdGlobal: 1,
+                                  alunoIdGlobal: idUsuarioLocal,
                                   alunoNomeGlobal: nomeUsuarioLocal,
                                   objetivoIdGlobal: 1,
                                 )

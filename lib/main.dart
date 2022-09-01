@@ -26,38 +26,6 @@ Future<void> main() async {
       child: App(),
     )
   );
-
-  /*final Future<FirebaseApp> _inicializacao = Firebase.initializeApp();
-
-  runApp(
-    Provider(
-      create: (_) => User(versao: 'V3.20220824.1930'/*packageInfo.version*/),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-      title: 'Vendor',
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('pt', 'BR'),
-      ],
-      locale: const Locale('pt', 'BR'),
-      theme: ThemeData(
-          primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: Color.fromARGB(255, 170, 170, 170),
-          iconTheme: const IconThemeData(color: Colors.blue)),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.blue,
-        iconTheme: const IconThemeData(color: Colors.blue),
-      ),
-      themeMode: ThemeMode.light,
-      home: const Login(),
-      ),
-    ),
-  );*/
 }
 
 class App extends StatelessWidget {
@@ -98,9 +66,7 @@ class App extends StatelessWidget {
         future: _inicializacao,
         builder: (context, app) {
           if (app.connectionState == ConnectionState.done) {
-            return AvaliacaoFisicaNovaAvaliacao(
-              alunoIdGlobal: 1,
-              alunoNomeGlobal: "Victor Barbosasd",
+            return Login(
             );
           }
 

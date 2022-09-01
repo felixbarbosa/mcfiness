@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
+import 'package:mcfitness/model/carga.dart';
 import 'package:mcfitness/pages/alunos/alunos_novo_exercicio.dart';
 import  'package:circular_countdown/circular_countdown.dart';
 import 'package:timer_controller/timer_controller.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 enum SingingCharacter { nome, cnpj }
 
@@ -93,6 +96,8 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
   String descansoQuery = "";
   int exercicioSelecionado = 0;
   String nomeExercicio = "";
+  String urlPassada = "";
+  String cargaExercicio = "";
   //String entidadeIdQuery = entidadeId; 
 
   bool loading = false;
@@ -101,10 +106,14 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
   int numeroSeries = 1;
   int tempoDescanso = 0;
   bool isButtonDisable = false;
+  bool cargaEditavel = true;
   bool mostrarExplicacao = false;
   bool iniciarTreino= false;
   bool clicouIniciarExercicio = false;
+  bool abrirVideo = false;
   bool fimDeSerie= false;
+  bool temVideo = false;
+  String dataCarga = "";
 
   List treinos = [];
   List<int> exerciciosFinalizados = [];
@@ -117,6 +126,138 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
   late final TimerController _controller;
   final _scrollController = ScrollController();
   final ItemScrollController itemScrollController = ItemScrollController();
+  
+  late ChewieController chewieController;
+  late VideoPlayerController _controllerLocal;
+
+  carregarUrlVideo(String urlPassada) async {
+
+    if(urlPassada != ""){
+
+      setState(() {
+        loading = true;
+        temVideo = true;
+        _controllerLocal = VideoPlayerController.network(urlPassada);
+        
+      });
+
+      await _controllerLocal.initialize();
+
+      setState(() {
+
+        chewieController = ChewieController(
+          videoPlayerController: _controllerLocal,
+          autoPlay: true,
+          looping: true
+        );
+
+        if(mostrarExplicacao == true){
+          if(chewieController.videoPlayerController.value.isInitialized){
+            print("Inicializado");
+            abrirVideo = true;
+            loading = false;
+          }else{
+            print("Não Inicializado");
+          }
+          //clicouVideo = false;
+        }
+        
+      });
+
+    }else{
+      setState(() {
+        abrirVideo = false;
+        temVideo = false;
+      });
+    }
+
+    
+  }
+
+  video(String urlPassada) {
+
+    return Container(
+      height: 250,
+      child: Center(
+          child: (
+            AspectRatio(
+              aspectRatio: 1,
+              child: Chewie(
+                controller: chewieController
+              ),
+            )
+          ),
+        ),
+    );
+    
+  }
+
+  Future<void> _salvarCargaExercicioAluno() async {
+
+    try{
+
+      Map<String, dynamic> result = await Graphql.salvarCargaExercicioAluno(Carga(
+        id: 0,
+        aluno: alunoIdLocal,
+        carga: cargaExercicio,
+        exercicio: exercicioSelecionado,
+        data: dataCarga
+      )
+      );
+
+      print("aqui");
+      
+
+      if (result['salvarCarga']['id'] >= 0) {
+        print("Salvou");
+
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Não foi possivel registrar a carga do exercicio'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    loading = false;
+                  });
+                },
+                child: const Text('Fechar'),
+              ),
+            ],
+          )
+        );
+      }
+
+    }catch(erro){
+
+      print("Erro = ${erro.toString()}");
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Erro na base de dados'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  loading = false;
+                });
+              },
+              child: const Text('Fechar'),
+            ),
+          ],
+        )
+      );
+
+    }
+
+    
+  }
+
 
   Future<void> _treinosPorAlunoPorDia() async {
 
@@ -286,26 +427,6 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                     children: [
                       RaisedButton(
                         onPressed: () async {
-
-                          if(!iniciarTreino){
-                            setState(() {
-                              iniciarTreino = true;
-                            });
-                          }
-                        },
-                        color: iniciarTreino ? Colors.grey : Colors.black,
-                        child: Text(
-                          'Iniciar Treino',
-                          style: TextStyle(
-                            color: iniciarTreino ? Colors.black : Colors.white
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0)
-                        ),
-                      ),
-                      RaisedButton(
-                        onPressed: () async {
                           if((treinos.length == exerciciosFinalizados.length)){
                             Navigator.pop(context);
                           }
@@ -355,10 +476,17 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                               onPressed: (){
                                 setState(() {
                                   mostrarExplicacao = false;
+                                  abrirVideo = false;
+
+                                  if(temVideo == true){
+                                    chewieController.pause();
+                                  }
+                                  
                                 });
                               }, 
                               icon: Icon(
-                                Icons.close
+                                Icons.close,
+                                color: Colors.white,
                               )
                             )
                           ],
@@ -366,18 +494,20 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
-                        child: Container(
-                          height: 250,
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.black,
-                        ),
+                        child: loading ? indicadorProgresso() : abrirVideo ? video(urlPassada) : semVideo()
                       ),
                       Container(
                         height: 100,
                         width: MediaQuery.of(context).size.width,
                         color: Colors.grey.withOpacity(0.7),
-                        child: Text(
-                          instrucao
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            instrucao,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
                         ),
                       )
                     ],
@@ -386,183 +516,26 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
               ),
             ),
           ): Container()
-          /*iniciarTreino ? 
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.black87.withOpacity(0.8),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Container(
-                  height: MediaQuery.of(context).size.height/1.5,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.blue[400],
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 35,
-                        width: MediaQuery.of(context).size.width,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: (){
-                                setState(() {
-                                  iniciarTreino = false;
-                                });
-                              }, 
-                              icon: Icon(
-                                Icons.close
-                              )
-                            )
-                          ],
-                        )
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 20, 15, 10),
-                        child: Container(
-                          height: MediaQuery.of(context).size.height/2,
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.white,
-                          child: PageView.builder(
-                            //physics: NeverScrollableScrollPhysics(),
-                            controller: pageController,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (BuildContext context, int index){
-
-                              descansoQuery =  treinos[index]['descanso'];
-
-                              tempoDescanso = (60*int.parse(descansoQuery.substring(0,1))) + int.parse(descansoQuery.substring(2,4));
-
-                              return ListTile(
-                                minVerticalPadding: 0,
-                                title: Container(
-                                  height: MediaQuery.of(context).size.height,
-                                  width: MediaQuery.of(context).size.width,
-                                  color: Colors.white,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Expanded(
-                                        child: Stack(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                    treinos[index]['exercicio']['urlImagem'] == null ? "assets/Erro.png" : treinos[index]['exercicio']['urlImagem']
-                                                  ),
-                                                  fit: BoxFit.fill
-                                                ),
-                                                //color: Colors.lightGreen[400]
-                                              ),
-                                            ),
-                                            index + 1  < treinos.length ?
-                                            Container(
-                                              child: Center(
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                  children: [ 
-                                                    Icon(
-                                                      Icons.chevron_right,
-                                                      color: Colors.blue,
-                                                      size: 50,
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ) :
-                                            Container()
-                                          ]
-                                        ),
-                                      ),
-                                      Text(
-                                        treinos[index]['exercicio']['descricao'],
-                                        style: TextStyle(
-                                          color: Colors.black
-                                        ),
-                                      ),
-                                      RaisedButton(
-                                        onPressed: () async {
-                                          if(!clicouIniciarExercicio){
-                                            setState(() {
-                                              clicouIniciarExercicio = true;
-                                            });
-                                          }else{
-                                            setState(() {
-                                              fimDeSerie = true;
-                                            });
-                                          }
-                                        },
-                                        color: (clicouIniciarExercicio && fimDeSerie) ? Colors.grey : Color.fromARGB(255, 238, 238, 238),
-                                        child: Text(
-                                          clicouIniciarExercicio ? 'Fim da ${numeroSeries}º série' : 'Iniciar Exercicio',
-                                          style: TextStyle(
-                                            color: (clicouIniciarExercicio && fimDeSerie) ? Colors.white : Colors.blue[400]
-                                          ),
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5.0)
-                                        ),
-                                      ),
-                                      fimDeSerie ? 
-                                      TimeCircularCountdown(
-                                        unit: CountdownUnit.second,
-                                        textStyle: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 20
-                                        ),
-                                        countdownTotal: tempoDescanso,
-                                        onUpdated: (unit, remainingTime) => print('Updated'),
-                                        onFinished: () => setState(() {
-                                          fimDeSerie = false;
-
-                                          if(numeroSeries == int.parse(treinos[index]['series'])){
-
-                                            numeroSeries = 1;
-
-                                            if(index + 1 < treinos.length){
-                                              pageController.nextPage(
-                                                duration: Duration(milliseconds: 400), 
-                                                curve: Curves.easeIn
-                                              );
-                                            }else{
-                                              iniciarTreino = false;
-                                            }
-                                            
-                                          }else{
-                                            numeroSeries++;
-                                          }
-                                          
-                                        }),
-                                        countdownRemainingColor: Colors.blue,
-                                        countdownCurrentColor: Colors.blue,
-                                        countdownTotalColor: Colors.grey,
-                                        repeat: false,
-                                      ) : Container()
-                                    ],
-                                  ),
-                                )
-                              );
-                            },
-                            itemCount: treinos.length,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          )
-          :Container()*/
           ]
         )
     );
+  }
+
+  semVideo(){
+    return Padding(
+    padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+    child: Container(
+      height: 250,
+      child: Center(
+        child: Text(
+          "Nenhum vídeo para esse exercicio",
+          style: TextStyle(
+            color: Colors.red
+          ),
+        )
+      )
+    ),
+      );
   }
 
   widgetListaRolagem() {
@@ -595,7 +568,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                               children: [
                                 Container(
                                     height: (fimDeSerie && (exercicioSelecionado == treinos[index]['exercicio']['id'])) ? 
-                                              MediaQuery.of(context).size.height/1.35 : MediaQuery.of(context).size.height/1.64,
+                                              MediaQuery.of(context).size.height/1.35 : MediaQuery.of(context).size.height/1.55,
                                     width: MediaQuery.of(context).size.width/1.127,
                                     decoration: BoxDecoration(
                                       color: (alunoSelecionado && idSelecionado == treinos[index]['musculoAlvo']['id']) ? Colors.blue[400] : Colors.white,
@@ -651,8 +624,10 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                                       RaisedButton(
                                                         onPressed: () async {
                                                           setState(() {
+                                                            urlPassada = treinos[index]['exercicio']['urlVideo'] == null ? "" : treinos[index]['exercicio']['urlVideo'];
+                                                            carregarUrlVideo(urlPassada);
                                                             mostrarExplicacao = true;
-                                                            instrucao = treinos[index]['instrucao'] == null ? "Sem Instrução" : treinos[index]['instrucao'];
+                                                            instrucao = treinos[index]['exercicio']['instrucao'] == null ? "Sem Instrução" : treinos[index]['exercicio']['instrucao'];
                                                           });
                                                         },
                                                         color: Color.fromARGB(255, 238, 238, 238),
@@ -673,6 +648,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                                             if(!clicouIniciarExercicio){
                                                               setState(() {
                                                                 clicouIniciarExercicio = true;
+                                                                cargaEditavel = false;
                                                                 exercicioSelecionado = treinos[index]['exercicio']['id'];
                                                               });
                                                             }else{
@@ -713,7 +689,18 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
 
                                                             exerciciosFinalizados.add(exercicioSelecionado);
 
+                                                            print("Carga a ser salva = $cargaExercicio");
+                                                            print("Exercicio a ser salvo = ${treinos[index]['exercicio']['descricao']}");
+                                                            print("Id do exercicio = $exercicioSelecionado");
+                                                            print("Data: ${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}");
+
+                                                            dataCarga = "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}";
+
+                                                            _salvarCargaExercicioAluno();
+
                                                             clicouIniciarExercicio = false;
+
+                                                            cargaEditavel = true;
 
                                                             exercicioSelecionado = 0;
                                     
@@ -785,7 +772,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                                             ],
                                                           ),
                                                           SizedBox(
-                                                            width: MediaQuery.of(context).size.width/4,
+                                                            width: MediaQuery.of(context).size.width/5,
                                                           ),
                                                           Column(
                                                             children: [
@@ -805,6 +792,75 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                                               ),
                                                               Text(
                                                                 "REPETIÇÕES",  
+                                                                overflow: TextOverflow.fade,                          
+                                                                style: TextStyle(
+                                                                  color: Colors.black,
+                                                                  fontSize: 10.0,
+                                                                  fontWeight: FontWeight.normal
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            width: MediaQuery.of(context).size.width/5,
+                                                          ),
+                                                          Column(
+                                                            children: <Widget>[
+                                                              Icon(
+                                                                Icons.line_weight,
+                                                                color: Colors.blue[400],
+                                                                size: 30,
+                                                              ),
+                                                              SizedBox(
+                                                                height: 3,
+                                                              ),
+                                                              SizedBox(
+                                                                height: 25,
+                                                                width: 45,
+                                                                child: IgnorePointer(
+                                                                  ignoring: !cargaEditavel,
+                                                                  child: TextFormField(
+                                                                    keyboardType: TextInputType.number,
+                                                                    textAlign: TextAlign.center,
+                                                                    style: TextStyle(
+                                                                      color: Colors.black
+                                                                    ),
+                                                                    decoration: InputDecoration(
+                                                                      contentPadding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+                                                                      fillColor: Colors.white,
+                                                                      filled: true,
+                                                                      border: new OutlineInputBorder(
+                                                                        borderRadius: BorderRadius.circular(10.0),
+                                                                      ),
+                                                                      //hintText: estoques[index]['quantidade'].toString(),
+                                                                      hintStyle: TextStyle(color: Colors.black),
+                                                                    ),
+                                                                    onChanged: (value){
+                                                                
+                                                                      setState(() {
+                                                                        //modificouEstoque = true;
+                                                                      });
+                                                                
+                                                                      print(value);
+                                                                      //print("Tamanho do array = ${estoquesLocais.length}");
+                                                                      if(value.isEmpty){
+                                                                        print("Vazio");
+                                                                        cargaExercicio = "";
+                                                                      }else{
+                                                                        cargaExercicio = value;
+                                                                      }
+                                                                      
+                                                                      //produtoIdTemporiario = int.parse(estoques[index]['produto']['id']);
+                                                                      //giroVendaDiaTemporario = estoques[index]['giroVendaDia'];
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 3,
+                                                              ),
+                                                              Text(
+                                                                "CARGA",  
                                                                 overflow: TextOverflow.fade,                          
                                                                 style: TextStyle(
                                                                   color: Colors.black,
@@ -1120,16 +1176,15 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
 }
 
 indicadorProgresso(){
-  return Expanded(
-      child: Padding(
-      padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
-      child: Container(
-        child: Center(
-          child: CircularProgressIndicator()
-        )
-      ),
-    ),
-  );
+  return Padding(
+  padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+  child: Container(
+    height: 250,
+    child: Center(
+      child: CircularProgressIndicator()
+    )
+  ),
+    );
 }
 
  

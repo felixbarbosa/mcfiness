@@ -184,6 +184,9 @@ class _TreinosListarTreinoState extends State<TreinosListarTreino> {
         _treinosAluno();
 
       } else {
+        
+        _treinosAluno();
+
         showDialog(
           context: context,
           builder: (context) => AlertDialog(

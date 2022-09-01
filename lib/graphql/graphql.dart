@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mcfitness/model/aluno.dart';
+import 'package:mcfitness/model/carga.dart';
 import 'package:mcfitness/model/exercicio.dart';
 import 'package:mcfitness/model/treino.dart';
 import 'package:mcfitness/model/variacoesExercicio.dart';
@@ -487,6 +488,34 @@ class Graphql {
           "idade": aluno.idade,
           "personal": aluno.personal,
           "objetivo": aluno.objetivo
+        }
+      },
+    ));
+    if (result.hasException) {
+      throw result.exception!;
+    } else {
+      return result.data!;
+    }
+  }
+
+  static Future<Map<String, dynamic>> salvarCargaExercicioAluno(Carga carga) async {
+    GraphQLClient client = getClient();
+
+    QueryResult result = await client.mutate(MutationOptions(
+      document: gql(r'''
+        mutation($carga: CargaInput!){
+          salvarCarga(carga:$carga){
+            id
+          }
+        }
+      '''),
+      variables: {
+        "carga": {
+          "id": carga.id,
+          "carga": carga.carga,
+          "aluno": carga.aluno,
+          "exercicio": carga.exercicio,
+          "data": carga.data
         }
       },
     ));
