@@ -49,23 +49,16 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
 
   final _formKey = GlobalKey<FormState>();
   final objetivo = TextEditingController();
-  final atividadeFisica = TextEditingController();
-  final refeicoes = TextEditingController();
-  final dieta = TextEditingController();
-  final suplementacao = TextEditingController();
-  final sono = TextEditingController();
-  final fumante = TextEditingController();
-  final bebidaAlcoolica = TextEditingController();
-  final colesterol = TextEditingController();
-  final alteracaoCardiaca = TextEditingController();
-  final diabetes = TextEditingController();
-  final hipertenso = TextEditingController();
-  final pulmonar = TextEditingController();
-  final medicamento = TextEditingController();
-  final cirurgia = TextEditingController();
-  final dores = TextEditingController();
-  final problemaOrtopedico = TextEditingController();
-  final observacoes = TextEditingController();
+  final idade = TextEditingController();
+  final altura = TextEditingController();
+  final peso = TextEditingController();
+  final peitoral = TextEditingController();
+  final biceps = TextEditingController();
+  final antebraco = TextEditingController();
+  final cintura = TextEditingController();
+  final abdome = TextEditingController();
+  final quadril = TextEditingController();
+  final coxa = TextEditingController();
   final fotoFrente = TextEditingController();
   final fotoLado = TextEditingController();
   final fotoCostas = TextEditingController();
@@ -92,12 +85,62 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
   String tabelaPreco = "";
   String txtQtde = "0";
   bool jaMudou = false;
-  bool mostrarNumberPickerSeries = false;
+  bool mostrarExplicacaoMedicao = false;
   bool mostrarNumberPickerRepeticoes = false;
   bool mostrarNumberPickerDescanso = false;
   bool selecionouMusculo = false;
   bool selecionouExercicio = false;
   bool clicouSalvar = false;
+
+  bool clicouPeitoral = false;
+  bool clicouBiceps = false;
+  bool clicouAnteBraco= false;
+  bool clicouCintura = false;
+  bool clicouAbdome = false;
+  bool clicouCoxa = false;
+  bool clicouQuadril = false;
+
+  String urlAdbome = "assets/medicao_abdome.png";
+  String urlPeitoral = "assets/medicao_peitoral.jpg";
+  String urlBiceps = "assets/medicao_biceps.jpg";
+  String urlAnteBraco = "assets/medicao_antebraco.webp";
+  String urlCintura = "assets/medicao_cintura.webp";
+  String urlCoxa = "assets/medicao_coxa.jpg";
+  String urlQuadril = "assets/medicao_quadril.jpg";
+
+  String instrucaoAdbome = "Para medir sua circunferência abdominal, é importante posicionar a " + 
+                          "fita métrica no ponto médio entre as duas últimas costelas e a parte" +
+                          " superior do osso ilíaco. Se você não sabe onde ele se localiza, basta" +	
+                          " passar a fita na altura do umbigo, envolvendo todo o diâmetro do corpo" + 
+                          " nessa região. Tenha certeza de que a fita não está torta e nem 	enrolada.";
+
+  String instrucaoPeitoral = "Para aferir corretamente a medida do peitoral você deve estar em pé, " +	
+                        "ereto e com caixa torácica relaxada. Normalmente a maior circunferência se " +
+                        "dá com a fita mais próxima às axilas no caso dos homens, e passando pelos " +
+                        "mamilos no caso das mulheres.";
+
+  String instrucaoBiceps = "Para a medida do braço, você pode aproveitar aquela marquinha da 	vacina" + 
+                        " BCG (que a maioria das pessoas tem) para facilitar sua vida. Normalmente" + 
+                        " essa medida é tirada com o braço esticado (músculo 	relaxado).";
+
+  String instrucaoAnteBraco = "Geralmente a região de maior circunferência fica a uns 2 ou 3 dedos" +
+                        " abaixo do cotovelo.";
+
+  String instrucaoCintura = "Fique em pé com o abdômen relaxado e as pernas fechadas. " +
+                        "Segure o ponto zero da fita métrica com uma mão, e com a outra, envolva o quadril. " +
+                        "Você deve passar a fita na metade do bumbum. " + 
+                        "Ajuste bem: não aperte muito, nem afrouxe a fita métrica.";
+
+  String instrucaoCoxa = "A cintura é a região mais estreita do seu abdômen, localizada entre a última" +
+                        " costela e o osso do quadril." + 
+                        " Fique em pé, com o abdômen relaxado e as pernas paralelas." + 
+                        " Segure o ponto zero da fita métrica com uma mão e, com a outra, passe ao" + 
+                        " redor da cintura." + 
+                        " A fita deve ficar ajustada, sem apertar muito, ou deixar larga.";
+
+  String instrucaoQuadril = "Mais uma vez vamos procurar a região de maior circunferência do 	quadril," +
+                        " geralmente localizada em um plano que passa pelo meio das nádegas.";
+
   final similares = TextEditingController();
   final observacao = TextEditingController();
   int qtdVendidaInt = 0;
@@ -115,7 +158,6 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
   String urlFrente = "";
   String urlLado = "";
   String urlCostas = "";
-  int idade = 0;
   DateTime dataSelecionada = DateTime.now();
 
   bool isCheck = false;
@@ -506,7 +548,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             height: 8.0,
                                           ),
                                           TextFormField(
-                                            controller: atividadeFisica,
+                                            controller: idade,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -537,47 +579,6 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             height: 30,
                                           ),
                                           Text(
-                                            'Data da avaliação:',
-                                            style: TextStyle(
-                                              fontSize: 15.0,
-                                              color: Colors.black
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 8.0,
-                                          ),
-                                          TextFormField(
-                                            controller: refeicoes,
-                                            style: TextStyle(
-                                              color: Colors.black
-                                            ),
-                                            decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(10.0),
-                                                borderSide: BorderSide(
-                                                  width: 1,
-                                                  color: Colors.black
-                                                )
-                                              ),
-                                              fillColor: Colors.white,
-                                              filled: true,
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(10.0)
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(10.0)
-                                              ),
-                                              hintText: "Ex.: dd/mm/aaaa",
-                                              hintStyle: TextStyle(
-                                                color: Colors.grey
-                                              )
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                          Text(
                                             'Altura:',
                                             style: TextStyle(
                                               fontSize: 15.0,
@@ -588,7 +589,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             height: 8.0,
                                           ),
                                           TextFormField(
-                                            controller: dieta,
+                                            controller: altura,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -629,7 +630,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             height: 8.0,
                                           ),
                                           TextFormField(
-                                            controller: suplementacao,
+                                            controller: peso,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -670,7 +671,10 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               ),
                                               IconButton(
                                                 onPressed: (){
-                                                  print("Clicou");
+                                                  setState(() {
+                                                    mostrarExplicacaoMedicao = true;
+                                                    clicouPeitoral = true;
+                                                  });
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
@@ -680,7 +684,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             ],
                                           ),
                                           TextFormField(
-                                            controller: sono,
+                                            controller: peitoral,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: Colors.black
@@ -718,7 +722,10 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               ),
                                               IconButton(
                                                 onPressed: (){
-                                                  print("Clicou");
+                                                  setState(() {
+                                                    mostrarExplicacaoMedicao = true;
+                                                    clicouBiceps = true;
+                                                  });
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
@@ -728,7 +735,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             ],
                                           ),
                                           TextFormField(
-                                            controller: fumante,
+                                            controller: biceps,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: Colors.black
@@ -766,7 +773,10 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               ),
                                               IconButton(
                                                 onPressed: (){
-                                                  print("Clicou");
+                                                  setState(() {
+                                                    mostrarExplicacaoMedicao = true;
+                                                    clicouAnteBraco = true;
+                                                  });
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
@@ -776,7 +786,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             ],
                                           ),
                                           TextFormField(
-                                            controller: bebidaAlcoolica,
+                                            controller: antebraco,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: Colors.black
@@ -814,7 +824,10 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               ),
                                               IconButton(
                                                 onPressed: (){
-                                                  print("Clicou");
+                                                  setState(() {
+                                                    mostrarExplicacaoMedicao = true;
+                                                    clicouCintura = true;
+                                                  });
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
@@ -824,7 +837,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             ],
                                           ),
                                           TextFormField(
-                                            controller: colesterol,
+                                            controller: cintura,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: Colors.black
@@ -854,7 +867,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           Row(
                                             children: [
                                               Text(
-                                                'Abdomem:',
+                                                'Abdome:',
                                                 style: TextStyle(
                                                   fontSize: 15.0,
                                                   color: Colors.black
@@ -862,7 +875,10 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               ),
                                               IconButton(
                                                 onPressed: (){
-                                                  print("Clicou");
+                                                  setState(() {
+                                                    mostrarExplicacaoMedicao = true;
+                                                    clicouAbdome = true;
+                                                  });
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
@@ -872,7 +888,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             ],
                                           ),
                                           TextFormField(
-                                            controller: alteracaoCardiaca,
+                                            controller: abdome,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: Colors.black
@@ -910,7 +926,10 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               ),
                                               IconButton(
                                                 onPressed: (){
-                                                  print("Clicou");
+                                                  setState(() {
+                                                    mostrarExplicacaoMedicao = true;
+                                                    clicouQuadril = true;
+                                                  });
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
@@ -920,7 +939,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             ],
                                           ),
                                           TextFormField(
-                                            controller: diabetes,
+                                            controller: quadril,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: Colors.black
@@ -958,7 +977,10 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               ),
                                               IconButton(
                                                 onPressed: (){
-                                                  print("Clicou");
+                                                  setState(() {
+                                                    mostrarExplicacaoMedicao = true;
+                                                    clicouCoxa = true;
+                                                  });
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
@@ -968,7 +990,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             ],
                                           ),
                                           TextFormField(
-                                            controller: hipertenso,
+                                            controller: coxa,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: Colors.black
@@ -1223,46 +1245,87 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                   ),
                 ),
             ),
-            mostrarNumberPickerSeries ? Center(
+            mostrarExplicacaoMedicao ? Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.black87.withOpacity(0.8),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Container(
-                  color: Colors.black87,
-                  height: MediaQuery.of(context).size.height/4,
-                  width: MediaQuery.of(context).size.width/3,
+                  height: MediaQuery.of(context).size.height/2,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.blue[400],
+                  ),
                   child: Column(
                     children: [
-                      NumberPicker(
-                        value: numeroSeries,
-                        minValue: 0,
-                        maxValue: 20,
-                        step: 1,
-                        haptics: true,
-                        onChanged: (value) {
-                          setState(() {
-                            numeroSeries = value;
-                          });
-                        },
-                      ),
                       Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.grey
-                        ),
-                        child: IconButton(
-                          color: Color.fromARGB(255, 114, 228, 49),
-                          onPressed: (){
-                            setState(() {
-                              mostrarNumberPickerSeries = false;
-                            });
-                          }, 
-                          icon: Icon(
-                            Icons.check
-                          )
+                        height: 35,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: (){
+                                setState(() {
+
+                                  mostrarExplicacaoMedicao = false;
+
+                                  clicouAbdome = false;
+                                  clicouAnteBraco = false;
+                                  clicouBiceps = false;
+                                  clicouCintura = false;
+                                  clicouCoxa = false;
+                                  clicouPeitoral = false;
+                                  clicouQuadril = false;
+                                  
+                                });
+                              }, 
+                              icon: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              )
+                            )
+                          ],
+                        )
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
+                        child: loading ? indicadorProgresso() : widgetMedicao(
+                          clicouPeitoral ? urlPeitoral : clicouBiceps ? urlBiceps : clicouAnteBraco ? 
+                          urlAnteBraco : clicouCintura ? urlCintura : clicouAbdome ? urlAdbome : clicouCoxa ? 
+                          urlCoxa : clicouQuadril ? urlQuadril : "assets/Erro.png"
+                        )
+                      ),
+                      Expanded(
+                        child: Container(
+                          //height: MediaQuery.of(context).size.height/6.2,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey.withOpacity(0.7),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              clicouPeitoral ? instrucaoPeitoral : clicouBiceps ? instrucaoBiceps : clicouAnteBraco ? 
+                              instrucaoAnteBraco : clicouCintura ? instrucaoCintura : clicouAbdome ? instrucaoAdbome : clicouCoxa ? 
+                              instrucaoCoxa : clicouQuadril ? instrucaoQuadril : "Sem Instrução",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ),
                         ),
                       )
                     ],
                   ),
-                )
-              ) : Container(),
+                ),
+              ),
+            ),
+          ) : Container(),
               mostrarNumberPickerRepeticoes ? Center(
                 child: Container(
                   color: Colors.black87,
@@ -1400,6 +1463,24 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
         child: Center(
           child: CircularProgressIndicator(
             color: Colors.black,
+          )
+        )
+      ),
+    ),
+  );
+}
+
+  widgetMedicao(String urlImagem){
+  return Container(
+    height: MediaQuery.of(context).size.height/4,
+      child: Padding(
+      padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+      child: Container(
+        child: Center(
+          child: Image(
+            image: AssetImage(
+              urlImagem
+            )
           )
         )
       ),
