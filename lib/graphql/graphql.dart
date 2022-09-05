@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mcfitness/model/aluno.dart';
+import 'package:mcfitness/model/avaliacaoFisica.dart';
 import 'package:mcfitness/model/carga.dart';
 import 'package:mcfitness/model/exercicio.dart';
 import 'package:mcfitness/model/treino.dart';
@@ -516,6 +517,46 @@ class Graphql {
           "aluno": carga.aluno,
           "exercicio": carga.exercicio,
           "data": carga.data
+        }
+      },
+    ));
+    if (result.hasException) {
+      throw result.exception!;
+    } else {
+      return result.data!;
+    }
+  }
+
+  static Future<Map<String, dynamic>> salvarAvaliacaoFisica(AvaliacaoFisica avaliacao) async {
+    GraphQLClient client = getClient();
+
+    QueryResult result = await client.mutate(MutationOptions(
+      document: gql(r'''
+        mutation($avaliacao: AvaliacaoFisicaInput!){
+          salvarAvaliacao(avaliacao: $avaliacao){
+            id
+          }
+        }
+      '''),
+      variables: {
+        "avaliacao": {
+          "id": avaliacao.id,
+          "aluno": avaliacao.aluno,
+          "objetivo": avaliacao.objetivo,
+          "idate": avaliacao.idade,
+          "data": avaliacao.data,
+          "altura": avaliacao.altura,
+          "peso": avaliacao.peso,
+          "peitoral": avaliacao.peitoral,
+          "biceps": avaliacao.biceps,
+          "anteBraco": avaliacao.anteBraco,
+          "cintura": avaliacao.cintura,
+          "abdome": avaliacao.abdome,
+          "quadril": avaliacao.quadril,
+          "coxa": avaliacao.coxa,
+          "fotoFrente": avaliacao.fotoFrente,
+          "fotoLado": avaliacao.fotoLado,
+          "fotoCostas": avaliacao.fotoCostas
         }
       },
     ));

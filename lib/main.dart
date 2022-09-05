@@ -66,9 +66,7 @@ class App extends StatelessWidget {
         future: _inicializacao,
         builder: (context, app) {
           if (app.connectionState == ConnectionState.done) {
-            return AvaliacaoFisicaNovaAvaliacao(
-              alunoIdGlobal: 1,
-              alunoNomeGlobal: "Victor Barbosa",
+            return Login(
             );
           }
 

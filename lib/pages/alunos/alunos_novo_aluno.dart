@@ -109,7 +109,7 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
         objetivo: 1
       ));
 
-      if (result['salvarAluno']['id'] == 0) {
+      if (result['salvarAluno']['id'] > 0) {
         print("Resultado buscado");
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -205,6 +205,7 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
     dataMostradaInicio = dia + "/" + mes + "/" + ano;
     dataMostradaSelecionada = dataMostradaInicio;
     dataFormatadaInicio = ano + "-" + mes + "-" + dia;
+    dataFormatadaSelecionada = dataFormatadaInicio;
   }
 
   @override

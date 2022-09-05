@@ -4,6 +4,7 @@ import 'package:camera_camera/camera_camera.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
+import 'package:mcfitness/model/avaliacaoFisica.dart';
 import 'package:mcfitness/model/treino.dart';
 import 'package:mcfitness/pages/teste/preview_page.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -163,6 +164,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
   bool isCheck = false;
   bool nomePadrao = true;
   bool nomePersonalizado = false;
+  bool uploading = false;
 
   int numeroSeries = 3;
   int numeroRepeticoes = 10;
@@ -188,32 +190,37 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
 
   final GlobalKey<FormFieldState> _keyExercicio = GlobalKey<FormFieldState>();
 
-  Future<void> _novoExercicio() async {
+  Future<void> _novaAvaliacaoFisica() async {
 
-    print("Aluno id = $alunoIdLocal");
-    print("musculo id = $musculoIdLocal");
-    print("series = ${numeroSeries.toString()}");
-    print("repeticoes = ${numeroRepeticoes.toString()}");
-    print("velocidade = $velocidadeSelecionada");
-    print("exercicio = $exercicioIdSelecionado");
-    print("Descanso = ${numeroDescansoMin.toString()} + ${numeroDescansoSec.toString()}");
+    setState(() {
+      loading = true;
+    });
 
     try{
 
-      Map<String, dynamic> result = await Graphql.incluirExercicioTreino(
-        Treino(
+      Map<String, dynamic> result = await Graphql.salvarAvaliacaoFisica(
+        AvaliacaoFisica(
           id: 0,
           aluno: alunoIdLocal,
-          musculo: musculoIdLocal,
-          series: numeroSeries.toString(),
-          repeticoes: numeroRepeticoes.toString(),
-          velocidade: velocidadeSelecionada,
-          exercicio: exercicioIdSelecionado,
-          descanso: numeroDescansoMin.toString() + "'" + numeroDescansoSec.toString() + "''"
+          abdome: abdome.text,
+          altura: altura.text,
+          anteBraco: antebraco.text,
+          biceps: biceps.text,
+          cintura: cintura.text,
+          coxa: coxa.text,
+          data: "",
+          fotoCostas: urlCostas,
+          fotoFrente: urlFrente,
+          fotoLado: urlLado,
+          idade: int.parse(idade.text),
+          objetivo: objetivo.text,
+          peitoral: peitoral.text,
+          peso: double.parse(peso.text),
+          quadril: quadril.text
         )
       );
 
-      if (result['salvarTreino']['id'] == 0) {
+      if (result['salvarAvaliacao']['id'] == 0) {
         print("Resultado buscado");
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -332,9 +339,11 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
 
       task.snapshotEvents.listen((TaskSnapshot snapshot) async {
         if (snapshot.state == TaskState.running) {
-          setState(() {
 
+          setState(() {
+            uploading = true;
           });
+
         } else if (snapshot.state == TaskState.success) {
           final photoRef = snapshot.ref;
 
@@ -342,13 +351,23 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
 
           if(foto == "frente"){
             urlFrente = await photoRef.getDownloadURL();
+            print("Carregou URL frente");
           }else if(foto == "lado"){
             urlLado= await photoRef.getDownloadURL();
+            print("Carregou URL lado");
           }else{
             urlCostas = await photoRef.getDownloadURL();
+            print("Carregou URL costas");
           }
 
-          setState((){});
+          if(urlFrente != "" && urlCostas != "" && urlLado != ""){
+            setState(() {
+              loading = false;
+            });
+            _novaAvaliacaoFisica();
+          }else{
+            print("Esperando o final do upload...");
+          }
         }
       });
     }
@@ -549,6 +568,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: idade,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -590,6 +610,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: altura,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -631,6 +652,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: peso,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -685,7 +707,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: peitoral,
-                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -736,7 +758,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: biceps,
-                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -787,7 +809,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: antebraco,
-                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -838,7 +860,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: cintura,
-                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -889,7 +911,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: abdome,
-                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -940,7 +962,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: quadril,
-                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -991,7 +1013,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                           ),
                                           TextFormField(
                                             controller: coxa,
-                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
                                             style: TextStyle(
                                               color: Colors.black
                                             ),
@@ -1187,7 +1209,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                             minWidth: double.infinity,
                                             height: 42,
                                             onPressed: () {
-                                              if(fotoFrente.text != ""){
+
                                                 count = 0;
 
                                                 while(count < paths.length){
@@ -1203,20 +1225,11 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                   count++;
                                                 }
 
-                                              }else{
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) => AlertDialog(
-                                                    title: const Text('Preencha todos os campos!'),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () => Navigator.pop(context),
-                                                        child: const Text('Fechar'),
-                                                      ),
-                                                    ],
-                                                  )
-                                                );
-                                              }
+                                                /*if(!uploading){
+                                                  print("Inserindo avaliacao");
+                                                  _novaAvaliacaoFisica();
+                                                }*/
+
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.all(10.0),
@@ -1227,9 +1240,6 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          clicouSalvar ? indicadorProgresso() : SizedBox(
-                                            height: 20,
                                           ),
                                         ],
                                       ),
@@ -1445,7 +1455,9 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                     ],
                   ),
                 )
-              ) : Container()
+              ) : Container(),
+              loading ?
+              indicadorProgresso() : Container()
             ]
           ),
       );
@@ -1456,19 +1468,32 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
   }
 
   indicadorProgresso(){
-  return Expanded(
-      child: Padding(
-      padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
-      child: Container(
-        child: Center(
-          child: CircularProgressIndicator(
-            color: Colors.black,
-          )
+    return Padding(
+    padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+    child: Container(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Salvando...",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.blue
+              ),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            CircularProgressIndicator(
+              color: Colors.blue,
+            ),
+          ],
         )
-      ),
+      )
     ),
-  );
-}
+      );
+  }
 
   widgetMedicao(String urlImagem){
   return Container(
