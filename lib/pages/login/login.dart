@@ -5,6 +5,7 @@ import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/model/user.dart';
 import 'package:mcfitness/pages/home/home_page.dart';
 import 'package:mcfitness/pages/login/controllers/login_controller.dart';
+import 'package:mcfitness/pages/professor/professor_novo_professor.dart';
 import 'package:mcfitness/store/login_store.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +47,10 @@ class _LoginState extends State<Login> {
 
     print("Email = ${login.text.trim()}");
     print("Senha = ${senha.text}");
+
+    setState(() {
+      clicouEntrar = true;
+    });
 
     try {
       Map<String, dynamic> result = await Graphql.login(
@@ -346,9 +351,6 @@ class _LoginState extends State<Login> {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-
-
-                            
                           },
                           child: const Text(
                             'Recuperar senha',
@@ -369,7 +371,9 @@ class _LoginState extends State<Login> {
                       height: 42,
                       onPressed: () {
 
-                        _login();
+                        if(!clicouEntrar){
+                          _login();
+                        }
 
                       },
                       child: Padding(
@@ -397,12 +401,22 @@ class _LoginState extends State<Login> {
                         minWidth: double.infinity,
                         height: 42,
                         onPressed: () {
-                          //_novoExercicio();
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => Professor_novo_professor(
+                                alunoIdGlobal: 1,
+                                alunoNomeGlobal: "",
+                              ),
+                            ),
+                          );
+                          
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Text(
-                            "Ativar Conta",
+                            "Criar Conta",
                             style: TextStyle(
                               fontSize: 17.0,
                               color: Colors.black
@@ -413,7 +427,10 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                ])
+                ]
+                ),
+                clicouEntrar ?
+                indicadorProgresso() : Container()
               ],
             ),
           ),
@@ -424,8 +441,12 @@ class _LoginState extends State<Login> {
 
   indicadorProgresso(){
     return Padding(
-    padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+    padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width/4, MediaQuery.of(context).size.height/2, MediaQuery.of(context).size.width/4,  MediaQuery.of(context).size.height/2.8),
     child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+      ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -442,6 +463,9 @@ class _LoginState extends State<Login> {
             ),
             CircularProgressIndicator(
               color: Colors.blue,
+            ),
+            SizedBox(
+              height: 10,
             ),
           ],
         )

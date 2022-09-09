@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
-import 'package:mcfitness/pages/alunos/alunos_anamnese_aluno.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_treino_nome.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_treinos_musculo.dart';
 import 'package:mcfitness/pages/alunos/alunos_novo_aluno.dart';

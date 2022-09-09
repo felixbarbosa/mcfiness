@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mcfitness/model/aluno.dart';
+import 'package:mcfitness/model/anamnese.dart';
 import 'package:mcfitness/model/avaliacaoFisica.dart';
 import 'package:mcfitness/model/carga.dart';
 import 'package:mcfitness/model/exercicio.dart';
+import 'package:mcfitness/model/personal.dart';
 import 'package:mcfitness/model/treino.dart';
 import 'package:mcfitness/model/variacoesExercicio.dart';
 import 'package:path_provider/path_provider.dart';
@@ -410,6 +412,49 @@ class Graphql {
     }
   }
 
+  static Future<Map<String, dynamic>> obterAnamnesePorAluno(int alunoId) async {
+    GraphQLClient client = getClient();
+    QueryResult result = await client.query(QueryOptions(
+      document: gql(r'''
+      query($aluno: Int!){
+        obterAnamnesePorAluno(alunoId:$aluno){
+          id,
+          objetivo,
+          atividadeFisica,
+          refeicoes,
+          dieta,
+          suplementacao,
+          sono,
+          fumante,
+          bebidaAlcoolica,
+          colesterol,
+          alteracaoCardiaca,
+          diabetes,
+          hipertenso,
+          pulmonar,
+          medicamento,
+          cirurgia,
+          dores,
+          problemaOrtopedico,
+          observacoes
+        }
+      }
+      '''),
+      variables: {
+        "aluno": alunoId
+      },
+    ));
+    if(result.isLoading){
+      print("Carregando...");
+    }
+    if (result.hasException) {
+      throw result.exception!;
+      //return null;
+    } else {
+      return result.data!;
+    }
+  }
+
   static Future<Map<String, dynamic>> obterTodosExercicios() async {
     GraphQLClient client = getClient();
     QueryResult result = await client.query(QueryOptions(
@@ -489,6 +534,38 @@ class Graphql {
           "idade": aluno.idade,
           "personal": aluno.personal,
           "objetivo": aluno.objetivo
+        }
+      },
+    ));
+    if (result.hasException) {
+      throw result.exception!;
+    } else {
+      return result.data!;
+    }
+  }
+
+  static Future<Map<String, dynamic>> salvarPersonal(Personal personal) async {
+    GraphQLClient client = getClient();
+
+    QueryResult result = await client.mutate(MutationOptions(
+      document: gql(r'''
+        mutation($personal: PersonalInput!){
+          salvarPersonal(Personal: $personal){
+            id
+          }
+        }
+      '''),
+      variables: {
+        "personal": {
+          "id": personal.id,
+          "nome": personal.nome,
+          "cpf": personal.cpf,
+          "login": personal.login,
+          "senha": personal.senha,
+          "sexo": personal.sexo,
+          "email": personal.email,
+          "idade": personal.idade,
+          "cref": personal.cref
         }
       },
     ));
@@ -639,6 +716,49 @@ class Graphql {
           "series": treino.series,
           "variacaoExercicio": treino.variacaoExercicio
         }
+      },
+    ));
+    if (result.hasException) {
+      throw result.exception!;
+    } else {
+      return result.data!;
+    }
+  }
+
+  static Future<Map<String, dynamic>> novaAnamnese(Anamnese anamnese) async {
+    GraphQLClient client = getClient();
+
+    QueryResult result = await client.mutate(MutationOptions(
+      document: gql(r'''
+        mutation($anamnese: AnamneseInput!){
+          salvarAnamnese(anamnese: $anamnese){
+            id
+          }
+        }
+      '''),
+      variables: {
+        "anamnese": {
+          "id": anamnese.id,
+          "aluno": anamnese.aluno,
+          "objetivo": anamnese.objetivo,
+          "atividadeFisica": anamnese.atividadeFisica,
+          "refeicoes": anamnese.refeicoes,
+          "dieta": anamnese.dieta,
+          "suplementacao": anamnese.suplementacao,
+          "sono": anamnese.sono,
+          "fumante": anamnese.fumante,
+          "bebidaAlcoolica": anamnese.bebidaAlcoolica,
+          "colesterol": anamnese.colesterol,
+          "alteracaoCardiaca": anamnese.alteracaoCardiaca,
+          "diabetes": anamnese.diabetes,
+          "hipertenso": anamnese.hipertenso,
+          "pulmonar": anamnese.pulmonar,
+          "medicamento": anamnese.medicamento,
+          "cirurgia": anamnese.cirurgia,
+          "dores": anamnese.dores,
+          "problemaOrtopedico": anamnese.problemaOrtopedico,
+          "observacoes": anamnese.observacoes
+  }
       },
     ));
     if (result.hasException) {

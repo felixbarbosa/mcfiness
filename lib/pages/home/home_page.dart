@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_alunos.dart';
+import 'package:mcfitness/pages/anamnese/anamnese_nova_anamnese.dart';
 import 'package:mcfitness/pages/exercicios/exercicios_listar_musculos.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/treinos/treinos_listar_treino.dart';
@@ -49,6 +51,8 @@ class _Homemodulestate extends State<Home_Page> {
     }
   );
 
+  bool anamnesePreenchida = false;
+
   
 
   void _changePage(int index) {
@@ -56,6 +60,47 @@ class _Homemodulestate extends State<Home_Page> {
       setState(() => _pageIndex = index);
       _pageCtrl.jumpToPage(index);
     }
+  }
+
+  Future<void> _buscarAnamnesePorAluno() async {
+
+    try{
+
+      Map<String, dynamic> result = await Graphql.obterAnamnesePorAluno(idUsuarioLocal);
+
+      print("aqui");
+      
+
+      if (result['obterAnamnesePorAluno'].length > 0) {
+        print("Resultado buscado");
+
+        setState(() {
+          anamnesePreenchida = true;
+        });
+
+      } else {
+        setState(() {
+          anamnesePreenchida = false;
+        });
+      }
+
+    }catch(erro){
+
+      print("Erro = ${erro.toString()}");
+
+    }
+
+    
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if(!isPersonalLocal){
+      _buscarAnamnesePorAluno();
+    }
+    
   }
 
   @override
@@ -161,15 +206,34 @@ class _Homemodulestate extends State<Home_Page> {
 
                           if(!isPersonalLocal){
 
-                            Navigator.push(
-                              context, MaterialPageRoute(
-                                builder: (context) => TreinosListarTreino(
-                                  alunoIdGlobal: idUsuarioLocal,
-                                  alunoNomeGlobal: nomeUsuarioLocal,
-                                  objetivoIdGlobal: 1,
+                            if(!anamnesePreenchida){
+
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Preencha a sua Anamnese!'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Fechar'),
+                                    ),
+                                  ],
                                 )
-                              )
-                            );
+                              );
+
+                            }else{
+                              Navigator.push(
+                                context, MaterialPageRoute(
+                                  builder: (context) => TreinosListarTreino(
+                                    alunoIdGlobal: idUsuarioLocal,
+                                    alunoNomeGlobal: nomeUsuarioLocal,
+                                    objetivoIdGlobal: 1,
+                                  )
+                                )
+                              );
+                            }
 
                           }else{
                             Navigator.push(
@@ -190,6 +254,27 @@ class _Homemodulestate extends State<Home_Page> {
 
                           if(!isPersonalLocal){
 
+                            if(!anamnesePreenchida){
+
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Preencha a sua Anamnese!'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Fechar'),
+                                    ),
+                                  ],
+                                )
+                              );
+
+                            }else{
+
+                            }
+
                           }else{
                             Navigator.push(
                               context, MaterialPageRoute(
@@ -202,10 +287,59 @@ class _Homemodulestate extends State<Home_Page> {
                           
                         },
                       ),
+                      !isPersonalLocal ?
+                      HomeButtonWidget(
+                        icon: Icons.analytics,
+                        buttonName: 'Anamnese',
+                        onPressed: () async {
+
+                          if(anamnesePreenchida){
+
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Você ja preencheu sua anamnese. Não é mais possível alterá-la.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Fechar'),
+                                    ),
+                                  ],
+                                )
+                              );
+
+                          }else{
+
+                            var tela = await Navigator.push(
+                              context, MaterialPageRoute(
+                                builder: (context) => AnamneseNovaAnamnese(
+                                  alunoIdGlobal: idUsuarioLocal,
+                                  alunoNomeGlobal: nomeUsuarioLocal,
+                                )
+                              )
+                            );
+
+                            if(tela == 1){
+                              _buscarAnamnesePorAluno();
+                            }
+                          }
+
+                        },
+                      ) : Container(),
+                      !isPersonalLocal ?
+                      HomeButtonWidget(
+                        icon: Icons.analytics,
+                        buttonName: 'Avaliação Fisica',
+                        onPressed: (){
+                          
+                        },
+                      ) : Container(),
                       HomeButtonWidget(
                         icon: Icons.analytics,
                         buttonName: 'Feedbacks',
-                      ),
+                      )
                       /*HomeButtonWidget(
                         icon: Icons.real_estate_agent,
                         buttonName: 'Preços e Promoções',

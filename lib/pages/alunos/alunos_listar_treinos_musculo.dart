@@ -1,7 +1,6 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
-import 'package:mcfitness/pages/alunos/alunos_anamnese_aluno.dart';
 import 'package:mcfitness/pages/alunos/alunos_novo_aluno.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';

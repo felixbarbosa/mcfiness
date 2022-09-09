@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/model/aluno.dart';
+import 'package:mcfitness/model/anamnese.dart';
 import 'package:mcfitness/model/treino.dart';
 import 'package:numberpicker/numberpicker.dart';
 
@@ -132,32 +133,36 @@ class _AnamneseNovaAnamneseState extends State<AnamneseNovaAnamnese> {
 
   final GlobalKey<FormFieldState> _keyExercicio = GlobalKey<FormFieldState>();
 
-  Future<void> _novoExercicio() async {
-
-    print("Aluno id = $alunoIdLocal");
-    print("musculo id = $musculoIdLocal");
-    print("series = ${numeroSeries.toString()}");
-    print("repeticoes = ${numeroRepeticoes.toString()}");
-    print("velocidade = $velocidadeSelecionada");
-    print("exercicio = $exercicioIdSelecionado");
-    print("Descanso = ${numeroDescansoMin.toString()} + ${numeroDescansoSec.toString()}");
+  Future<void> _novaAnamnese() async {
 
     try{
 
-      Map<String, dynamic> result = await Graphql.incluirExercicioTreino(
-        Treino(
+      Map<String, dynamic> result = await Graphql.novaAnamnese(
+        Anamnese(
           id: 0,
           aluno: alunoIdLocal,
-          musculo: musculoIdLocal,
-          series: numeroSeries.toString(),
-          repeticoes: numeroRepeticoes.toString(),
-          velocidade: velocidadeSelecionada,
-          exercicio: exercicioIdSelecionado,
-          descanso: numeroDescansoMin.toString() + "'" + numeroDescansoSec.toString() + "''"
+          alteracaoCardiaca: alteracaoCardiaca.text,
+          atividadeFisica: atividadeFisica.text,
+          bebidaAlcoolica: bebidaAlcoolica.text,
+          cirurgia: cirurgia.text,
+          colesterol: colesterol.text,
+          diabetes: diabetes.text,
+          dieta: dieta.text,
+          dores: dores.text,
+          fumante: fumante.text,
+          hipertenso: hipertenso.text,
+          medicamento: medicamento.text,
+          objetivo: objetivo.text,
+          observacoes: observacao.text,
+          problemaOrtopedico: problemaOrtopedico.text,
+          pulmonar: pulmonar.text,
+          refeicoes: refeicoes.text,
+          sono: sono.text,
+          suplementacao: suplementacao.text
         )
       );
 
-      if (result['salvarTreino']['id'] == 0) {
+      if (result['salvarAnamnese']['id'] >= 0) {
         print("Resultado buscado");
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -174,6 +179,18 @@ class _AnamneseNovaAnamneseState extends State<AnamneseNovaAnamnese> {
 
         Navigator.of(context).pop(1);
 
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text('Anamnese salva com sucesso!'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Fechar'),
+                  ),
+                ],
+              ));
+
         setState(() {
           loading = false;
         });
@@ -182,7 +199,7 @@ class _AnamneseNovaAnamneseState extends State<AnamneseNovaAnamnese> {
         showDialog(
             context: context,
             builder: (context) => AlertDialog(
-                  title: const Text('Exercicio não incluido'),
+                  title: const Text('Anamnesa não pôde ser salva. Tente novamente mais tarde.'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -1304,8 +1321,9 @@ class _AnamneseNovaAnamneseState extends State<AnamneseNovaAnamnese> {
                                             minWidth: double.infinity,
                                             height: 42,
                                             onPressed: () {
-                                              if(exercicioSelecionado != "" && velocidadeSelecionada != ""){
-                                                _novoExercicio();
+                                              _novaAnamnese();
+                                              /*if(exercicioSelecionado != "" && velocidadeSelecionada != ""){
+                                                _novaAnamnese();
                                               }else{
                                                 showDialog(
                                                   context: context,
@@ -1319,7 +1337,7 @@ class _AnamneseNovaAnamneseState extends State<AnamneseNovaAnamnese> {
                                                     ],
                                                   )
                                                 );
-                                              }
+                                              }*/
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.all(10.0),

@@ -16,13 +16,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
-
+ 
   WidgetsFlutterBinding.ensureInitialized();
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
   runApp(
     Provider(
-      create: (_) => User(versao: 'V3.20220824.1930'/*packageInfo.version*/),
+      create: (_) => User(versao: 'V3.20220909.1930'/*packageInfo.version*/),
       child: App(),
     )
   );

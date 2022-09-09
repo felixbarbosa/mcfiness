@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
-import 'package:mcfitness/pages/alunos/alunos_anamnese_aluno.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_treino.dart';
 import 'package:mcfitness/pages/alunos/alunos_novo_aluno.dart';
+import 'package:mcfitness/pages/anamnese/anamnese_listar_anamnese.dart';
 
 enum SingingCharacter { nome, cnpj }
 
@@ -143,49 +143,27 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*floatingActionButton: Padding(
+      floatingActionButton: Padding(
         padding: const EdgeInsets.fromLTRB(8, 8, 8, 60),
-        child: SpeedDial(
-          animatedIcon: AnimatedIcons.menu_home,
-          animatedIconTheme: IconThemeData(
-            size: 22,
-            color: Colors.white
+        child: FloatingActionButton(
+          onPressed: () async {
+            var tela = await Navigator.push(
+              context, MaterialPageRoute(
+                builder: (context) => AlunosNovoAluno(
+                  professorIdGlobal: professorIdLocal,
+                )
+              )
+            );
+
+            if(tela == 1){
+              _alunosPorPersonal();
+            }
+          },
+          child: Icon(
+            Icons.add
           ),
-          curve: Curves.bounceIn,
-          children: [
-            SpeedDialChild(
-              child: Icon(
-                Icons.shop,
-                color: Colors.white,
-              ),
-              backgroundColor: CustomColorTheme.primaryColor,
-              onTap: () async { 
-
-                var tela = await Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => ClientesListarCanaisVendas(
-                    entidadeGlobal: entidadeId, 
-                    usuarioGlobal: usuarioId,
-                    usuarioNomeGlobal: usuarioNomeLocal,
-                    )));
-
-                if(tela == 1){
-                  setState(() {
-                    _alunosPorPersonal();
-                  });
-                }
-
-              },
-              label: 'Canal de Vendas',
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0
-              ),
-              labelBackgroundColor: CustomColorTheme.primaryColor
-            ),
-          ]
         )
-      ),*/
+      ),
         appBar: AppBar(
           title: Column(
             children: [
@@ -232,31 +210,6 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
                   children: [
                     RaisedButton(
                       onPressed: () async {
-                        var tela = await Navigator.push(
-                          context, MaterialPageRoute(
-                            builder: (context) => AlunosNovoAluno(
-                              professorIdGlobal: professorIdLocal,
-                            )
-                          )
-                        );
-
-                        if(tela == 1){
-                          _alunosPorPersonal();
-                        }
-                      },
-                      color: Colors.black,
-                      child: Text(
-                        'Novo Aluno',
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                    ),
-                    RaisedButton(
-                      onPressed: () async {
                         if(alunoSelecionado){
                           var tela = await Navigator.push(
                             context, MaterialPageRoute(
@@ -286,32 +239,41 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
                     ),
                     RaisedButton(
                       onPressed: () {
-                        /*if(alunoSelecionado){
+                        if(alunoSelecionado){
                           Navigator.push(
                             context, MaterialPageRoute(
-                              builder: (context) => AlunosAnamneseAluno(
-                                alunoIdGlobal: professorIdLocal,
+                              builder: (context) => AnamneseListarAnamnese(
+                                alunoIdGlobal: idSelecionado,
+                                alunoNomeGlobal: nomeSelecionado
                               )
                             )
                           );
                         }
-                        Navigator.push(
-                          context, MaterialPageRoute(
-                            builder: (context) => AlunosAnamneseAluno(
-                              alunoIdGlobal: 0,
-                            )
-                          )
-                        );*/
                       },
-                      color: /*alunoSelecionado ? Colors.black :*/ Colors.grey,
+                      color: alunoSelecionado ? Colors.black : Colors.grey,
                       child: Text(
                         'Anamnese',
                         style: TextStyle(
-                          color: /*alunoSelecionado ? Colors.white :*/ Colors.black 
+                          color: alunoSelecionado ? Colors.white : Colors.black 
                         ),
                       ),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    RaisedButton(
+                      onPressed: () async {
+                        
+                      },
+                      color: alunoSelecionado ? Colors.black : Colors.grey,
+                      child: Text(
+                        'Avaliação Fisica',
+                        style: TextStyle(
+                          color: alunoSelecionado ? Colors.white : Colors.black 
+                        ),
+                      ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)
                       ),
                     ),
                   ],
