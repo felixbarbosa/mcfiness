@@ -285,6 +285,77 @@ class Graphql {
     }
   }
 
+  static Future<Map<String, dynamic>> obterCargasPorAluno(int alunoId) async {
+    GraphQLClient client = getClient();
+    QueryResult result = await client.query(QueryOptions(
+      document: gql(r'''
+      query($aluno: Int!){
+        obterCargasPorAluno(aluno: $aluno){
+          id,
+          carga,
+          aluno{
+            id,
+            nome
+          },
+          exercicio{
+            id,
+            descricao
+          },
+          data
+        }
+      }
+      '''),
+      variables: {
+        "aluno": alunoId,
+      },
+    ));
+    if(result.isLoading){
+      print("Carregando...");
+    }
+    if (result.hasException) {
+      throw result.exception!;
+      //return null;
+    } else {
+      return result.data!;
+    }
+  }
+
+  static Future<Map<String, dynamic>> obterCargasPorAlunoPorExercicio(int alunoId, int exercicioId) async {
+    GraphQLClient client = getClient();
+    QueryResult result = await client.query(QueryOptions(
+      document: gql(r'''
+      query($aluno: Int!, $exercicio: Int!){
+        obterCargasPorAlunoPorExercicio(aluno: $aluno, exercicio:$exercicio){
+          id,
+          carga,
+          aluno{
+            id,
+            nome
+          },
+          exercicio{
+            id,
+            descricao
+          },
+          data
+        }
+      }
+      '''),
+      variables: {
+        "aluno": alunoId,
+        "exercicio": exercicioId
+      },
+    ));
+    if(result.isLoading){
+      print("Carregando...");
+    }
+    if (result.hasException) {
+      throw result.exception!;
+      //return null;
+    } else {
+      return result.data!;
+    }
+  }
+
   static Future<Map<String, dynamic>> exerciciosPorMusculo(int musculoId) async {
     GraphQLClient client = getClient();
     QueryResult result = await client.query(QueryOptions(
@@ -437,6 +508,50 @@ class Graphql {
           dores,
           problemaOrtopedico,
           observacoes
+        }
+      }
+      '''),
+      variables: {
+        "aluno": alunoId
+      },
+    ));
+    if(result.isLoading){
+      print("Carregando...");
+    }
+    if (result.hasException) {
+      throw result.exception!;
+      //return null;
+    } else {
+      return result.data!;
+    }
+  }
+
+  static Future<Map<String, dynamic>> obterAvaliacaoPorAluno(int alunoId) async {
+    GraphQLClient client = getClient();
+    QueryResult result = await client.query(QueryOptions(
+      document: gql(r'''
+      query($aluno: Int!){
+        obterAvaliacaoPorAluno(alunoId: $aluno){
+          id,
+          aluno{
+            id,
+            nome
+          },
+          objetivo,
+          idate,
+          data,
+          altura,
+          peso,
+          peitoral,
+          biceps,
+          anteBraco,
+          cintura,
+          abdome,
+          quadril,
+          coxa,
+          fotoFrente,
+          fotoLado,
+          fotoCostas,
         }
       }
       '''),

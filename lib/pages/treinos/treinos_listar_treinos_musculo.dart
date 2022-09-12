@@ -600,7 +600,7 @@ class _TreinosListarTreinosMusculoState extends State<TreinosListarTreinosMuscul
                                             decoration: BoxDecoration(
                                               image: DecorationImage(
                                                 image: AssetImage(treinos[index]['exercicio']['urlImagem'] == null ? 
-                                                "assets/Erro.png" :
+                                                urlImagemLocal :
                                                 treinos[index]['exercicio']['urlImagem']
                                               ),
                                                 fit: BoxFit.contain

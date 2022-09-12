@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_alunos.dart';
 import 'package:mcfitness/pages/anamnese/anamnese_nova_anamnese.dart';
+import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.dart';
 import 'package:mcfitness/pages/exercicios/exercicios_listar_musculos.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/treinos/treinos_listar_treino.dart';
+import 'package:badges/badges.dart';
 
 import 'widgets/home_button_widget.dart';
 
-class Home_Page extends StatefulWidget {
+class Home_Page_Aluno extends StatefulWidget {
 
   final bool isPersonalGlobal;
   final int idUsuarioGlobal;
   final String nomeUsuarioGlobal;
   final String documentoUsuarioGlobal;
 
-  const Home_Page({
+  const Home_Page_Aluno({
     Key? key,
     required this.isPersonalGlobal,
     required this.idUsuarioGlobal,
@@ -33,7 +35,7 @@ class Home_Page extends StatefulWidget {
   );
 }
 
-class _Homemodulestate extends State<Home_Page> {
+class _Homemodulestate extends State<Home_Page_Aluno> {
   int _pageIndex = 0;
   final PageController _pageCtrl = PageController();
 
@@ -97,9 +99,8 @@ class _Homemodulestate extends State<Home_Page> {
   void initState() {
     super.initState();
 
-    if(!isPersonalLocal){
-      _buscarAnamnesePorAluno();
-    }
+    _buscarAnamnesePorAluno();
+    
     
   }
 
@@ -141,7 +142,6 @@ class _Homemodulestate extends State<Home_Page> {
               padding: const EdgeInsets.only(top: 10),
               child: Column(
                 children: [
-                  !isPersonalLocal ?
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -151,7 +151,7 @@ class _Homemodulestate extends State<Home_Page> {
                             fontWeight: FontWeight.w500),
                       ),
                     ],
-                  ) : Container(),
+                  ),
                   SizedBox(
                     height: 30,
                   ),            
@@ -159,7 +159,7 @@ class _Homemodulestate extends State<Home_Page> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        !isPersonalLocal ? 'Aluno(a): $nomeUsuarioLocal' : 'Professor(a): $nomeUsuarioLocal',
+                        'Aluno(a): $nomeUsuarioLocal',
                         style: TextStyle(
                             fontWeight: FontWeight.w500),
                       ),
@@ -200,46 +200,35 @@ class _Homemodulestate extends State<Home_Page> {
                     ),
                     children: [
                       HomeButtonWidget(
+                        notificacao: false,
                         icon: Icons.person,
-                        buttonName: !isPersonalLocal ? 'Treino' : 'Alunos',
+                        buttonName: 'Treino',
                         onPressed: () {
 
-                          if(!isPersonalLocal){
+                          if(!anamnesePreenchida){
 
-                            if(!anamnesePreenchida){
-
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Preencha a sua Anamnese!'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Fechar'),
-                                    ),
-                                  ],
-                                )
-                              );
-
-                            }else{
-                              Navigator.push(
-                                context, MaterialPageRoute(
-                                  builder: (context) => TreinosListarTreino(
-                                    alunoIdGlobal: idUsuarioLocal,
-                                    alunoNomeGlobal: nomeUsuarioLocal,
-                                    objetivoIdGlobal: 1,
-                                  )
-                                )
-                              );
-                            }
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Preencha a sua Anamnese!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Fechar'),
+                                  ),
+                                ],
+                              )
+                            );
 
                           }else{
                             Navigator.push(
                               context, MaterialPageRoute(
-                                builder: (context) => AlunosListarAlunos(
-                                  professorIdGlobal: 1,
+                                builder: (context) => TreinosListarTreino(
+                                  alunoIdGlobal: idUsuarioLocal,
+                                  alunoNomeGlobal: nomeUsuarioLocal,
+                                  objetivoIdGlobal: 1,
                                 )
                               )
                             );
@@ -248,47 +237,36 @@ class _Homemodulestate extends State<Home_Page> {
                         },
                       ),
                       HomeButtonWidget(
+                        notificacao: false,
                         icon: Icons.sports_gymnastics,
-                        buttonName: !isPersonalLocal ? 'Meu Progresso' : 'Exercicios',
+                        buttonName: 'Meu Progresso',
                         onPressed: () {
 
-                          if(!isPersonalLocal){
+                          if(!anamnesePreenchida){
 
-                            if(!anamnesePreenchida){
-
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Preencha a sua Anamnese!'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Fechar'),
-                                    ),
-                                  ],
-                                )
-                              );
-
-                            }else{
-
-                            }
-
-                          }else{
-                            Navigator.push(
-                              context, MaterialPageRoute(
-                                builder: (context) => ExerciciosListarMusculos(
-                                  personalIdGlobal: 1,
-                                )
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Preencha a sua Anamnese!'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Fechar'),
+                                  ),
+                                ],
                               )
                             );
+
+                          }else{
+
                           }
                           
                         },
                       ),
-                      !isPersonalLocal ?
                       HomeButtonWidget(
+                        notificacao: !anamnesePreenchida,
                         icon: Icons.analytics,
                         buttonName: 'Anamnese',
                         onPressed: () async {
@@ -327,16 +305,27 @@ class _Homemodulestate extends State<Home_Page> {
                           }
 
                         },
-                      ) : Container(),
-                      !isPersonalLocal ?
+                      ),
                       HomeButtonWidget(
+                        notificacao: false,
                         icon: Icons.analytics,
                         buttonName: 'Avaliação Fisica',
                         onPressed: (){
                           
+                          Navigator.push(
+                            context, MaterialPageRoute(
+                              builder: (context) => AvaliacaoFisicaNovaAvaliacao(
+                                alunoIdGlobal: idUsuarioLocal,
+                                alunoNomeGlobal: nomeUsuarioLocal
+                              )
+                            )
+                          );
+                        
+                          
                         },
-                      ) : Container(),
+                      ),
                       HomeButtonWidget(
+                        notificacao: false,
                         icon: Icons.analytics,
                         buttonName: 'Feedbacks',
                       )

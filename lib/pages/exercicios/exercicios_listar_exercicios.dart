@@ -68,6 +68,7 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
   int idSelecionado = 0;
   bool isButtonDisable = false;
   String urlImagemLocal = "";
+  int donoExercicio = 0;
 
   List exercicios = [];
   List pedido_por_clientes = [];
@@ -385,7 +386,7 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
                       child: Text(
                         'Editar',
                         style: TextStyle(
-                          color: exercicioSelecionado ? Colors.white : Colors.black 
+                          color: (exercicioSelecionado && criadorExercicio) ? Colors.white : Colors.black 
                         ),
                       ),
                       shape: RoundedRectangleBorder(
@@ -406,7 +407,7 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
                       child: Text(
                         'Remover',
                         style: TextStyle(
-                          color: exercicioSelecionado ? Colors.white : Colors.black 
+                          color: (exercicioSelecionado && criadorExercicio) ? Colors.white : Colors.black 
                         ),
                       ),
                       shape: RoundedRectangleBorder(

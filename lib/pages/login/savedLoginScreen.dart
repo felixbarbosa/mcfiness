@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mcfitness/pages/home/home_page.dart';
+import 'package:mcfitness/pages/home/home_page_aluno.dart';
 
 class SavedLoginScreen extends StatefulWidget {
   final String userName;

@@ -186,6 +186,7 @@ class _AnamneseListarAnamneseState extends State<AnamneseListarAnamnese> {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
+                  Navigator.pop(context);
                   setState(() {
                     loading = false;
                   });

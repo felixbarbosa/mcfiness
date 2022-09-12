@@ -1,6 +1,9 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/model/aluno.dart';
+import 'package:cpf_cnpj_validator/cpf_validator.dart';
 
 enum SingingCharacter { nome, cnpj }
 
@@ -73,12 +76,20 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
   String mes = "0";
   String ano = "0";
   String generoSelecionado = "";
+  int numeroInicial = 0;
+  int numeroFinal = 0;
+  Random random = new Random();
+  int indexLetra = 0;
+  String codigoGerado = "";
   int idade = 0;
   DateTime dataSelecionada = DateTime.now();
 
   bool isCheck = false;
 
   List precos = [];
+
+  List<String> letras = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
+  "s", "t", "u", "v", "w", "x", "y", "z"];
 
   List<String> generos = [
     'Masculino', 'Feminino'
@@ -89,6 +100,7 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
     try{
 
       idade = DateTime.now().year - int.parse(ano);
+
       if (DateTime.now().month < int.parse(mes))
         idade--;
       else if (DateTime.now().month == int.parse(mes)){
@@ -96,13 +108,19 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
           idade--;
       }
 
+      numeroInicial = random.nextInt(9); // 0 - 9
+      indexLetra = random.nextInt(25); // 0 - 25
+      numeroFinal = random.nextInt(99 - 11) + 10; // 10 - 99
+
+      codigoGerado = numeroInicial.toString() + letras[indexLetra].toUpperCase() + numeroFinal.toString();
+
       Map<String, dynamic> result = await Graphql.salvarAluno(Aluno(
         id: 0,
         nome: nome.text,
         cpf: cpf.text,
         email: email.text,
         login: email.text,
-        senha: "",
+        senha: codigoGerado,
         personal: professorIdLocal,
         idade: idade,
         sexo: generoSelecionado,
@@ -112,19 +130,104 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
       if (result['salvarAluno']['id'] > 0) {
         print("Resultado buscado");
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            duration: Duration(
-              milliseconds: 1000
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: Colors.white,
+            title: Center(
+              child: Text(
+                "Login e Senha:",
+                style: TextStyle(
+                  color: Colors.black
+                ),
+              ),
             ),
-            backgroundColor: Colors.green,
-            content: Icon(
-              Icons.check
+            content: Padding(
+              padding: EdgeInsets.fromLTRB(0,0,0,0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Login: ${email.text}",
+                    style: TextStyle(
+                      color: Colors.pink[100],
+                      fontSize: 20
+                    ),
+                  ),
+                  Text(
+                    "Senha: ${codigoGerado}",
+                    style: TextStyle(
+                      color: Colors.pink[100],
+                      fontSize: 20
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.copy_outlined,
+                      color: Colors.black,
+                    ),
+                    onPressed: () async {
+
+                      print("Clicou");
+
+                      await Clipboard.setData(
+                        ClipboardData(
+                          text: 'Seu login é: ${email.text}, e a senha do seu acesso é: $codigoGerado!'
+                        )
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.blue[400],
+                        content: Padding(
+                          padding: EdgeInsets.fromLTRB(20,0,20,0),
+                          child: Text(
+                            'Login copiado com sucesso!',
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                          ),
+                        ),
+                      ));
+                      
+                    },
+                  )
+                ],
+              ),
             ),
-          ),
+            actions: [
+              TextButton(
+                onPressed: () {
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      duration: Duration(
+                        milliseconds: 1000
+                      ),
+                      backgroundColor: Colors.green,
+                      content: Icon(
+                        Icons.check,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+
+                  Navigator.pop(context);
+                  Navigator.of(context).pop(1);
+
+                },
+                child: const Text(
+                  'Fechar',
+                  style: TextStyle(
+                    color: Colors.black
+                  ),
+                ),
+              ),
+            ],
+          )
         );
 
-        Navigator.of(context).pop(1);
+        print("Chegou aqui");
 
         setState(() {
           loading = false;
@@ -323,7 +426,7 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(50.0)
                                 ),
-                                hintText: "Nome do Vendedor",
+                                hintText: "Nome do Aluno",
                                 hintStyle: TextStyle(
                                   color: Colors.grey
                                 ),
@@ -362,7 +465,7 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(50.0)
                                 ),
-                                hintText: "CPF do Vendedor",
+                                hintText: "CPF do Aluno",
                                 hintStyle: TextStyle(
                                   color: Colors.grey
                                 ),
@@ -401,7 +504,7 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(50.0)
                                 ),
-                                hintText: "Email do Vendedor",
+                                hintText: "Email do Aluno",
                                 hintStyle: TextStyle(
                                   color: Colors.grey
                                 ),
@@ -554,9 +657,42 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
                               height: 42,
                               onPressed: () {
                                 if(nome.text != "" && cpf.text != "" && email.text != "" && 
-                                generoSelecionado != "" && dataFormatadaSelecionada != ""){
+                                generoSelecionado != "" && dataFormatadaSelecionada != ""
+                                && RegExp(
+                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(email.text)){
                                   _salvarAluno();
-                                }else{
+                                }else if(!CPFValidator.isValid(cpf.text)){
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('CPF informado é inválido!'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: const Text('Fechar'),
+                                        ),
+                                      ],
+                                    )
+                                  );
+                                }else if(!RegExp(
+                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(email.text)){
+
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Email informado é inválido!'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: const Text('Fechar'),
+                                        ),
+                                      ],
+                                    )
+                                  );
+
+                                } else{
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(

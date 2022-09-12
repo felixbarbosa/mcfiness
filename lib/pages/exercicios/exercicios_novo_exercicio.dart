@@ -635,25 +635,16 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
                                     iconDisabledColor: Colors.black,
                                     items: urls.map((String value){
                                       return DropdownMenuItem(
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              height: 80,
-                                              child: Image(
-                                                image: AssetImage(
-                                                 value,
-                                                ),
-                                                fit: BoxFit.contain,
+                                        child: Center(
+                                          child: Container(
+                                            height: 120,
+                                            child: Image(
+                                              image: AssetImage(
+                                               value,
                                               ),
+                                              fit: BoxFit.contain,
                                             ),
-                                            Text(
-                                              value,
-                                              style: TextStyle(
-                                                color: Colors.black
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            )
-                                          ],
+                                          ),
                                         ),
                                         value: value,
                                       );

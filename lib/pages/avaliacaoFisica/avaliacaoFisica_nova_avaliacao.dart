@@ -208,7 +208,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
           biceps: biceps.text,
           cintura: cintura.text,
           coxa: coxa.text,
-          data: "",
+          data: dataMostradaInicio,
           fotoCostas: urlCostas,
           fotoFrente: urlFrente,
           fotoLado: urlLado,
@@ -398,8 +398,21 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
   @override
   void initState() {
     super.initState();
-    //_buscarDiasSemana();
-    //_buscarMusculos();
+
+    dia = DateTime.now().day.toString();
+    mes = DateTime.now().month.toString();
+    ano = DateTime.now().year.toString();
+
+    if(dia.length < 2){
+      dia = "0" + DateTime.now().day.toString();
+    }
+
+    if(mes.length < 2){
+      mes = "0" + DateTime.now().month.toString();
+    }
+
+    dataMostradaInicio = dia + "/" + mes + "/" + ano;
+    
   }
 
   @override
@@ -712,7 +725,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -763,7 +776,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -814,7 +827,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -865,7 +878,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -916,7 +929,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -967,7 +980,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -1018,7 +1031,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -1055,7 +1068,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -1109,7 +1122,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -1163,7 +1176,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               color: Colors.black
                                             ),
                                             decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(10.0),
                                                 borderSide: BorderSide(
@@ -1241,6 +1254,9 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                               ),
                                             ),
                                           ),
+                                          SizedBox(
+                                            height: 12,
+                                          )
                                         ],
                                       ),
                                     ),

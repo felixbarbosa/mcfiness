@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/model/user.dart';
-import 'package:mcfitness/pages/home/home_page.dart';
+import 'package:mcfitness/pages/home/home_page_aluno.dart';
+import 'package:mcfitness/pages/home/home_page_professor.dart';
 import 'package:mcfitness/pages/login/controllers/login_controller.dart';
 import 'package:mcfitness/pages/professor/professor_novo_professor.dart';
 import 'package:mcfitness/store/login_store.dart';
@@ -100,12 +101,28 @@ class _LoginState extends State<Login> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => Home_Page(
-              documentoUsuarioGlobal: documentoUsuarioLocal,
-              idUsuarioGlobal: idUsuarioLocal,
-              isPersonalGlobal: isPersonal,
-              nomeUsuarioGlobal: nomeUsuarioLocal,
-            ),
+            builder: (_) { 
+              if(isPersonal){
+
+                return Home_Page_Professor(
+                  documentoUsuarioGlobal: documentoUsuarioLocal,
+                  idUsuarioGlobal: idUsuarioLocal,
+                  isPersonalGlobal: isPersonal,
+                  nomeUsuarioGlobal: nomeUsuarioLocal,
+                );
+
+              }else{
+
+                return Home_Page_Aluno(
+                  documentoUsuarioGlobal: documentoUsuarioLocal,
+                  idUsuarioGlobal: idUsuarioLocal,
+                  isPersonalGlobal: isPersonal,
+                  nomeUsuarioGlobal: nomeUsuarioLocal,
+                );
+
+              }
+              
+            }
           ),
         );
       } else {
@@ -371,8 +388,12 @@ class _LoginState extends State<Login> {
                       height: 42,
                       onPressed: () {
 
-                        if(!clicouEntrar){
+                        if(!clicouEntrar && RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(login.text)){
                           _login();
+                        }else{
+                          print("Email inválido");
                         }
 
                       },

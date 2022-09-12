@@ -3,6 +3,8 @@ import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_treino.dart';
 import 'package:mcfitness/pages/alunos/alunos_novo_aluno.dart';
 import 'package:mcfitness/pages/anamnese/anamnese_listar_anamnese.dart';
+import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_listar_avaliacao.dart';
+import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.dart';
 
 enum SingingCharacter { nome, cnpj }
 
@@ -263,6 +265,17 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
                     ),
                     RaisedButton(
                       onPressed: () async {
+
+                        if(alunoSelecionado){
+                          Navigator.push(
+                            context, MaterialPageRoute(
+                              builder: (context) => AvaliacaoFisicaListarAvaliacao(
+                                alunoIdGlobal: idSelecionado,
+                                alunoNomeGlobal: nomeSelecionado
+                              )
+                            )
+                          );
+                        }
                         
                       },
                       color: alunoSelecionado ? Colors.black : Colors.grey,

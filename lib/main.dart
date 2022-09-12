@@ -5,7 +5,7 @@ import 'package:mcfitness/model/user.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.dart';
-import 'package:mcfitness/pages/home/home_page.dart';
+import 'package:mcfitness/pages/home/home_page_aluno.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/teste/firebase_options.dart';
 import 'package:mcfitness/pages/teste/storage_page.dart';
@@ -22,7 +22,7 @@ Future<void> main() async {
 
   runApp(
     Provider(
-      create: (_) => User(versao: 'V3.20220909.1930'/*packageInfo.version*/),
+      create: (_) => User(versao: 'V3.20220912.1930'/*packageInfo.version*/),
       child: App(),
     )
   );

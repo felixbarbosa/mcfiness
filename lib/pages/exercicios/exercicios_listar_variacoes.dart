@@ -80,7 +80,7 @@ class _ExerciciosListarVariacoesState extends State<ExerciciosListarVariacoes> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Nenhum exercicio cadastrado'),
+            title: const Text('Nenhum variação encontrada para esse exercicio'),
             actions: [
               TextButton(
                 onPressed: () {
