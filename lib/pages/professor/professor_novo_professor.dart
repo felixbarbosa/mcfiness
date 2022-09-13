@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:camera_camera/camera_camera.dart';
+import 'package:cpf_cnpj_validator/cpf_validator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
@@ -163,6 +164,7 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
   bool senhaInvisivel = true;
   bool confirmacaoSenhaInvisivel = true;
   bool uploading = false;
+  bool crefValido = false;
 
   int numeroSeries = 3;
   int numeroRepeticoes = 10;
@@ -188,7 +190,18 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
     'Masculino', 'Feminino'
   ];
 
-  List<String> paths = [];
+  List<String> ufs = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR',
+    'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+  ];
+
+  List<String> separacaoCref = [];
+
+  List<String> separacaoCaracteres = [];
+
+  String digitos = "";
+
+  String caracteres = "";
 
   final GlobalKey<FormFieldState> _keyExercicio = GlobalKey<FormFieldState>();
 
@@ -288,94 +301,6 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
           )
         );
       }
-    }
-  }
-
-  showPreview(file, String foto) async {
-
-    File? arq =  await Navigator.push(
-      context, MaterialPageRoute(
-        builder: (context) => PreviewPage(file: file)
-      )
-    );
-
-    if (arq != null) {
-      print("Arquivo (Path) = ${arq.path}");
-      print("Arquivo = ${arq}");
-      aux = 0;
-
-      while(aux < paths.length){
-        if(foto == paths[aux].split("-")[0]){
-          paths.removeAt(aux);
-        }else{
-          aux++;
-        }
-      }
-
-      paths.add("$foto-${arq.path}");
-      
-      Navigator.pop(context);
-    }
-  }
-
-  pickAndUploadImage(String file, String foto) async {
-    if (file != null) {
-      UploadTask task = await upload(file);
-
-      task.snapshotEvents.listen((TaskSnapshot snapshot) async {
-        if (snapshot.state == TaskState.running) {
-
-          setState(() {
-            uploading = true;
-          });
-
-        } else if (snapshot.state == TaskState.success) {
-          final photoRef = snapshot.ref;
-
-          print("Url gerada = ${await photoRef.getDownloadURL()}");
-
-          if(foto == "frente"){
-            urlFrente = await photoRef.getDownloadURL();
-            print("Carregou URL frente");
-          }else if(foto == "lado"){
-            urlLado= await photoRef.getDownloadURL();
-            print("Carregou URL lado");
-          }else{
-            urlCostas = await photoRef.getDownloadURL();
-            print("Carregou URL costas");
-          }
-
-          if(urlFrente != "" && urlCostas != "" && urlLado != ""){
-            setState(() {
-              loading = false;
-            });
-          }else{
-            print("Esperando o final do upload...");
-          }
-        }
-      });
-    }
-  }
-
-  Future<UploadTask> upload(String path) async {
-    File file = File(path);
-    try {
-      String ref = 'images/img-${DateTime.now().toString()}.jpeg';
-
-      final storageRef = FirebaseStorage.instance.ref();
-
-      return storageRef.child(ref).putFile(
-            file,
-            SettableMetadata(
-              cacheControl: "public, max-age=300",
-              contentType: "image/jpeg",
-              customMetadata: {
-                "user": "123",
-              },
-            ),
-          );
-    } on FirebaseException catch (e) {
-      throw Exception('Erro no upload: ${e.code}');
     }
   }
 
@@ -947,7 +872,51 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
 
                                               }else{
 
-                                                if(idade < 16){
+                                                if(!RegExp(
+                                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                .hasMatch(email.text)){
+
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) => AlertDialog(
+                                                      title: const Text('Email informado é inválido!'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () => Navigator.pop(context),
+                                                          child: const Text('Fechar'),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  );
+
+                                                }else if(!CPFValidator.isValid(cpf.text)){
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) => AlertDialog(
+                                                      title: const Text('CPF informado é inválido!'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () => Navigator.pop(context),
+                                                          child: const Text('Fechar'),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  );
+                                                }else if(!validarCref()){
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) => AlertDialog(
+                                                      title: const Text('CREF informado é inválido!'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () => Navigator.pop(context),
+                                                          child: const Text('Fechar'),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  );
+                                                }
+                                                else if(idade < 16){
                                                   showDialog(
                                                     context: context,
                                                     builder: (context) => AlertDialog(
@@ -1248,6 +1217,53 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
 
     print("Você tem $idade anos");
 
+
+  }
+
+  bool validarCref(){
+
+    if(cref.text.contains("-") && cref.text.contains("/")){
+
+      separacaoCref = cref.text.split("-"); //['000000','G/PE']
+
+      caracteres = separacaoCref[1]; //'G/PE'
+
+      separacaoCaracteres = caracteres.split("/"); //['G', 'PE']
+
+      digitos = separacaoCref[0]; //'000000'
+
+      try{
+
+        if(digitos.length == 6){
+
+          if(int.parse(digitos) != null){
+            if(separacaoCaracteres[0].toUpperCase() == "G"){
+              if(ufs.contains(separacaoCaracteres[1].toUpperCase())){
+                crefValido = true;
+              }else{
+                crefValido = false;
+              }
+            }else{
+              crefValido = false;
+            }
+          }else{
+            crefValido = false;
+          }
+
+        }else{
+          crefValido = false;
+        }
+
+      }catch(Exception){
+        return false;
+      }
+      
+
+    }else{
+      crefValido = false;
+    }
+
+    return crefValido;
 
   }
 

@@ -69,9 +69,7 @@ class _LoginState extends State<Login> {
 
         print("${result['obterUsuario'][0]['id']}");
 
-        idUsuarioLocal = result['obterUsuario'][0]['id'];
-
-        print("${result['obterUsuario'][0]['id']}");
+        idUsuarioLocal = result['obterUsuario'][0]['pessoa']['aluno']['id'];
 
         nomeUsuarioLocal = result['obterUsuario'][0]['pessoa']['nome'];
 

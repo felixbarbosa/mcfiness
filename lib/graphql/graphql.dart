@@ -873,7 +873,7 @@ class Graphql {
           "dores": anamnese.dores,
           "problemaOrtopedico": anamnese.problemaOrtopedico,
           "observacoes": anamnese.observacoes
-  }
+        }
       },
     ));
     if (result.hasException) {

@@ -135,12 +135,14 @@ class _AnamneseNovaAnamneseState extends State<AnamneseNovaAnamnese> {
 
   Future<void> _novaAnamnese() async {
 
+    print("Aluno id = $alunoIdLocal");
+
     try{
 
       Map<String, dynamic> result = await Graphql.novaAnamnese(
         Anamnese(
           id: 0,
-          aluno: alunoIdLocal,
+          aluno: 70,
           alteracaoCardiaca: alteracaoCardiaca.text,
           atividadeFisica: atividadeFisica.text,
           bebidaAlcoolica: bebidaAlcoolica.text,
