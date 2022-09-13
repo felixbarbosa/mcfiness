@@ -69,7 +69,9 @@ class _LoginState extends State<Login> {
 
         print("${result['obterUsuario'][0]['id']}");
 
-        idUsuarioLocal = result['obterUsuario'][0]['pessoa']['aluno']['id'];
+        idUsuarioLocal = result['obterUsuario'][0]['pessoa']['aluno'] == null ? 
+                          result['obterUsuario'][0]['pessoa']['personal']['id'] :
+                          result['obterUsuario'][0]['pessoa']['aluno']['id'];
 
         nomeUsuarioLocal = result['obterUsuario'][0]['pessoa']['nome'];
 
