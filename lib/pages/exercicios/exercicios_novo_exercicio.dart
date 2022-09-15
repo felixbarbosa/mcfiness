@@ -72,12 +72,15 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
   final _formKey = GlobalKey<FormState>();
   final nome = TextEditingController();
   final urlVideo = TextEditingController();
+  final urlImage = TextEditingController();
   final email = TextEditingController();
   final instrucao = TextEditingController();
   //final entidade = 5;
 
   int idLocal = 0;
   bool loading = false;
+  bool uploadingImage = true;
+  bool uploadingVideo = true;
   bool produtoSelecionado = false;
   String idSelecionado = "";
   bool isButtonDisable = false;
@@ -109,6 +112,8 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
   int musculoId = 0;
   bool selecionouImagem = false;
   String urlSelecionada = "";
+  String linkImage = "";
+  String linkVideo = "";
 
   DateTime dataSelecionada = DateTime.now();
 
@@ -129,6 +134,9 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
   List<Reference> refs = [];
   List<String> arquivos = [];
 
+  XFile? fileImage;
+  XFile? fileVideo;
+
   Future<void> _novoExercicio() async {
 
     try{
@@ -139,8 +147,8 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
           musculo: musculoId,
           nome: nome.text,
           professor: personalIdLocal,
-          urlImagem: urlSelecionada,
-          urlVideo: urlVideo.text,
+          urlImagem: linkImage,
+          urlVideo: linkVideo,
           instrucao: instrucao.text
         )
       );
@@ -166,9 +174,14 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
 
           setState(() {
             loading = false;
+            clicouSalvar = false;
           });
 
         } else {
+          setState(() {
+            loading = false;
+            clicouSalvar = false;
+          });
           showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -202,9 +215,14 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
 
           setState(() {
             loading = false;
+            clicouSalvar = false;
           });
 
         } else {
+          setState(() {
+            loading = false;
+            clicouSalvar = false;
+          });
           showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -225,6 +243,7 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
 
       setState(() {
         loading = false;
+        clicouSalvar = false;
       });
 
       if(erro.toString().contains("Connection failed")){
@@ -246,6 +265,11 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
 
         
       }else{
+
+        setState(() {
+          loading = false;
+          clicouSalvar = false;
+        });
 
         showDialog(
           context: context,
@@ -341,10 +365,10 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
     }
   }
 
-  pickAndUploadVideo() async {
-    XFile? file = await getVideo();
+  pickAndUploadVideo(XFile? file) async {
+    //XFile? file = await getVideo();
     if (file != null) {
-      UploadTask task = await upload(file.path);
+      UploadTask task = await uploadVideo(file.path);
 
       task.snapshotEvents.listen((TaskSnapshot snapshot) async {
         if (snapshot.state == TaskState.running) {
@@ -363,11 +387,22 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
 
           arquivos.add(await photoRef.getDownloadURL());
           refs.add(photoRef);
-          urlVideo.text = await photoRef.getDownloadURL();
+          linkVideo = await photoRef.getDownloadURL();
           // final SharedPreferences prefs = await _prefs;
           // prefs.setStringList('images', arquivos);
 
-          setState(() => loading = false);
+          if(linkVideo != "" && !uploadingImage){
+            uploadingVideo = false;
+            setState(() {
+              loading = false;
+            });
+            print("Imagem = ${linkImage}");
+            print("Video = ${linkVideo}");
+            print("Preparando para salvar...");
+            _novoExercicio();
+          }else{
+            print("Esperando o final do upload...");
+          }
         }
       });
     }else{
@@ -377,14 +412,71 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
     }
   }
 
+  pickAndUploadImage(XFile? file) async {
+    setState(() {
+      loading = true;
+      clicouSalvar = true;
+    });
+    if (file != null) {
+      UploadTask task = await uploadImage(file.path);
+
+      task.snapshotEvents.listen((TaskSnapshot snapshot) async {
+        if (snapshot.state == TaskState.running) {
+          setState(() {
+            loading = true;
+            //total = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          });
+        } else if (snapshot.state == TaskState.success) {
+          final photoRef = snapshot.ref;
+
+          // final newMetadata = SettableMetadata(
+          //   cacheControl: "public, max-age=300",
+          //   contentType: "image/jpeg",
+          // );
+          // await photoRef.updateMetadata(newMetadata);
+
+          arquivos.add(await photoRef.getDownloadURL());
+          refs.add(photoRef);
+          linkImage = await photoRef.getDownloadURL();
+          // final SharedPreferences prefs = await _prefs;
+          // prefs.setStringList('images', arquivos);
+
+          if(linkImage != ""){
+            uploadingImage = false;
+            pickAndUploadVideo(fileVideo);
+          }else{
+            print("Esperando o final do upload...");
+          }
+        }
+      });
+    }else{
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  Future<XFile?> getImage() async {
+    final ImagePicker _picker = ImagePicker();
+    //XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      urlImage.text = image == null ? "" : image.path;
+    });
+    return image;
+  }
+
   Future<XFile?> getVideo() async {
     final ImagePicker _picker = ImagePicker();
     //XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     XFile? video = await _picker.pickVideo(source: ImageSource.gallery);
+    setState(() {
+      urlVideo.text = video == null ? "" : video.path;
+    });
     return video;
   }
 
-  Future<UploadTask> upload(String path) async {
+  Future<UploadTask> uploadVideo(String path) async {
     File file = File(path);
     try {
       String ref = 'videos/${personalIdLocal}-${nome.text}.mp4';
@@ -396,6 +488,28 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
               cacheControl: "public, max-age=300",
               //contentType: "image/jpeg",
               contentType: "video/mp4",
+              customMetadata: {
+                "user": "123",
+              },
+            ),
+          );
+    } on FirebaseException catch (e) {
+      throw Exception('Erro no upload: ${e.code}');
+    }
+  }
+
+  Future<UploadTask> uploadImage(String path) async {
+    File file = File(path);
+    try {
+      String ref = 'images/${personalIdLocal}-${nome.text}.jpeg';
+      //String ref = 'images/img-${DateTime.now().toString()}.mp4';
+      final storageRef = FirebaseStorage.instance.ref();
+      return storageRef.child(ref).putFile(
+            file,
+            SettableMetadata(
+              cacheControl: "public, max-age=300",
+              //contentType: "image/jpeg",
+              contentType: "image/jpeg",
               customMetadata: {
                 "user": "123",
               },
@@ -625,71 +739,38 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
                               SizedBox(
                                 height: 8.0,
                               ),
-                              SizedBox(
-                                height: 50.0,
-                                child: Container(
-                                  child: DropdownButtonFormField<String>(
-                                    isExpanded: true,
-                                    dropdownColor: Colors.white,
-                                    iconEnabledColor: Colors.black,
-                                    iconDisabledColor: Colors.black,
-                                    items: urls.map((String value){
-                                      return DropdownMenuItem(
-                                        child: Center(
-                                          child: Container(
-                                            height: 120,
-                                            child: Image(
-                                              image: AssetImage(
-                                               value,
-                                              ),
-                                              fit: BoxFit.contain,
-                                            ),
-                                          ),
-                                        ),
-                                        value: value,
-                                      );
-                                    }).toList(),  
-                                    onChanged: (valorSelecionado){
-        
-                                      print("URl selecionada = $valorSelecionado");
-        
-                                      setState(() {
-                                        selecionouImagem = true;
-                                        if(valorSelecionado != ""){
-                                          urlSelecionada = valorSelecionado!;
-                                        }
-                                      });
-        
+                              TextFormField(
+                                controller: urlImage,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black
+                                ),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      Icons.image,
+                                      color: Colors.black
+                                    ),
+                                    onPressed: () async {
+                                      //pickAndUploadImage();
+                                      fileImage = await getImage();
                                     },
-                                    decoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        Icons.location_on,
-                                        color: Colors.black,
-                                      ),
-                                      contentPadding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(30))
-                                      ),
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      hintText: (editandoLocal && urlSelecionada != "") ? "$urlSelecionada" : "Imagem do Exercicio",
-                                      hintStyle: TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                    ),
                                   ),
-                                )
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0)
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50.0)
+                                  ),
+                                  hintText: "Imagem demonstrativa",
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey
+                                  ),
+                                ),
                               ),
-                              selecionouImagem || (editandoLocal && urlSelecionada != "") ? 
-                                Container(
-                                  height: 200,
-                                  child: Image(
-                                    image: AssetImage(
-                                      urlSelecionada,
-                                    ),
-                                    fit: BoxFit.contain,
-                                  ),
-                                ) : Container(),
                               SizedBox(
                                 height: 20,
                               ),
@@ -712,11 +793,12 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
                                   contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                                   suffixIcon: IconButton(
                                     icon: Icon(
-                                      Icons.image,
+                                      Icons.video_camera_back,
                                       color: Colors.black
                                     ),
-                                    onPressed: (){
-                                      pickAndUploadVideo();
+                                    onPressed: () async {
+                                      //pickAndUploadVideo();
+                                      fileVideo = await getVideo();
                                     },
                                   ),
                                   fillColor: Colors.white,
@@ -773,12 +855,14 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
                               MaterialButton(
                                 shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(17.0)),
-                                color: clicouSalvar ? Colors.grey : Colors.grey[900],
+                                color: (clicouSalvar || nome.text == "" || musculoId == 0) ? Colors.grey : Colors.grey[900],
                                 textColor: Colors.white,
                                 minWidth: double.infinity,
                                 height: 42,
                                 onPressed: () {
-                                  _novoExercicio();
+                                  if(!clicouSalvar && nome.text != "" && musculoId != 0){
+                                    pickAndUploadImage(fileImage);
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(10.0),

@@ -421,7 +421,7 @@ class _AnamneseNovaAnamneseState extends State<AnamneseNovaAnamnese> {
 
     try{
 
-      Map<String, dynamic> result = await Graphql.exerciciosPorMusculo(musculoIdLocal);
+      Map<String, dynamic> result = await Graphql.exerciciosPorMusculo(musculoIdLocal, 1);
 
       print("aqui");
       

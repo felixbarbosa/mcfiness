@@ -328,7 +328,7 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
                                           alunoSelecionado = true;
                                           idSelecionado = alunos[index]['id'];
                                           nomeSelecionado = alunos[index]['nome'];
-                                          objetivoIdLocal = alunos[index]['objetivo']['id'];
+                                          //objetivoIdLocal = alunos[index]['objetivo']['id'];
                                           print("Objetivo = $objetivoIdLocal");
                                         }
                                         

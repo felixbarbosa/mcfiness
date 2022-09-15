@@ -81,7 +81,7 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
 
     try{
 
-      Map<String, dynamic> result = await Graphql.exerciciosPorMusculo(musculoIdLocal);
+      Map<String, dynamic> result = await Graphql.exerciciosPorMusculo(musculoIdLocal, personalIdLocal);
 
       print("aqui");
       

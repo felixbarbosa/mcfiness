@@ -90,10 +90,6 @@ class Graphql {
                 nome,
                 cref
               },
-              objetivo{
-                id,
-                objetivo
-              }
             },
             personal{
               id,
@@ -175,9 +171,6 @@ class Graphql {
           cpf,
           sexo,
           idade,
-          objetivo{
-            id
-          }
         }
       }
       '''),
@@ -356,12 +349,12 @@ class Graphql {
     }
   }
 
-  static Future<Map<String, dynamic>> exerciciosPorMusculo(int musculoId) async {
+  static Future<Map<String, dynamic>> exerciciosPorMusculo(int musculoId, int professorId) async {
     GraphQLClient client = getClient();
     QueryResult result = await client.query(QueryOptions(
       document: gql(r'''
-      query($musculoId: Int!){
-        obterExerciciosPorMusculo(musculoId:$musculoId){
+      query($musculoId: Int!, $professorId: Int!){
+        obterExerciciosPorMusculo(musculoId:$musculoId, professorId:$professorId){
           id,
           descricao,
           musculo{
@@ -378,7 +371,8 @@ class Graphql {
       }
       '''),
       variables: {
-        "musculoId": musculoId
+        "musculoId": musculoId,
+        "professorId": professorId
       },
     ));
     if(result.isLoading){
@@ -406,7 +400,6 @@ class Graphql {
           },
           exercicio{
             id,
-            descricao
           }
         }
       }
@@ -570,12 +563,12 @@ class Graphql {
     }
   }
 
-  static Future<Map<String, dynamic>> obterTodosExercicios() async {
+  static Future<Map<String, dynamic>> obterTodosExercicios(int professorId) async {
     GraphQLClient client = getClient();
     QueryResult result = await client.query(QueryOptions(
       document: gql(r'''
-      query{
-        obterExercicios{
+      query($professor: Int!){
+        obterExercicios(professorId:$professor){
           id,
           descricao,
           musculo{
@@ -590,7 +583,10 @@ class Graphql {
           instrucao
         }
       }
-      ''')
+      '''),
+      variables: {
+        "professor": professorId
+      }
     ));
     if(result.isLoading){
       print("Carregando...");

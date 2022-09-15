@@ -135,7 +135,6 @@ class _AlunosNovoExercicioState extends State<AlunosNovoExercicio> {
           musculo: musculoIdLocal,
           series: numeroSeries.toString(),
           repeticoes: numeroRepeticoes.toString(),
-          instrucao: instrucao.text,
           velocidade: velocidadeSelecionada,
           exercicio: exercicioIdSelecionado,
           nome: nomeTreinoLocal,
@@ -231,7 +230,7 @@ class _AlunosNovoExercicioState extends State<AlunosNovoExercicio> {
 
     try{
 
-      Map<String, dynamic> result = await Graphql.exerciciosPorMusculo(musculoIdLocal);
+      Map<String, dynamic> result = await Graphql.exerciciosPorMusculo(musculoIdLocal, 1);
 
       print("aqui");
       
@@ -566,40 +565,6 @@ class _AlunosNovoExercicioState extends State<AlunosNovoExercicio> {
                                             )
                                           ),
                                         )
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Text(
-                                        "Instrução do Exercicio",
-                                        style: TextStyle(
-                                          fontSize: 23
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                      SizedBox(
-                                        height: 100.0,
-                                        child: TextFormField(
-                                          controller: instrucao,
-                                          maxLines: 5,
-                                          style: TextStyle(
-                                            color: Colors.black
-                                          ),
-                                          decoration: InputDecoration(
-                                            fillColor: Colors.white,
-                                            filled: true,
-                                            hintText: "Instrução de como executar o exercicio",
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey[400],
-                                              fontSize: 12.0
-                                            ),
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(10.0),
-                                            ),
-                                          ),
-                                        ),
                                       ),
                                       SizedBox(
                                         height: 20,

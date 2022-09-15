@@ -411,7 +411,7 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
 
     try{
 
-      Map<String, dynamic> result = await Graphql.exerciciosPorMusculo(musculoIdLocal);
+      Map<String, dynamic> result = await Graphql.exerciciosPorMusculo(musculoIdLocal, 1);
 
       print("aqui");
       
