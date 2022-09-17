@@ -139,7 +139,6 @@ class _AlunosNovoExercicioState extends State<AlunosNovoExercicio> {
           exercicio: exercicioIdSelecionado,
           nome: nomeTreinoLocal,
           descanso: numeroDescansoMin.toString() + "'" + numeroDescansoSec.toString() + "''",
-          variacaoExercicio: variacaoIdSelecionado != 0 ? variacaoIdSelecionado : null
         )
       );
 
@@ -255,8 +254,6 @@ class _AlunosNovoExercicioState extends State<AlunosNovoExercicio> {
           count++;
         }
 
-        _buscarVariacoesPorMusculo();
-
       } else {
         showDialog(
           context: context,
@@ -304,78 +301,7 @@ class _AlunosNovoExercicioState extends State<AlunosNovoExercicio> {
     
   }
 
-  Future<void> _buscarVariacoesPorMusculo() async {
-
-    print("Musculo = $musculoIdLocal");
-
-    try{
-
-      Map<String, dynamic> result = await Graphql.obterVariacoesExercicioPorMusculo(musculoIdLocal);
-
-      print("aqui");
-      
-
-      if (result['obterVariacoesPorMusculo'].length > 0) {
-        print("Resultado buscado");
-
-        int count = 0;
-        String addExercicio = "";
-
-        while(count < result['obterVariacoesPorMusculo'].length){
-          print("Dentro do while");
-          print("Id = ${result['obterVariacoesPorMusculo'][count]['id']}");
-          print("Descricao = ${result['obterVariacoesPorMusculo'][count]['descricao']}");
-
-          addExercicio = result['obterVariacoesPorMusculo'][count]['id'].toString() + 
-          " - " + 
-          result['obterVariacoesPorMusculo'][count]['descricao'] + 
-          " ¨${result['obterVariacoesPorMusculo'][count]['exercicio']['id']}¨";
-          setState(() {
-            print("SetState");
-            exercicios.add(addExercicio);
-          });
-          
-          count++;
-        }
-
-        setState(() {
-          loading = false;
-        });
-
-      } else {
-
-        setState(() {
-          loading = false;
-        });
-        
-      }
-
-    }catch(erro){
-
-      print("Erro = ${erro.toString()}");
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro na base de dados de variacoes de exercicios'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  loading = false;
-                });
-              },
-              child: const Text('Fechar'),
-            ),
-          ],
-        )
-      );
-
-    }
-
-    
-  }
+  
 
   @override
   void initState() {

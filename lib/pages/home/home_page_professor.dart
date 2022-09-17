@@ -6,6 +6,7 @@ import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.d
 import 'package:mcfitness/pages/exercicios/exercicios_listar_musculos.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/treinos/treinos_listar_treino.dart';
+import 'package:mcfitness/pages/usuario/usuario_perfil.dart';
 
 import 'widgets/home_button_widget.dart';
 
@@ -15,13 +16,15 @@ class Home_Page_Professor extends StatefulWidget {
   final int idUsuarioGlobal;
   final String nomeUsuarioGlobal;
   final String documentoUsuarioGlobal;
+  final String fotoGlobal;
 
   const Home_Page_Professor({
     Key? key,
     required this.isPersonalGlobal,
     required this.idUsuarioGlobal,
     required this.nomeUsuarioGlobal,
-    required this.documentoUsuarioGlobal
+    required this.documentoUsuarioGlobal,
+    required this.fotoGlobal
     
   }) : super(key: key);
 
@@ -30,7 +33,8 @@ class Home_Page_Professor extends StatefulWidget {
     documentoUsuarioLocal: documentoUsuarioGlobal,
     idUsuarioLocal: idUsuarioGlobal,
     isPersonalLocal: isPersonalGlobal,
-    nomeUsuarioLocal: nomeUsuarioGlobal
+    nomeUsuarioLocal: nomeUsuarioGlobal,
+    fotoLocal: fotoGlobal
   );
 }
 
@@ -42,13 +46,15 @@ class _Homemodulestate extends State<Home_Page_Professor> {
   final int idUsuarioLocal;
   final String nomeUsuarioLocal;
   final String documentoUsuarioLocal;
+  final String fotoLocal;
 
   _Homemodulestate(
     {
       required this.isPersonalLocal, 
       required this.idUsuarioLocal, 
       required this.nomeUsuarioLocal, 
-      required this.documentoUsuarioLocal
+      required this.documentoUsuarioLocal,
+      required this.fotoLocal
     }
   );
 
@@ -283,6 +289,12 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                         },
                       ),*/
                     ],
+                  ),
+                  UsuarioPerfil(
+                    usuarioGlobal: idUsuarioLocal,
+                    usuarioNomeGlobal: nomeUsuarioLocal,
+                    fotoGlobal: fotoLocal,
+                    crefGlobal: documentoUsuarioLocal,
                   ),
                 ],
               ),

@@ -40,6 +40,7 @@ class _LoginState extends State<Login> {
   bool isPersonal = false;
   int idUsuarioLocal = 0;
   String nomeUsuarioLocal = "";
+  String fotoLocal = "";
   String documentoUsuarioLocal = "";
 
   //ProgressDialog progressDialog;
@@ -74,6 +75,7 @@ class _LoginState extends State<Login> {
                           result['obterUsuario'][0]['pessoa']['aluno']['id'];
 
         nomeUsuarioLocal = result['obterUsuario'][0]['pessoa']['nome'];
+        fotoLocal = result['obterUsuario'][0]['foto'] == null ? "" : result['obterUsuario'][0]['foto'];
 
         print("${result['obterUsuario'][0]['pessoa']['nome']}");
 
@@ -109,6 +111,7 @@ class _LoginState extends State<Login> {
                   idUsuarioGlobal: idUsuarioLocal,
                   isPersonalGlobal: isPersonal,
                   nomeUsuarioGlobal: nomeUsuarioLocal,
+                  fotoGlobal: fotoLocal,
                 );
 
               }else{

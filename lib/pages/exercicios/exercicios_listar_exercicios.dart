@@ -59,6 +59,7 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
   String clienteNome = "";
   String nomeMusculo = "";
   int musculoId = 0;
+  int isVariacao = 0;
   String nomeExercicio = "";
   //String entidadeIdQuery = entidadeId; 
 
@@ -416,19 +417,27 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
                     ),
                     RaisedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context, MaterialPageRoute(
-                            builder: (context) => ExerciciosListarVariacoes(
-                              exercicicoIdGlobal: idSelecionado,
+                        if((exercicioSelecionado && isVariacao == 0)){
+                          Navigator.push(
+                            context, MaterialPageRoute(
+                              builder: (context) => ExerciciosListarVariacoes(
+                                personalIdGlobal: personalIdLocal,
+                                editandoGlobal: false,
+                                exercicioIdGlobal: idSelecionado,
+                                musculoIdGlobal: musculoId,
+                                nomeExercicioGlobal: nomeExercicio,
+                                nomeMusculoGlobal: nomeMusculo,
+                                urlGlobal: urlImagemLocal,
+                              )
                             )
-                          )
-                        );
+                          );
+                        }
                       },
-                      color: exercicioSelecionado ? Colors.black : Colors.grey,
+                      color: (exercicioSelecionado && isVariacao == 0) ? Colors.black : Colors.grey,
                       child: Text(
                         'Variações',
                         style: TextStyle(
-                          color: exercicioSelecionado ? Colors.white : Colors.black 
+                          color: (exercicioSelecionado && isVariacao == 0) ? Colors.white : Colors.black 
                         ),
                       ),
                       shape: RoundedRectangleBorder(
@@ -472,6 +481,7 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
                                         }else{
                                           exercicioSelecionado = true;
                                           idSelecionado = exercicios[index]['id'];
+                                          isVariacao = exercicios[index]['isVariacao'];
                                           nomeExercicio = exercicios[index]['descricao'];
                                           musculoId = exercicios[index]['musculo']['id'];
                                           nomeMusculo = exercicios[index]['musculo']['descricao'];

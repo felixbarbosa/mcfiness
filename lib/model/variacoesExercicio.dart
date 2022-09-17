@@ -3,6 +3,11 @@ class VariacoesExercicio {
   String? descricao;
   int? exercicio;
   int? musculo;
+  int? professor;
+  String? urlImagem;
+  String? urlVideo;
+  String? instrucao;
+  int? isVariacao;
 
   VariacoesExercicio(
       {
@@ -10,6 +15,11 @@ class VariacoesExercicio {
         this.musculo,
         this.descricao,
         this.exercicio,
+        this.instrucao,
+        this.isVariacao,
+        this.professor,
+        this.urlImagem,
+        this.urlVideo
       }
   );
 }

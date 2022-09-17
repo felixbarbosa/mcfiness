@@ -45,10 +45,6 @@ class Graphql {
           repeticoes,
           descanso,
           velocidade,
-          variacaoExercicio{
-            id,
-            descricao
-          },
         }
       }
       '''),
@@ -75,6 +71,7 @@ class Graphql {
       query($login: String!, $senha: String!){
         obterUsuario(login: $login, senha: $senha){
           id,
+          foto,
           pessoa{
             nome,
             cref,
@@ -88,7 +85,8 @@ class Graphql {
               personal{
                 id,
                 nome,
-                cref
+                cref,
+                foto
               },
             },
             personal{
@@ -98,7 +96,8 @@ class Graphql {
               cpf,
               sexo,
               email,
-              idade        
+              idade,
+              foto        
             }
           }
         }
@@ -171,6 +170,7 @@ class Graphql {
           cpf,
           sexo,
           idade,
+          foto
         }
       }
       '''),
@@ -366,7 +366,8 @@ class Graphql {
           },
           urlImagem,
           urlVideo,
-          instrucao
+          instrucao,
+          isVariacao
         }
       }
       '''),
@@ -386,26 +387,36 @@ class Graphql {
     }
   }
 
-  static Future<Map<String, dynamic>> obterVariacoesExercicio(int exercicioId) async {
+  static Future<Map<String, dynamic>> obterVariacoesExercicio(int exercicioId, int professorId) async {
     GraphQLClient client = getClient();
     QueryResult result = await client.query(QueryOptions(
       document: gql(r'''
-      query($exercicioId: Int!){
-        obterVariacoes(exercicioId:$exercicioId){
+      query($exercicioId: Int!, $professor: Int!){
+        obterVariacoesExerciciosPorExercicio(exercicioId:$exercicioId, professorId: $professor){
           id,
           descricao,
           musculo{
             id,
             descricao
           },
+          professor{
+            id,
+            nome
+          },
+          urlImagem,
+          urlVideo,
+          instrucao,
+          isVariacao,
           exercicio{
             id,
+            descricao
           }
         }
       }
       '''),
       variables: {
-        "exercicioId": exercicioId
+        "exercicioId": exercicioId,
+        "professor": professorId
       },
     ));
     if(result.isLoading){
@@ -580,7 +591,8 @@ class Graphql {
           },
           urlImagem,
           urlVideo,
-          instrucao
+          instrucao,
+          isVariacao
         }
       }
       '''),
@@ -676,7 +688,8 @@ class Graphql {
           "sexo": personal.sexo,
           "email": personal.email,
           "idade": personal.idade,
-          "cref": personal.cref
+          "cref": personal.cref,
+          "foto": personal.foto
         }
       },
     ));
@@ -760,17 +773,22 @@ class Graphql {
 
     QueryResult result = await client.mutate(MutationOptions(
       document: gql(r'''
-        mutation($variacoes: VariacoesExerciciosInput!){
-          salvarVariacoesExercicios(variacoesExercicios: $variacoes){
+        mutation($variacao:VariacaoExercicioInput!){
+          salvarVariacaoExercicio(variacaoExercicio:$variacao){
             id
           }
         }
       '''),
       variables: {
-        "variacoes": {
+        "variacao": {
           "id": variacoes.id,
           "descricao": variacoes.descricao,
           "musculo": variacoes.musculo,
+          "professor": variacoes.professor,
+          "urlImagem": variacoes.urlImagem,
+          "urlVideo": variacoes.urlVideo,
+          "instrucao": variacoes.instrucao,
+          "isVariacao": variacoes.isVariacao,
           "exercicio": variacoes.exercicio
         }
       },

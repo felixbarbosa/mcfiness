@@ -567,7 +567,9 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
                                 setState(() {
                                   mostrarExplicacao = false;
                                   abrirVideo = false;
-                                  chewieController.pause();
+                                  if(chewieController.videoPlayerController.value.isInitialized){
+                                    chewieController.pause();
+                                  }
                                 });
                               }, 
                               icon: Icon(
@@ -671,9 +673,7 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
                                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                   children: [
                                                     Text(
-                                                      treinos[index]['variacaoExercicio'] == null ? 
-                                                      treinos[index]['exercicio']['descricao'] :
-                                                      treinos[index]['variacaoExercicio']['descricao'],  
+                                                      treinos[index]['exercicio']['descricao'],  
                                                       overflow: TextOverflow.fade,                          
                                                       style: TextStyle(
                                                         color: Colors.black,

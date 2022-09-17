@@ -4,6 +4,7 @@ import 'package:camera_camera/camera_camera.dart';
 import 'package:cpf_cnpj_validator/cpf_validator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/model/avaliacaoFisica.dart';
 import 'package:mcfitness/model/personal.dart';
@@ -73,6 +74,7 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
   final estoque = TextEditingController();
   final giroMes = TextEditingController();
   final ultimoPreco = TextEditingController();
+  final urlImage = TextEditingController();
   int promocao = 0;
   double preco = 0.0;
   double desconto = 0.0;
@@ -80,6 +82,7 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
   String tabelaPreco = "";
   String txtQtde = "0";
   String generoSelecionado = "";
+  XFile? fileImage;
   bool jaMudou = false;
   bool mostrarExplicacaoMedicao = false;
   bool mostrarNumberPickerRepeticoes = false;
@@ -156,6 +159,7 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
   String urlFrente = "";
   String urlLado = "";
   String urlCostas = "";
+  String linkImage = "";
   DateTime dataSelecionada = DateTime.now();
 
   bool isCheck = false;
@@ -195,6 +199,8 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
     'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
   ];
 
+  List<Reference> refs = [];
+
   List<String> separacaoCref = [];
 
   List<String> separacaoCaracteres = [];
@@ -223,7 +229,8 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
           login: email.text,
           nome: nome.text,
           senha: senha.text,
-          sexo: generoSelecionado
+          sexo: generoSelecionado,
+          foto: linkImage
         )
       );
 
@@ -301,6 +308,76 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
           )
         );
       }
+    }
+  }
+
+  Future<XFile?> getImage() async {
+    final ImagePicker _picker = ImagePicker();
+    //XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      urlImage.text = image == null ? "" : image.path;
+    });
+    return image;
+  }
+
+  pickAndUploadImage(XFile? file) async {
+    setState(() {
+      loading = true;
+      clicouSalvar = true;
+    });
+    if (file != null) {
+      UploadTask task = await uploadImage(file.path);
+
+      task.snapshotEvents.listen((TaskSnapshot snapshot) async {
+        if (snapshot.state == TaskState.running) {
+          setState(() {
+            loading = true;
+            //total = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          });
+        } else if (snapshot.state == TaskState.success) {
+          final photoRef = snapshot.ref;
+
+          refs.add(photoRef);
+          linkImage = await photoRef.getDownloadURL();
+          // final SharedPreferences prefs = await _prefs;
+          // prefs.setStringList('images', arquivos);
+
+          if(linkImage != ""){
+
+            _novoProfessor();
+
+          }else{
+            print("Esperando o final do upload...");
+          }
+        }
+      });
+    }else{
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  Future<UploadTask> uploadImage(String path) async {
+    File file = File(path);
+    try {
+      String ref = 'images/ADM-${nome.text}.jpeg';
+      //String ref = 'images/img-${DateTime.now().toString()}.mp4';
+      final storageRef = FirebaseStorage.instance.ref();
+      return storageRef.child(ref).putFile(
+            file,
+            SettableMetadata(
+              cacheControl: "public, max-age=300",
+              //contentType: "image/jpeg",
+              contentType: "image/jpeg",
+              customMetadata: {
+                "user": "123",
+              },
+            ),
+          );
+    } on FirebaseException catch (e) {
+      throw Exception('Erro no upload: ${e.code}');
     }
   }
 
@@ -841,6 +918,51 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
                                             )
                                           ),
                                           SizedBox(
+                                            height: 20.0,
+                                          ),
+                                          Text(
+                                            'Foto:',
+                                            style: TextStyle(
+                                              fontSize: 15.0,
+                                              color: Colors.black
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 8.0,
+                                          ),
+                                          TextFormField(
+                                            controller: urlImage,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: Colors.black
+                                            ),
+                                            decoration: InputDecoration(
+                                              contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                                              suffixIcon: IconButton(
+                                                icon: Icon(
+                                                  Icons.image,
+                                                  color: Colors.black
+                                                ),
+                                                onPressed: () async {
+                                                  //pickAndUploadImage();
+                                                  fileImage = await getImage();
+                                                },
+                                              ),
+                                              fillColor: Colors.white,
+                                              filled: true,
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(25.0)
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(50.0)
+                                              ),
+                                              hintText: "Foto de Perfil",
+                                              hintStyle: TextStyle(
+                                                color: Colors.grey
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
                                             height: 20,
                                           ),
                                           MaterialButton(
@@ -941,7 +1063,7 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
                                                           ],
                                                         ));
                                                 }else{
-                                                  _novoProfessor();
+                                                  pickAndUploadImage(fileImage);
                                                 }
 
                                               }

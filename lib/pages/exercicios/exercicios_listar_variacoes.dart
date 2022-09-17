@@ -1,22 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
+import 'package:mcfitness/pages/exercicios/exercicios_nova_variacao.dart';
 
 enum SingingCharacter { nome, cnpj }
 
 class ExerciciosListarVariacoes extends StatefulWidget {
 
-  final int exercicicoIdGlobal;
+  final int personalIdGlobal;
+  final int exercicioIdGlobal;
+  final String nomeExercicioGlobal;
+  final int musculoIdGlobal;
+  final bool editandoGlobal;
+  final String nomeMusculoGlobal;
+  final String urlGlobal;
 
   const ExerciciosListarVariacoes(
     {
       Key? key, 
-      required this.exercicicoIdGlobal
+      required this.personalIdGlobal,
+      required this.editandoGlobal,
+      required this.musculoIdGlobal,
+      required this.nomeExercicioGlobal,
+      required this.nomeMusculoGlobal,
+      required this.exercicioIdGlobal,
+      required this.urlGlobal
     }
   ) : super(key: key);
 
   @override
   _ExerciciosListarVariacoesState createState() => _ExerciciosListarVariacoesState(
-    exercicioIdLocal: exercicicoIdGlobal
+    personalIdLocal: personalIdGlobal,
+    editandoLocal: editandoGlobal,
+    musculoIdLocal: musculoIdGlobal,
+    nomeExercicioLocal: nomeExercicioGlobal,
+    nomeMusculoLocal: nomeMusculoGlobal,
+    exercicioIdLocal: exercicioIdGlobal,
+    urlLocal: urlGlobal
   );
 }
 
@@ -24,10 +43,22 @@ bool termoMaiorTres = false;
 
 class _ExerciciosListarVariacoesState extends State<ExerciciosListarVariacoes> {
 
+  final int personalIdLocal;
   final int exercicioIdLocal;
+  final String nomeExercicioLocal;
+  final int musculoIdLocal;
+  final bool editandoLocal;
+  final String nomeMusculoLocal;
+  final String urlLocal;
 
   _ExerciciosListarVariacoesState({
-    required this.exercicioIdLocal
+    required this.personalIdLocal,
+    required this.exercicioIdLocal,
+    required this.nomeExercicioLocal,
+    required this.musculoIdLocal,
+    required this.editandoLocal,
+    required this.nomeMusculoLocal,
+    required this.urlLocal
   }
   );
 
@@ -62,18 +93,18 @@ class _ExerciciosListarVariacoesState extends State<ExerciciosListarVariacoes> {
 
     try{
 
-      Map<String, dynamic> result = await Graphql.obterVariacoesExercicio(exercicioIdLocal);
+      Map<String, dynamic> result = await Graphql.obterVariacoesExercicio(exercicioIdLocal, 1);
 
       print("aqui");
       
 
-      if (result['obterVariacoes'].length > 0) {
+      if (result['obterVariacoesExerciciosPorExercicio'].length > 0) {
         print("Resultado buscado");
 
         setState(() {
           loading = false;
           termoMaiorTres = false;
-          variacoes = result['obterVariacoes'];
+          variacoes = result['obterVariacoesExerciciosPorExercicio'];
         });
 
       } else {
@@ -216,6 +247,29 @@ class _ExerciciosListarVariacoesState extends State<ExerciciosListarVariacoes> {
             SizedBox(
               height: 5,
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                color: Colors.black,
+                child: Center(
+                  //padding: const EdgeInsets.fromLTRB(10.0, 10.0, 6.5, 10.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      'Variações do $nomeExercicioLocal',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white
+                      ),
+                    )
+                  ),
+                ),
+              ),
+            ),
             loading ? indicadorProgresso() : widgetListaRolagem(),
             SizedBox(
               height: 2,
@@ -229,6 +283,25 @@ class _ExerciciosListarVariacoesState extends State<ExerciciosListarVariacoes> {
                   children: [
                     RaisedButton(
                       onPressed: () async {
+                        var tela = Navigator.push(
+                          context, MaterialPageRoute(
+                            builder: (context) => ExerciciosNovaVariacao(
+                              personalIdGlobal: personalIdLocal,
+                              editandoGlobal: false,
+                              exercicioIdGlobal: exercicioIdLocal,
+                              musculoIdGlobal: musculoIdLocal,
+                              nomeExercicioGlobal: nomeExercicioLocal,
+                              nomeMusculoGlobal: nomeMusculoLocal,
+                              urlGlobal: urlLocal,
+                            )
+                          )
+                        );
+
+                        if(tela == 1){
+                          setState(() {
+                            _variacoes();
+                          });
+                        }
                       },
                       color: Colors.black,
                       child: Text(

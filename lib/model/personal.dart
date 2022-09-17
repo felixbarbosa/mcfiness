@@ -8,6 +8,7 @@ class Personal {
   String? email;
   int? idade;
   String? cref;
+  String? foto;
 
   Personal(
       {
@@ -20,6 +21,7 @@ class Personal {
         this.login,
         this.senha,
         this.sexo,
+        this.foto
       }
   );
 }
