@@ -17,6 +17,7 @@ class Home_Page_Professor extends StatefulWidget {
   final String nomeUsuarioGlobal;
   final String documentoUsuarioGlobal;
   final String fotoGlobal;
+  final String senhaGlobal;
 
   const Home_Page_Professor({
     Key? key,
@@ -24,7 +25,8 @@ class Home_Page_Professor extends StatefulWidget {
     required this.idUsuarioGlobal,
     required this.nomeUsuarioGlobal,
     required this.documentoUsuarioGlobal,
-    required this.fotoGlobal
+    required this.fotoGlobal,
+    required this.senhaGlobal
     
   }) : super(key: key);
 
@@ -34,7 +36,8 @@ class Home_Page_Professor extends StatefulWidget {
     idUsuarioLocal: idUsuarioGlobal,
     isPersonalLocal: isPersonalGlobal,
     nomeUsuarioLocal: nomeUsuarioGlobal,
-    fotoLocal: fotoGlobal
+    fotoLocal: fotoGlobal,
+    senhaLocal: senhaGlobal
   );
 }
 
@@ -47,6 +50,7 @@ class _Homemodulestate extends State<Home_Page_Professor> {
   final String nomeUsuarioLocal;
   final String documentoUsuarioLocal;
   final String fotoLocal;
+  final String senhaLocal;
 
   _Homemodulestate(
     {
@@ -54,7 +58,8 @@ class _Homemodulestate extends State<Home_Page_Professor> {
       required this.idUsuarioLocal, 
       required this.nomeUsuarioLocal, 
       required this.documentoUsuarioLocal,
-      required this.fotoLocal
+      required this.fotoLocal,
+      required this.senhaLocal
     }
   );
 
@@ -292,9 +297,7 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                   ),
                   UsuarioPerfil(
                     usuarioGlobal: idUsuarioLocal,
-                    usuarioNomeGlobal: nomeUsuarioLocal,
-                    fotoGlobal: fotoLocal,
-                    crefGlobal: documentoUsuarioLocal,
+                    isPersonalGlobal: true,
                   ),
                 ],
               ),

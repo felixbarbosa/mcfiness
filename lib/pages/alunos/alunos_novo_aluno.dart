@@ -124,7 +124,6 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
         personal: professorIdLocal,
         idade: idade,
         sexo: generoSelecionado,
-        objetivo: 1
       ));
 
       if (result['salvarAluno']['id'] > 0) {

@@ -112,6 +112,7 @@ class _LoginState extends State<Login> {
                   isPersonalGlobal: isPersonal,
                   nomeUsuarioGlobal: nomeUsuarioLocal,
                   fotoGlobal: fotoLocal,
+                  senhaGlobal: senha.text,
                 );
 
               }else{

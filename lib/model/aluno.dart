@@ -8,7 +8,7 @@ class Aluno {
   String? email;
   int? idade;
   int? personal;
-  int? objetivo;
+  String? foto;
 
   Aluno(
       {
@@ -21,7 +21,7 @@ class Aluno {
         this.login,
         this.senha,
         this.sexo,
-        this.objetivo
+        this.foto
       }
   );
 }

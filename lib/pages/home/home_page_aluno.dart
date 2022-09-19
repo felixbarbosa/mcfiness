@@ -7,6 +7,7 @@ import 'package:mcfitness/pages/exercicios/exercicios_listar_musculos.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/treinos/treinos_listar_treino.dart';
 import 'package:badges/badges.dart';
+import 'package:mcfitness/pages/usuario/usuario_perfil.dart';
 
 import 'widgets/home_button_widget.dart';
 
@@ -390,6 +391,10 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
                         },
                       ),*/
                     ],
+                  ),
+                  UsuarioPerfil(
+                    usuarioGlobal: idUsuarioLocal,
+                    isPersonalGlobal: false,
                   ),
                 ],
               ),
