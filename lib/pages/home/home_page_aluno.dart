@@ -3,6 +3,7 @@ import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_alunos.dart';
 import 'package:mcfitness/pages/anamnese/anamnese_nova_anamnese.dart';
 import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.dart';
+import 'package:mcfitness/pages/carga/carga_listar_musculos.dart';
 import 'package:mcfitness/pages/exercicios/exercicios_listar_musculos.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/treinos/treinos_listar_treino.dart';
@@ -55,6 +56,7 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
   );
 
   bool anamnesePreenchida = false;
+  int personalIdLocal = 0;
 
   
 
@@ -85,6 +87,42 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
         setState(() {
           anamnesePreenchida = false;
         });
+      }
+
+    }catch(erro){
+
+      print("Erro = ${erro.toString()}");
+
+    }
+
+    
+  }
+
+  Future<void> _obterAlunoPorId() async {
+
+    try{
+
+      Map<String, dynamic> result = await Graphql.obterAlunoPorId(idUsuarioLocal);
+
+      print("aqui");
+      
+
+      if (result['obterAlunoPorId']['id'] >= 0) {
+        print("Resultado buscado");
+
+        personalIdLocal = result['obterAlunoPorId']['personal']['id'];
+
+        Navigator.push(
+          context, MaterialPageRoute(
+            builder: (context) => CargaListarMusculos(
+              alunoIdGlobal: idUsuarioLocal,
+              personalIdGlobal: personalIdLocal,
+            )
+          )
+        );
+
+      } else {
+
       }
 
     }catch(erro){
@@ -261,6 +299,9 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
                             );
 
                           }else{
+
+                            _obterAlunoPorId();
+
 
                           }
                           

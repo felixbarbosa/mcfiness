@@ -135,11 +135,7 @@ class Graphql {
           series,
           repeticoes,
           descanso,
-          velocidade,
-          variacaoExercicio{
-            id,
-            descricao
-          },
+          velocidade
         }
       }
       '''),
@@ -328,6 +324,80 @@ class Graphql {
           exercicio{
             id,
             descricao
+          },
+          data
+        }
+      }
+      '''),
+      variables: {
+        "aluno": alunoId,
+        "exercicio": exercicioId
+      },
+    ));
+    if(result.isLoading){
+      print("Carregando...");
+    }
+    if (result.hasException) {
+      throw result.exception!;
+      //return null;
+    } else {
+      return result.data!;
+    }
+  }
+
+  static Future<Map<String, dynamic>> obterPrimeiraCargaPorAlunoPorExercicio(int alunoId, int exercicioId) async {
+    GraphQLClient client = getClient();
+    QueryResult result = await client.query(QueryOptions(
+      document: gql(r'''
+      query($aluno: Int!, $exercicio: Int!){
+        cargaInicial: obterPrimeiraCargaPorAlunoPorExercicio(aluno: $aluno, exercicio:$exercicio){
+          id,
+          carga,
+          aluno{
+            id,
+            nome
+          },
+          exercicio{
+            id,
+            descricao,
+            urlImagem
+          },
+          data
+        }
+      }
+      '''),
+      variables: {
+        "aluno": alunoId,
+        "exercicio": exercicioId
+      },
+    ));
+    if(result.isLoading){
+      print("Carregando...");
+    }
+    if (result.hasException) {
+      throw result.exception!;
+      //return null;
+    } else {
+      return result.data!;
+    }
+  }
+
+  static Future<Map<String, dynamic>> obterUltimaCargaPorAlunoPorExercicio(int alunoId, int exercicioId) async {
+    GraphQLClient client = getClient();
+    QueryResult result = await client.query(QueryOptions(
+      document: gql(r'''
+      query($aluno: Int!, $exercicio: Int!){
+        cargaAtual: obterUltimaCargaPorAlunoPorExercicio(aluno: $aluno, exercicio:$exercicio){
+          id,
+          carga,
+          aluno{
+            id,
+            nome
+          },
+          exercicio{
+            id,
+            descricao,
+            urlImagem
           },
           data
         }
@@ -650,7 +720,11 @@ class Graphql {
           nome,
           cpf,
           foto,
-          senha
+          senha,
+          personal{
+            id,
+            nome
+          }
         }
       }
       '''),
