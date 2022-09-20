@@ -11,6 +11,7 @@ import 'package:mcfitness/store/login_store.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+enum SingingCharacter { personal, aluno }
 
 class Login extends StatefulWidget {
 
@@ -27,6 +28,8 @@ class _LoginState extends State<Login> {
   final login = TextEditingController();
   final senha = TextEditingController();
 
+  SingingCharacter? _character;
+
   
   String dia = "0";
   String mes = "0";
@@ -37,7 +40,9 @@ class _LoginState extends State<Login> {
   bool _isPasswordObscure = true;
   bool _saveLogin = false;
   bool primeiroAcesso = false;
+  bool selecionouUsuario = false;
   bool isPersonal = false;
+  bool isAluno = false;
   int idUsuarioLocal = 0;
   String nomeUsuarioLocal = "";
   String fotoLocal = "";
@@ -208,13 +213,12 @@ class _LoginState extends State<Login> {
         width: MediaQuery.of(context).size.width, //Pegar a largura da tela quando usamos o SingleChildScrollView
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue[400]!,
-              Colors.grey,
-            ],
+          image: DecorationImage(
+            image: AssetImage(
+              "assets/login_background.jpg"
+            ),
+            fit: BoxFit.cover,
+            opacity: 0.6
           )
         ),
         child: SingleChildScrollView(
@@ -231,7 +235,10 @@ class _LoginState extends State<Login> {
                     alignment: Alignment.bottomCenter,
                     child: Text(
                       context.read<User>().versao!,
-                      style: const TextStyle(fontWeight: FontWeight.w300),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white
+                      ),
                     ),
                   ),
                 ),
@@ -239,213 +246,342 @@ class _LoginState extends State<Login> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.18,
                   ),
-                  /*SizedBox(
-                    height: 70,
-                    child: Image.asset("assets/wisell_logo.png"),
-                  ),*/
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Text(
-                    "Muscle Fitness",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 33.0,
-                      color: Color(0xff3c4f9d),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 70.0,
-                    ),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        'MC Fitness',
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(
                     height: 40,
                   ),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    child: TextFormField(
-                      controller: login,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black
+                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.black.withOpacity(0.7),
                       ),
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        prefixIcon: Icon(
-                          Icons.account_circle,
-                          color: Colors.black
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0)
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(50.0)
-                        ),
-                        hintText: "Login",
-                        hintStyle: TextStyle(
-                          color: Colors.grey
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 5.0),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    child: TextFormField(
-                      obscureText: _isPasswordObscure,
-                      controller: senha,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black
-                      ),
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        prefixIcon: Icon(
-                          Icons.password,
-                          color: Colors.black
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0)
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(50.0)
-                        ),
-                        hintText: "Senha",
-                        hintStyle: TextStyle(
-                          color: Colors.grey
-                        ),
-                        suffixIcon: IconButton(
-                          splashRadius: 25.0,
-                          onPressed: () => setState(
-                              () => _isPasswordObscure = !_isPasswordObscure),
-                          icon: Icon(
-                            _isPasswordObscure
-                                ? Icons.visibility_off_rounded
-                                : Icons.visibility_rounded,
-                            color: Theme.of(context).disabledColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Observer(
-                          builder: (_) => Switch(
-                            activeColor: Colors.blue[400],
-                            value: _store.saveCredentials, //_saveLogin, 
-                            onChanged: (_) => _store.toggleSaveCredentials(), //_saveLogin = !_saveLogin 
-                          ),
-                        ),
-                        const Text(
-                          'Lembrar login',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black
-                          )
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                          },
-                          child: const Text(
-                            'Recuperar senha',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: MaterialButton(
-                      shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(17.0)),
-                      color: Colors.blue[400],
-                      textColor: Colors.white,
-                      minWidth: double.infinity,
-                      height: 42,
-                      onPressed: () {
-
-                        if(!clicouEntrar && RegExp(
-                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                          .hasMatch(login.text)){
-                          _login();
-                        }else{
-                          print("Email inválido");
-                        }
-
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          "Entrar",
-                          style: TextStyle(
-                            fontSize: 17.0,
-                            color: Colors.black
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child:  MaterialButton(
-                        shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(17.0)),
-                        color: Colors.blue[400],
-                        textColor: Colors.white,
-                        minWidth: double.infinity,
-                        height: 42,
-                        onPressed: () {
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => Professor_novo_professor(
-                                alunoIdGlobal: 1,
-                                alunoNomeGlobal: "",
+                      child: selecionouUsuario ? 
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                        child: Column(
+                          children: [
+                            const Text(
+                              "Muscle Fitness",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 33.0,
+                                color: Color(0xff3c4f9d),
                               ),
                             ),
-                          );
-                          
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(
-                            "Criar Conta",
-                            style: TextStyle(
-                              fontSize: 17.0,
-                              color: Colors.black
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 70.0,
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Text(
+                                  'MC Fitness',
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                  child: Text(
+                                    "Login",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                              child: TextFormField(
+                                controller: login,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                                  prefixIcon: Icon(
+                                    Icons.account_circle,
+                                    color: Colors.white
+                                  ),
+                                  //fillColor: Colors.white,
+                                  //filled: true,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0)
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50.0)
+                                  ),
+                                  hintText: "Login",
+                                  hintStyle: TextStyle(
+                                    color: Colors.white
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 5.0),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                  child: Text(
+                                    "Senha",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                              child: TextFormField(
+                                obscureText: _isPasswordObscure,
+                                controller: senha,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  prefixIcon: Icon(
+                                    Icons.password,
+                                    color: Colors.white
+                                  ),
+                                  //fillColor: Colors.white,
+                                  //filled: true,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0)
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50.0)
+                                  ),
+                                  hintText: "Senha",
+                                  hintStyle: TextStyle(
+                                    color: Colors.white
+                                  ),
+                                  suffixIcon: IconButton(
+                                    splashRadius: 25.0,
+                                    onPressed: () => setState(
+                                        () => _isPasswordObscure = !_isPasswordObscure),
+                                    icon: Icon(
+                                      _isPasswordObscure
+                                          ? Icons.visibility_off_rounded
+                                          : Icons.visibility_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Observer(
+                                    builder: (_) => Switch(
+                                      activeColor: Colors.blue[400],
+                                      value: _store.saveCredentials, //_saveLogin, 
+                                      onChanged: (_) => _store.toggleSaveCredentials(), //_saveLogin = !_saveLogin 
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Lembrar login',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white
+                                    )
+                                  ),
+                                  const Spacer(),
+                                  GestureDetector(
+                                    onTap: () {
+                                    },
+                                    child: const Text(
+                                      'Recuperar senha',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: MaterialButton(
+                                shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(17.0)),
+                                color: Colors.blue[400],
+                                textColor: Colors.white,
+                                minWidth: double.infinity,
+                                height: 42,
+                                onPressed: () {
+
+                                  if(!clicouEntrar && RegExp(
+                                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                    .hasMatch(login.text)){
+                                    _login();
+                                  }else{
+                                    print("Email inválido");
+                                  }
+
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Text(
+                                    "Entrar",
+                                    style: TextStyle(
+                                      fontSize: 17.0,
+                                      color: Colors.black
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            isPersonal ?
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child:  MaterialButton(
+                                  shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(17.0)),
+                                  color: Colors.blue[400],
+                                  textColor: Colors.white,
+                                  minWidth: double.infinity,
+                                  height: 42,
+                                  onPressed: () {
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => Professor_novo_professor(
+                                          alunoIdGlobal: 1,
+                                          alunoNomeGlobal: "",
+                                        ),
+                                      ),
+                                    );
+                                    
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text(
+                                      "Criar Conta",
+                                      style: TextStyle(
+                                        fontSize: 17.0,
+                                        color: Colors.black
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ) : Container()
+                          ],
+                        ),
+                      ) : 
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height/3,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 60),
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Muscle Fitness",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 33.0,
+                                  color: Color(0xff3c4f9d),
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 70.0,
+                                ),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Text(
+                                    'MC Fitness',
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                      Radio<SingingCharacter>(
+                                        value: SingingCharacter.personal,
+                                        groupValue: _character,
+                                        onChanged: (SingingCharacter? value) {
+                                          setState(() {
+                                            print("Personal Ativo");
+                                            isAluno = false;
+                                            isPersonal = true;
+                                            selecionouUsuario = true;
+                                            _character = value;
+                                          });
+                                        },
+                                      ),
+                                      Text(
+                                        "Personal",
+                                        style: TextStyle(
+                                          color: Colors.white
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Radio<SingingCharacter>(
+                                        value: SingingCharacter.aluno,
+                                        groupValue: _character,
+                                        onChanged: (SingingCharacter? value) {
+                                          setState(() {
+                                            print("Aluno Ativo");
+                                            isAluno = true;
+                                            isPersonal = false;
+                                            selecionouUsuario = true;
+                                            _character = value;
+                                          });
+                                        },
+                                      ),
+                                      Text(
+                                        "Aluno",
+                                        style: TextStyle(
+                                          color: Colors.white
+                                        ),
+                                      )
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

@@ -92,6 +92,8 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
       loading = true;
     });
 
+    print("Exercicio id = $exercicioIdLocal");
+
     try{
 
       Map<String, dynamic> result = await Graphql.obterPrimeiraCargaPorAlunoPorExercicio(
@@ -108,7 +110,7 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
         setState(() {
           dataInicio = result['cargaInicial']['data'];
           cargaInicio = result['cargaInicial']['carga'];
-          urlExercicio = result['cargaInicial']['exercicio']['urlImagem'];
+          urlExercicio = result['cargaInicial']['exercicio']['urlImagem'] == null ? "" : result['cargaInicial']['exercicio']['urlImagem'];
           _cargaAtualExercicioPorAluno();
         });
 
@@ -134,12 +136,10 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
 
     }catch(erro){
 
-      print("Erro = ${erro.toString()}");
-
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Erro na base de dados'),
+          title: const Text('Nenhuma carga registrada nesse exercicio!'),
           actions: [
             TextButton(
               onPressed: () {
@@ -153,6 +153,13 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
           ],
         )
       );
+
+      setState(() {
+        cargaAtual = "-";
+        cargaInicio = "-";
+        dataAtual = "--/--/----";
+        dataInicio = "--/--/----";
+      });
 
     }
     
@@ -505,7 +512,8 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
                                             width: MediaQuery.of(context).size.width/6,
                                             height: 50,
                                             padding: EdgeInsets.all(2.0),
-                                            decoration: BoxDecoration(
+                                            decoration: urlExercicio != "" ? 
+                                            BoxDecoration(
                                               image: DecorationImage(
                                                 image: AssetImage(
                                                   urlExercicio
@@ -517,6 +525,13 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
                                                 bottomLeft: Radius.circular(4.0)
                                               ),
                                               color: Colors.white
+                                            ) : 
+                                            BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(4.0),
+                                                bottomLeft: Radius.circular(4.0)
+                                              ),
+                                              color: Colors.blue
                                             ),
                                           ),
                                           SizedBox(
@@ -524,7 +539,7 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
                                           ),
                                           Flexible(
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
                                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                 children: [
                                                   Text(
@@ -532,33 +547,61 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
                                                     overflow: TextOverflow.fade,                          
                                                     style: TextStyle(
                                                       color: Colors.black,
-                                                      fontSize: 13.0,
+                                                      fontSize: 18.0,
                                                       fontWeight: FontWeight.bold
                                                     ),
                                                   ),
                                                   SizedBox(
                                                     height: 12,
                                                   ),
-                                                  Text(
-                                                    dataInicio,  
-                                                    overflow: TextOverflow.fade,                          
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 13.0,
-                                                      fontWeight: FontWeight.bold
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 12,
-                                                  ),
-                                                  Text(
-                                                    "${cargaAtual}Kg",  
-                                                    overflow: TextOverflow.fade,                          
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 13.0,
-                                                      fontWeight: FontWeight.bold
-                                                    ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: [
+                                                      Column(
+                                                        children: [
+                                                          Text(
+                                                            dataInicio,  
+                                                            overflow: TextOverflow.fade,                          
+                                                            style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontSize: 13.0,
+                                                              fontWeight: FontWeight.bold
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            "${cargaInicio}Kg",  
+                                                            overflow: TextOverflow.fade,                          
+                                                            style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontSize: 13.0,
+                                                              fontWeight: FontWeight.bold
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Column(
+                                                        children: [
+                                                          Text(
+                                                            dataAtual,  
+                                                            overflow: TextOverflow.fade,                          
+                                                            style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontSize: 13.0,
+                                                              fontWeight: FontWeight.bold
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            "${cargaAtual}Kg",  
+                                                            overflow: TextOverflow.fade,                          
+                                                            style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontSize: 13.0,
+                                                              fontWeight: FontWeight.bold
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
                                                   ),
                                                   SizedBox(
                                                     height: 3,

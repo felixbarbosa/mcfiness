@@ -316,7 +316,7 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
         setState(() {
           linkImage = linkImage;
           nome = result['obterPersonalPorId']['nome'];
-          documento = result['obterPersonalPorId']['documento'];
+          documento = result['obterPersonalPorId']['cref'];
           senhaAtualQuery = result['obterPersonalPorId']['senha'];
           linkImage = result['obterPersonalPorId']['foto'];
           clicouSalvar = false;
@@ -519,6 +519,7 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
   void initState() {
     super.initState();
     if(widget.isPersonalGlobal){
+      print("É Personal, e o id = ${widget.usuarioGlobal}");
       _obterPersonal();
     }else{
       _obterAluno();

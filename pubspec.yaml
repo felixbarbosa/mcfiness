@@ -147,6 +147,7 @@ flutter:
    - assets/medicao_panturrilha.png
    - assets/medicao_peitoral.jpg
    - assets/medicao_quadril.jpg
+   - assets/login_background.jpg
    - assets/medicoes_avaliacao_fisica.webp
 
   # To add assets to your application, add an assets section, like this:
