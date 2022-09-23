@@ -145,7 +145,7 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Padding(
+      /*floatingActionButton: Padding(
         padding: const EdgeInsets.fromLTRB(8, 8, 8, 60),
         child: FloatingActionButton(
           onPressed: () async {
@@ -165,7 +165,7 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
             Icons.add
           ),
         )
-      ),
+      ),*/
         appBar: AppBar(
           title: Column(
             children: [
@@ -190,16 +190,63 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
         body: Container(
-          child: Column(children: [
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black,
+                Color.fromARGB(255, 132, 136, 139)
+              ],
+            )
+            //color: Colors.black
+          ),
+          child: Column(
+            children: [
             SizedBox(
               height: 5,
             ),
-            loading ? indicadorProgresso() : widgetListaRolagem(),
+            Container(
+              height: MediaQuery.of(context).size.height/1.235,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Container(
+                    height: 70,
+                    width: 70,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      image: DecorationImage(
+                        image: NetworkImage("https://i.pinimg.com/originals/1e/87/e8/1e87e8692e5b90f57eba7f6919e8442f.png"),
+                        fit: BoxFit.fill
+                      )
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+                    child: Text(
+                      'Aluno(a): Victor Barbosa',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(
               height: 2,
             ),

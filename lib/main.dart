@@ -22,7 +22,7 @@ Future<void> main() async {
 
   runApp(
     Provider(
-      create: (_) => User(versao: 'V1.20220919.1930'/*packageInfo.version*/),
+      create: (_) => User(versao: 'V1.20220922.1930'/*packageInfo.version*/),
       child: App(),
     )
   );
