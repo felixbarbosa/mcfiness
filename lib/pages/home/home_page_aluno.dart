@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
-import 'package:mcfitness/pages/alunos/alunos_listar_alunos.dart';
 import 'package:mcfitness/pages/anamnese/anamnese_nova_anamnese.dart';
 import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.dart';
 import 'package:mcfitness/pages/carga/carga_listar_musculos.dart';
-import 'package:mcfitness/pages/exercicios/exercicios_listar_musculos.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/treinos/treinos_listar_treino.dart';
-import 'package:badges/badges.dart';
 import 'package:mcfitness/pages/usuario/usuario_perfil.dart';
 
 import 'widgets/home_button_widget.dart';
@@ -139,7 +136,6 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
     super.initState();
 
     _buscarAnamnesePorAluno();
-    
     
   }
 
@@ -371,66 +367,6 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
                         icon: Icons.analytics,
                         buttonName: 'Feedbacks',
                       )
-                      /*HomeButtonWidget(
-                        icon: Icons.real_estate_agent,
-                        buttonName: 'Preços e Promoções',
-                        onPressed: () {
-                        },
-                      ),
-                      HomeButtonWidget(
-                        icon: Icons.thumb_up,
-                        buttonName: 'Recomendações',
-                        onPressed: () {
-
-                          
-                        }
-                      ),
-                      HomeButtonWidget(
-                        icon: Icons.people,
-                        buttonName: 'Clientes',
-                        onPressed: () {
-
-                          
-                        }
-                      ),
-                      HomeButtonWidget(
-                        icon: Icons.event,
-                        buttonName: 'Agenda de Vendas',
-                        onPressed: () {
-
-                          
-                        }
-                      ),
-                      HomeButtonWidget(
-                        icon: Icons.lens_blur,
-                        buttonName: 'Produtos',
-                        onPressed: (){
-                        },
-                      ),
-                      HomeButtonWidget(
-                        icon: Icons.reduce_capacity,
-                        buttonName: 'Entidades Jurídicas',
-                        onPressed: () {
-
-                          
-                        }
-                      ),
-                      HomeButtonWidget(
-                        icon: Icons.reduce_capacity,
-                        buttonName: 'Fornecedores',
-                        onPressed: (){
-                        },
-                      ),
-                      const HomeButtonWidget(
-                        icon: Icons.reduce_capacity,
-                        buttonName: 'Trade Marketing',
-                      ),
-                      HomeButtonWidget(
-                        icon: Icons.lens_blur,
-                        buttonName: 'Vendedores',
-                        onPressed: (){
-                        },
-                      ),*/
                     ],
                   ),
                   UsuarioPerfil(

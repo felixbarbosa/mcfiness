@@ -55,30 +55,17 @@ class _AlunosListarTreinoNomeState extends State<AlunosListarTreinoNome> {
     }
   );
 
-  SingingCharacter? _character = SingingCharacter.nome;
-
-  final _formKey = GlobalKey<FormState>();
-  final termo = TextEditingController();
-
-  String clienteQueryId = "";
-  String pedidoId = "";
-  String status = "";
-  //String responsavelId = "Pegar id do usuario logado";
-  double valorMetaQuery = 0.0;
-  String abertura = "";
-  String fechamento = "";
-  String clienteNome = "";
   String urlImagemLocal = "";
   String musculoNomeLocal = "";
   String nomeTreino = "";
   String diaSemanaDia = "";
+
   int diaSemanaId = 0;
   int objetivoLocal = 0;
-  //String entidadeIdQuery = entidadeId; 
+  int idSelecionado = 0;
 
   bool loading = false;
   bool treinoSelecionado = false;
-  int idSelecionado = 0;
   bool isButtonDisable = false;
 
   List treinos = [];
@@ -154,115 +141,6 @@ class _AlunosListarTreinoNomeState extends State<AlunosListarTreinoNome> {
 
     
   }
-
-  /*Future<void> _vender() async {
-
-    setState(() {
-      loading = true;
-    });
-
-    String dia = "0";
-    String mes = "0";
-    String ano = "0";
-
-    dia = DateTime.now().day.toString();
-    mes = DateTime.now().month.toString();
-    ano = DateTime.now().year.toString();
-
-    if(dia.length < 2){
-      dia = "0" + DateTime.now().day.toString();
-    }
-
-    if(mes.length < 2){
-      mes = "0" + DateTime.now().month.toString();
-    }
-
-    abertura = ano + "-" + mes + "-" + dia;
-    fechamento = abertura;
-
-    Map<String, dynamic> result = await Graphql.criarPedido(PedidoVenda(
-      id: 0,
-      cliente: idSelecionado,
-      responsavel: usuarioId,
-      status: 1,
-      abertura: abertura,
-      fechamento: fechamento,
-      fase: 1,
-      valorPedido: 0.0,
-      valorMeta: valorMetaQuery,
-      entidade: entidadeId,
-    ));
-
-    Map<String, dynamic> resultPrecoVenda = await Graphql.pedidos_venda_por_cliente(ItemPedidoVendaCliente(
-      cliente: idSelecionado,
-      entidade: entidadeId,
-    ));
-
-    print("aqui");
-
-    int count = 0;
-    double valorPedido = 0.0;
-
-    if (result['pedido'].length > 0) {
-      print("Resultado buscado");
-
-      setState(() {
-        loading = false;
-        termoMaiorTres = false;
-      });
-
-      pedidoId = result['pedido']['id'];
-      if(result['pedido']['status']['descricao'] == null){
-        status = "-";
-      }else{
-        status = result['pedido']['status']['descricao'];
-      }
-
-      while(count < resultPrecoVenda.length){
-
-        if(resultPrecoVenda['pedidosCliente'][count]['id'] == pedidoId){
-          valorPedido = resultPrecoVenda['pedidosCliente'][count]['valorPedido'];
-          break;
-        }else{
-          count++;
-        }
-
-      }
-
-      var tela = await Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-        SalePageProdutos(
-          entidadeGlobal: entidadeId, 
-          pedidoGlobal: pedidoId, 
-          usuarioGlobal: usuarioId,
-          statusGlobal: status,
-          clienteGlobal: idSelecionado,
-          usuarioNomeGlobal: usuarioNomeLocal,
-        )
-      ));
-
-      if(tela == 1){
-        setState(() {
-          loading = false;
-        });
-      }
-
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Não foi possivel criar um pedido'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Fechar'),
-            ),
-          ],
-        )
-      );
-    }
-
-    
-  }*/
 
   @override
   void initState() {
@@ -466,13 +344,11 @@ class _AlunosListarTreinoNomeState extends State<AlunosListarTreinoNome> {
                                           nomeTreino = treinos[index]['nome'];
                                           diaSemanaId = treinos[index]['diaSemana']['id'];
                                           diaSemanaDia = treinos[index]['diaSemana']['dia'];
-                                          //objetivoLocal = treinos[index]['objetivo']['id'];
                                         }
                                         
                                       });
                                   },
                                   child: Container(
-                                      //height: 70,
                                       width: MediaQuery.of(context).size.width/1.127,
                                       decoration: BoxDecoration(
                                         color: (treinoSelecionado && idSelecionado == treinos[index]['musculoAlvo']['id']) ? Colors.blue[400] : Colors.white,
@@ -483,7 +359,6 @@ class _AlunosListarTreinoNomeState extends State<AlunosListarTreinoNome> {
                                           bottomLeft: Radius.circular(4.0)
                                         )
                                       ),
-                                      //padding: EdgeInsets.all(2.0),
                                       padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                                       child: IntrinsicHeight(
                                         child: Row(

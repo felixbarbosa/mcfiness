@@ -46,31 +46,17 @@ class _AlunosListarTreinoState extends State<AlunosListarTreino> {
     }
   );
 
-  SingingCharacter? _character = SingingCharacter.nome;
-
-  final _formKey = GlobalKey<FormState>();
-  final termo = TextEditingController();
-
-  String clienteQueryId = "";
-  String pedidoId = "";
-  String status = "";
-  //String responsavelId = "Pegar id do usuario logado";
-  double valorMetaQuery = 0.0;
-  String abertura = "";
-  String fechamento = "";
-  String clienteNome = "";
   String urlImagemLocal = "";
   String musculoNomeLocal = "";
   String nomeTreino = "";
   String diaSemanaDia = "";
+  String idSelecionado = "";
+
   int diaSemanaId = 0;
   int objetivoLocal = 0;
-  //String entidadeIdQuery = entidadeId; 
 
   bool loading = false;
   bool treinoSelecionado = false;
-  String idSelecionado = "";
-  bool isButtonDisable = false;
 
   List treinos = [];
 
@@ -161,49 +147,6 @@ class _AlunosListarTreinoState extends State<AlunosListarTreino> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*floatingActionButton: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 60),
-        child: SpeedDial(
-          animatedIcon: AnimatedIcons.menu_home,
-          animatedIconTheme: IconThemeData(
-            size: 22,
-            color: Colors.white
-          ),
-          curve: Curves.bounceIn,
-          children: [
-            SpeedDialChild(
-              child: Icon(
-                Icons.shop,
-                color: Colors.white,
-              ),
-              backgroundColor: CustomColorTheme.primaryColor,
-              onTap: () async { 
-
-                var tela = await Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => ClientesListarCanaisVendas(
-                    entidadeGlobal: entidadeId, 
-                    usuarioGlobal: usuarioId,
-                    usuarioNomeGlobal: usuarioNomeLocal,
-                    )));
-
-                if(tela == 1){
-                  setState(() {
-                    _treinosAluno();
-                  });
-                }
-
-              },
-              label: 'Canal de Vendas',
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0
-              ),
-              labelBackgroundColor: CustomColorTheme.primaryColor
-            ),
-          ]
-        )
-      ),*/
         appBar: AppBar(
           title: Column(
             children: [

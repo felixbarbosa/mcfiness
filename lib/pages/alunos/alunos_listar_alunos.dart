@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_treino.dart';
-import 'package:mcfitness/pages/alunos/alunos_novo_aluno.dart';
 import 'package:mcfitness/pages/anamnese/anamnese_listar_anamnese.dart';
 import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_listar_avaliacao.dart';
-import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.dart';
 
 enum SingingCharacter { nome, cnpj }
 
@@ -37,30 +35,13 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
     }
   );
 
-  SingingCharacter? _character = SingingCharacter.nome;
-
-  final _formKey = GlobalKey<FormState>();
-  final termo = TextEditingController();
-
-  String clienteQueryId = "";
-  String pedidoId = "";
-  String status = "";
-  //String responsavelId = "Pegar id do usuario logado";
-  double valorMetaQuery = 0.0;
-  String abertura = "";
-  String fechamento = "";
-  String clienteNome = "";
-  //String entidadeIdQuery = entidadeId; 
-
   bool loading = false;
   bool alunoSelecionado = false;
   int idSelecionado = 0;
   String nomeSelecionado = "";
-  bool isButtonDisable = false;
   int objetivoIdLocal = 0;
 
   List alunos = [];
-  List pedido_por_clientes = [];
 
   Future<void> _alunosPorPersonal() async {
 
@@ -145,27 +126,6 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*floatingActionButton: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 60),
-        child: FloatingActionButton(
-          onPressed: () async {
-            var tela = await Navigator.push(
-              context, MaterialPageRoute(
-                builder: (context) => AlunosNovoAluno(
-                  professorIdGlobal: professorIdLocal,
-                )
-              )
-            );
-
-            if(tela == 1){
-              _alunosPorPersonal();
-            }
-          },
-          child: Icon(
-            Icons.add
-          ),
-        )
-      ),*/
         appBar: AppBar(
           title: Column(
             children: [
@@ -269,10 +229,6 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
                               )
                             )
                           );
-
-                          if(tela == 1){
-                            //_alunosPorPersonal();
-                          }
                         }
                       },
                       color: alunoSelecionado ? Colors.black : Colors.grey,
@@ -375,14 +331,12 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
                                           alunoSelecionado = true;
                                           idSelecionado = alunos[index]['id'];
                                           nomeSelecionado = alunos[index]['nome'];
-                                          //objetivoIdLocal = alunos[index]['objetivo']['id'];
                                           print("Objetivo = $objetivoIdLocal");
                                         }
                                         
                                       });
                                   },
                                   child: Container(
-                                      //height: 70,
                                       width: MediaQuery.of(context).size.width/1.127,
                                       decoration: BoxDecoration(
                                         color: (alunoSelecionado && idSelecionado == alunos[index]['id']) ? Colors.blue[400] : Colors.white,
@@ -393,7 +347,6 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
                                           bottomLeft: Radius.circular(4.0)
                                         )
                                       ),
-                                      //padding: EdgeInsets.all(2.0),
                                       padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                                       child: IntrinsicHeight(
                                         child: Row(

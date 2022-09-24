@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mcfitness/graphql/graphql.dart';
@@ -8,7 +7,6 @@ import 'package:mcfitness/pages/home/home_page_professor.dart';
 import 'package:mcfitness/pages/login/controllers/login_controller.dart';
 import 'package:mcfitness/pages/professor/professor_novo_professor.dart';
 import 'package:mcfitness/store/login_store.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 enum SingingCharacter { personal, aluno }
@@ -30,15 +28,11 @@ class _LoginState extends State<Login> {
 
   SingingCharacter? _character;
 
-  
   String dia = "0";
   String mes = "0";
   String ano = "0";
-  String ipLocal = "";
   bool clicouEntrar = false;
-  final bool _isLoading = false;
   bool _isPasswordObscure = true;
-  bool _saveLogin = false;
   bool primeiroAcesso = false;
   bool selecionouUsuario = false;
   bool isPersonal = false;
@@ -47,8 +41,6 @@ class _LoginState extends State<Login> {
   String nomeUsuarioLocal = "";
   String fotoLocal = "";
   String documentoUsuarioLocal = "";
-
-  //ProgressDialog progressDialog;
 
   Future<void> _login() async {
 
@@ -198,11 +190,6 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    /*if (context.read<User>().credentialSaved) {
-      email.text = context.read<User>().email!;
-      //password.text = context.read<User>().password!;
-      _store.toggleSaveCredentials();
-    }*/
     super.initState();
   }
 
@@ -364,8 +351,6 @@ class _LoginState extends State<Login> {
                                     Icons.password,
                                     color: Colors.white
                                   ),
-                                  //fillColor: Colors.white,
-                                  //filled: true,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0)
                                   ),

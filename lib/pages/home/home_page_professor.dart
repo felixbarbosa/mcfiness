@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_alunos.dart';
-import 'package:mcfitness/pages/anamnese/anamnese_nova_anamnese.dart';
-import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.dart';
-import 'package:mcfitness/pages/exercicios/exercicios_listar_musculos.dart';
 import 'package:mcfitness/pages/login/login.dart';
-import 'package:mcfitness/pages/treinos/treinos_listar_treino.dart';
 import 'package:mcfitness/pages/usuario/usuario_perfil.dart';
-
-import 'widgets/home_button_widget.dart';
 
 class Home_Page_Professor extends StatefulWidget {
 
@@ -63,7 +57,6 @@ class _Homemodulestate extends State<Home_Page_Professor> {
     }
   );
 
-  bool anamnesePreenchida = false;
   bool loading = false;
   bool alunoSelecionado = false;
   
@@ -147,37 +140,6 @@ class _Homemodulestate extends State<Home_Page_Professor> {
     
   }
 
-  Future<void> _buscarAnamnesePorAluno() async {
-
-    try{
-
-      Map<String, dynamic> result = await Graphql.obterAnamnesePorAluno(idUsuarioLocal);
-
-      print("aqui");
-      
-
-      if (result['obterAnamnesePorAluno'].length > 0) {
-        print("Resultado buscado");
-
-        setState(() {
-          anamnesePreenchida = true;
-        });
-
-      } else {
-        setState(() {
-          anamnesePreenchida = false;
-        });
-      }
-
-    }catch(erro){
-
-      print("Erro = ${erro.toString()}");
-
-    }
-
-    
-  }
-
   @override
   void initState() {
     super.initState();
@@ -187,20 +149,6 @@ class _Homemodulestate extends State<Home_Page_Professor> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50),
-        child: AppBar(
-          title: Center(
-            child: Text(
-              "MC Fitness",
-              style: TextStyle(
-                fontSize: 30
-              ),
-            ),
-          ),
-          backgroundColor: Color.fromARGB(255, 57, 100, 136),
-        ),
-      ),*/
       body: Container(
         width: MediaQuery.of(context).size.width, //Pegar a largura da tela quando usamos o SingleChildScrollView
         height: MediaQuery.of(context).size.height,
@@ -355,54 +303,6 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                       ),
                     ),
                   ),
-                  /*GridView(
-                    padding: const EdgeInsets.all(10.0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10.0,
-                      mainAxisSpacing: 10.0,
-                      childAspectRatio: 1.4,
-                    ),
-                    children: [
-                      HomeButtonWidget(
-                        notificacao: false,
-                        icon: Icons.person,
-                        buttonName: 'Alunos',
-                        onPressed: () {
-
-                          Navigator.push(
-                            context, MaterialPageRoute(
-                              builder: (context) => AlunosListarAlunos(
-                                professorIdGlobal: 1,
-                              )
-                            )
-                          );
-                          
-                        },
-                      ),
-                      HomeButtonWidget(
-                        notificacao: false,
-                        icon: Icons.sports_gymnastics,
-                        buttonName: 'Exercicios',
-                        onPressed: () {
-
-                          Navigator.push(
-                            context, MaterialPageRoute(
-                              builder: (context) => ExerciciosListarMusculos(
-                                personalIdGlobal: 1,
-                              )
-                            )
-                          );
-                          
-                        },
-                      ),
-                      HomeButtonWidget(
-                        notificacao: false,
-                        icon: Icons.analytics,
-                        buttonName: 'Feedbacks',
-                      )
-                    ],
-                  ),*/
                   UsuarioPerfil(
                     usuarioGlobal: idUsuarioLocal,
                     isPersonalGlobal: true,
