@@ -147,6 +147,36 @@ class _AlunosListarTreinoState extends State<AlunosListarTreino> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Padding(
+        padding: EdgeInsets.fromLTRB(0, 0, 15, 20),
+        child: FloatingActionButton(
+          backgroundColor: Colors.black,
+          onPressed: () async {
+
+            var tela = await Navigator.push(
+              context, MaterialPageRoute(
+                builder: (context) => AlunosNovoTreino(
+                  alunoIdGlobal: alunoIdLocal,
+                  diaSemanaIdGlobal: diaSemanaId,
+                  nomeTreinoGlobal: nomeTreino,
+                  alunoNomeGlobal: alunoNomeLocal,
+                )
+              )
+            );
+
+            if(tela == 1){
+              _treinosAluno();
+              treinoSelecionado = false;
+              idSelecionado = "";
+            }
+
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+        ),
+      ),
         appBar: AppBar(
           title: Column(
             children: [
@@ -171,11 +201,22 @@ class _AlunosListarTreinoState extends State<AlunosListarTreino> {
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
         body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black,
+                Color.fromARGB(255, 132, 136, 139)
+              ],
+            )
+            //color: Colors.black
+          ),
           child: Column(children: [
             SizedBox(
               height: 5,
@@ -186,7 +227,7 @@ class _AlunosListarTreinoState extends State<AlunosListarTreino> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                color: Colors.blue[400],
+                color: Color.fromARGB(255, 132, 136, 139),
                 child: Center(
                   heightFactor: 1.5,
                   child: Text(
@@ -201,75 +242,6 @@ class _AlunosListarTreinoState extends State<AlunosListarTreino> {
             loading ? indicadorProgresso() : widgetListaRolagem(),
             SizedBox(
               height: 2,
-            ),
-            ButtonTheme(
-              child: Container(
-                color: Colors.blue[400],
-                child: ButtonBar(
-                  buttonMinWidth: 100,
-                  alignment: MainAxisAlignment.center,
-                  children: [
-                    RaisedButton(
-                      onPressed: () async {
-                        
-                        var tela = await Navigator.push(
-                          context, MaterialPageRoute(
-                            builder: (context) => AlunosNovoTreino(
-                              alunoIdGlobal: alunoIdLocal,
-                              diaSemanaIdGlobal: diaSemanaId,
-                              nomeTreinoGlobal: nomeTreino,
-                              alunoNomeGlobal: alunoNomeLocal,
-                            )
-                          )
-                        );
-
-                        if(tela == 1){
-                          _treinosAluno();
-                          treinoSelecionado = false;
-                          idSelecionado = "";
-                        }
-                      },
-                      color: Colors.black,
-                      child: Text(
-                        'Novo Treino',
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        if(treinoSelecionado){
-                          Navigator.push(
-                          context, MaterialPageRoute(
-                            builder: (context) => AlunosListarTreinoNome(
-                              alunoIdGlobal: alunoIdLocal,
-                              alunoNomeGlobal: alunoNomeLocal,
-                              treinoNomeGlobal: nomeTreino,
-                              diaSemanaIdGlobal: diaSemanaId,
-                              objetivoIdGlobal: objetivoIdLocal,
-                            )
-                          )
-                        );
-                        }
-                      },
-                      color: treinoSelecionado ? Colors.black : Colors.grey,
-                      child: Text(
-                        'Ver Treino',
-                        style: TextStyle(
-                          color: treinoSelecionado ? Colors.white : Colors.black 
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ]
           ),
@@ -299,6 +271,7 @@ class _AlunosListarTreinoState extends State<AlunosListarTreino> {
                                   padding: EdgeInsets.all(0.0),
                                   onPressed: () {
                                     setState(() {
+                                        
                                         if(idSelecionado == treinos[index]['nome']){
                                           treinoSelecionado = !treinoSelecionado;
                                           idSelecionado = "";
@@ -306,6 +279,17 @@ class _AlunosListarTreinoState extends State<AlunosListarTreino> {
                                           diaSemanaId = 0;
                                           diaSemanaDia = "";
                                         }else{
+                                          Navigator.push(
+                                            context, MaterialPageRoute(
+                                              builder: (context) => AlunosListarTreinoNome(
+                                                alunoIdGlobal: alunoIdLocal,
+                                                alunoNomeGlobal: alunoNomeLocal,
+                                                treinoNomeGlobal: treinos[index]['nome'],
+                                                diaSemanaIdGlobal: treinos[index]['diaSemana']['id'],
+                                                objetivoIdGlobal: objetivoIdLocal,
+                                              )
+                                            )
+                                          );
                                           treinoSelecionado = true;
                                           idSelecionado = treinos[index]['nome'];
                                           nomeTreino = treinos[index]['nome'];

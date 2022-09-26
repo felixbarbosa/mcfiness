@@ -3,13 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mcfitness/model/user.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/services.dart';
-import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.dart';
-import 'package:mcfitness/pages/home/home_page_aluno.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/teste/firebase_options.dart';
-import 'package:mcfitness/pages/teste/storage_page.dart';
-import 'package:mcfitness/pages/teste/teste_camera.dart';
 import 'package:mcfitness/pages/widgets/error_page.dart';
 import 'package:mcfitness/pages/widgets/loading_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -22,7 +17,7 @@ Future<void> main() async {
 
   runApp(
     Provider(
-      create: (_) => User(versao: 'V1.20220922.1930'/*packageInfo.version*/),
+      create: (_) => User(versao: 'V1.20220926.1340'/*packageInfo.version*/),
       child: App(),
     )
   );
@@ -61,7 +56,7 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
         iconTheme: const IconThemeData(color: Colors.blue),
       ),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       home: FutureBuilder(
         future: _inicializacao,
         builder: (context, app) {

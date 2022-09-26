@@ -292,11 +292,22 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<CargaListarExerci
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
         body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black,
+                Color.fromARGB(255, 132, 136, 139)
+              ],
+            )
+            //color: Colors.black
+          ),
           child: Column(children: [
             SizedBox(
               height: 5,
@@ -304,51 +315,6 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<CargaListarExerci
             loading ? indicadorProgresso() : widgetListaRolagem(),
             SizedBox(
               height: 2,
-            ),
-            ButtonTheme(
-              child: Container(
-                color: Colors.blue[400],
-                child: ButtonBar(
-                  buttonMinWidth: 100,
-                  alignment: MainAxisAlignment.center,
-                  children: [
-                    RaisedButton(
-                      onPressed: () async {
-
-                        var tela = await Navigator.push(
-                          context, MaterialPageRoute(
-                            builder: (context) => CargaListarCargas(
-                              personalIdGlobal: personalIdLocal,
-                              exercicioIdGlobal: idSelecionado,
-                              exercicioNomeGlobal: nomeExercicio,
-                              alunoIdGlobal: alunoIdLocal,
-                            )
-                          )
-                        );
-
-                        if(tela == 1){
-                          idSelecionado = 0;
-                          exercicioSelecionado = false;
-                          _exerciciosPorMusculo();
-                        }
-
-                        
-                        
-                      },
-                      color: Colors.black,
-                      child: Text(
-                        'Ver Historico de Carga',
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ]
           ),
@@ -380,7 +346,18 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<CargaListarExerci
                                     setState(() {
                                         if(idSelecionado == exercicios[index]['id']){
                                           exercicioSelecionado = !exercicioSelecionado;
+                                          idSelecionado = 0;
                                         }else{
+                                          Navigator.push(
+                                            context, MaterialPageRoute(
+                                              builder: (context) => CargaListarCargas(
+                                                personalIdGlobal: personalIdLocal,
+                                                exercicioIdGlobal: exercicios[index]['id'],
+                                                exercicioNomeGlobal: exercicios[index]['descricao'],
+                                                alunoIdGlobal: alunoIdLocal,
+                                              )
+                                            )
+                                          );
                                           exercicioSelecionado = true;
                                           idSelecionado = exercicios[index]['id'];
                                           isVariacao = exercicios[index]['isVariacao'];

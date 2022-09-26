@@ -565,7 +565,7 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
@@ -575,15 +575,16 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
             width: MediaQuery.of(context).size.width, //Pegar a largura da tela quando usamos o SingleChildScrollView
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.blue[400]!,
-                  Colors.grey,
-                ],
-              )
-            ),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black,
+                Color.fromARGB(255, 132, 136, 139)
+              ],
+            )
+            //color: Colors.black
+          ),
             child: NotificationListener<ScrollNotification>(
               onNotification: (scrollNotification) {
                 if (scrollNotification.metrics.pixels >= scrollNotification.metrics.maxScrollExtent) {
@@ -606,7 +607,7 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          color: Colors.black,
+                          color: Color.fromARGB(255, 132, 136, 139),
                           child: Center(
                             //padding: const EdgeInsets.fromLTRB(10.0, 10.0, 6.5, 10.0),
                             child: Padding(

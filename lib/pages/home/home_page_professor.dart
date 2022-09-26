@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_alunos.dart';
+import 'package:mcfitness/pages/alunos/alunos_novo_aluno.dart';
+import 'package:mcfitness/pages/exercicios/exercicios_listar_musculos.dart';
 import 'package:mcfitness/pages/login/login.dart';
 import 'package:mcfitness/pages/usuario/usuario_perfil.dart';
 
@@ -183,7 +185,7 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                     ),
                   ),         
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 50, 0, 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -262,7 +264,15 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                                         ),
                                         TextButton(
                                           onPressed: (){
-                                            print("Clicou");
+
+                                            Navigator.push(
+                                              context, MaterialPageRoute(
+                                                builder: (context) => AlunosNovoAluno(
+                                                  professorIdGlobal: idUsuarioLocal,
+                                                )
+                                              )
+                                            );
+                                            
                                           }, 
                                           child: Text(
                                             "+ Aluno",
@@ -282,18 +292,29 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                             SizedBox(
                               height: 50,
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: Colors.black,
-                              ),
-                              height: 30,
-                              width: MediaQuery.of(context).size.width/2,
-                              child: Center(
-                                child: Text(
-                                  "Exercicios",
-                                  style: TextStyle(
-                                    color: Colors.white
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.push(
+                                  context, MaterialPageRoute(
+                                    builder: (context) => ExerciciosListarMusculos(
+                                      personalIdGlobal: idUsuarioLocal,
+                                    )
+                                  )
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.black,
+                                ),
+                                height: 30,
+                                width: MediaQuery.of(context).size.width/2,
+                                child: Center(
+                                  child: Text(
+                                    "Exercicios",
+                                    style: TextStyle(
+                                      color: Colors.white
+                                    ),
                                   ),
                                 ),
                               ),
@@ -362,6 +383,10 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                                   context, MaterialPageRoute(
                                     builder: (context) => AlunosListarAlunos(
                                       professorIdGlobal: idUsuarioLocal,
+                                      alunoFotoGlobal: alunos[index]['foto'] == null ? "https://banner2.cleanpng.com/20180329/lqq/kisspng-computer-icons-person-clip-art-font-5abd6e0bd0e9a2.3426644315223639158557.jpg" : 
+                                      alunos[index]['foto'],
+                                      alunoNomeGlobal: alunos[index]['nome'],
+                                      alunoIdGlobal: alunos[index]['id'],
                                     )
                                   )
                                 );

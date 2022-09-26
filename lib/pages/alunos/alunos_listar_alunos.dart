@@ -1,25 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:mcfitness/graphql/graphql.dart';
 import 'package:mcfitness/pages/alunos/alunos_listar_treino.dart';
+import 'package:mcfitness/pages/alunos/alunos_listar_treino_nome.dart';
+import 'package:mcfitness/pages/alunos/alunos_listar_treinos_musculo.dart';
 import 'package:mcfitness/pages/anamnese/anamnese_listar_anamnese.dart';
+import 'package:mcfitness/pages/anamnese/anamnese_nova_anamnese.dart';
 import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_listar_avaliacao.dart';
+import 'package:mcfitness/pages/avaliacaoFisica/avaliacaoFisica_nova_avaliacao.dart';
+import 'package:mcfitness/pages/carga/carga_listar_cargas.dart';
+import 'package:mcfitness/pages/carga/carga_listar_musculos.dart';
+import 'package:mcfitness/pages/home/widgets/home_button_widget.dart';
+import 'package:mcfitness/pages/treinos/treinos_listar_treino.dart';
+import 'package:mcfitness/pages/treinos/treinos_listar_treinos_dia.dart';
 
 enum SingingCharacter { nome, cnpj }
 
 class AlunosListarAlunos extends StatefulWidget {
 
   final int professorIdGlobal;
+  final int alunoIdGlobal;
+  final String alunoNomeGlobal;
+  final String alunoFotoGlobal;
 
   const AlunosListarAlunos(
     {
       Key? key, 
-      required this.professorIdGlobal, 
+      required this.professorIdGlobal,
+      required this.alunoIdGlobal,
+      required this.alunoNomeGlobal,
+      required this.alunoFotoGlobal
     }
   ) : super(key: key);
 
   @override
   _AlunosListarAlunosState createState() => _AlunosListarAlunosState(
     professorIdLocal: professorIdGlobal, 
+    alunoIdLocal: alunoIdGlobal,
+    alunoNomeLocal: alunoNomeGlobal,
+    alunoFotoLocal: alunoFotoGlobal
   );
 }
 
@@ -28,10 +46,16 @@ bool termoMaiorTres = false;
 class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
 
   final int professorIdLocal;
+  final int alunoIdLocal;
+  final String alunoNomeLocal;
+  final String alunoFotoLocal;
 
   _AlunosListarAlunosState(
     {
-      required this.professorIdLocal, 
+      required this.professorIdLocal,
+      required this.alunoIdLocal,
+      required this.alunoNomeLocal,
+      required this.alunoFotoLocal
     }
   );
 
@@ -169,16 +193,16 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
           child: Column(
             children: [
             SizedBox(
-              height: 5,
+              height: 50,
             ),
             Container(
-              height: MediaQuery.of(context).size.height/1.235,
+              //height: MediaQuery.of(context).size.height/1.235,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 20,
+                    width: 10,
                   ),
                   Container(
                     height: 70,
@@ -186,7 +210,7 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       image: DecorationImage(
-                        image: NetworkImage("https://i.pinimg.com/originals/1e/87/e8/1e87e8692e5b90f57eba7f6919e8442f.png"),
+                        image: NetworkImage(alunoFotoLocal),
                         fit: BoxFit.fill
                       )
                     ),
@@ -195,9 +219,9 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
                     width: 20,
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(20, 25, 0, 0),
                     child: Text(
-                      'Aluno(a): Victor Barbosa',
+                      'Aluno(a): $alunoNomeLocal',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.white
@@ -208,94 +232,256 @@ class _AlunosListarAlunosState extends State<AlunosListarAlunos> {
               ),
             ),
             SizedBox(
-              height: 2,
+              height: 65,
             ),
-            ButtonTheme(
-              child: Container(
-                color: Colors.blue[400],
-                child: ButtonBar(
-                  buttonMinWidth: 100,
-                  alignment: MainAxisAlignment.center,
-                  children: [
-                    RaisedButton(
-                      onPressed: () async {
-                        if(alunoSelecionado){
-                          var tela = await Navigator.push(
-                            context, MaterialPageRoute(
-                              builder: (context) => AlunosListarTreino(
-                                alunoIdGlobal: idSelecionado,
-                                alunoNomeGlobal: nomeSelecionado,
-                                objetivoIdGlobal: objetivoIdLocal,
-                              )
-                            )
-                          );
-                        }
-                      },
-                      color: alunoSelecionado ? Colors.black : Colors.grey,
-                      child: Text(
-                        'Treino',
-                        style: TextStyle(
-                          color: alunoSelecionado ? Colors.white : Colors.black 
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        if(alunoSelecionado){
-                          Navigator.push(
-                            context, MaterialPageRoute(
-                              builder: (context) => AnamneseListarAnamnese(
-                                alunoIdGlobal: idSelecionado,
-                                alunoNomeGlobal: nomeSelecionado
-                              )
-                            )
-                          );
-                        }
-                      },
-                      color: alunoSelecionado ? Colors.black : Colors.grey,
-                      child: Text(
-                        'Anamnese',
-                        style: TextStyle(
-                          color: alunoSelecionado ? Colors.white : Colors.black 
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    RaisedButton(
-                      onPressed: () async {
-
-                        if(alunoSelecionado){
-                          Navigator.push(
-                            context, MaterialPageRoute(
-                              builder: (context) => AvaliacaoFisicaListarAvaliacao(
-                                alunoIdGlobal: idSelecionado,
-                                alunoNomeGlobal: nomeSelecionado
-                              )
-                            )
-                          );
-                        }
-                        
-                      },
-                      color: alunoSelecionado ? Colors.black : Colors.grey,
-                      child: Text(
-                        'Avaliação Fisica',
-                        style: TextStyle(
-                          color: alunoSelecionado ? Colors.white : Colors.black 
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                    ),
-                  ],
+            Expanded(
+              child: GridView(
+                padding: const EdgeInsets.all(10.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0,
+                  childAspectRatio: 1.4,
                 ),
+                children: [
+                  HomeButtonWidget(
+                    icon: Icons.sports_gymnastics,
+                    buttonName: 'Treinos',
+                    notificacao: false,
+                    color: Colors.black,
+                    onPressed: () {
+
+                      Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AlunosListarTreino(
+                                alunoIdGlobal: alunoIdLocal,
+                                alunoNomeGlobal: alunoNomeLocal,
+                                objetivoIdGlobal: 1,
+                              );
+                            } 
+                          )
+                        );
+                      
+                    },
+                  ),
+                  HomeButtonWidget(
+                    icon: Icons.book,
+                    buttonName: 'Avaliações',
+                    notificacao: false,
+                    color: Colors.black,
+                    onPressed: () {
+
+                      Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AvaliacaoFisicaListarAvaliacao(
+                                alunoIdGlobal: alunoIdLocal,
+                                alunoNomeGlobal: alunoNomeLocal,
+                              );
+                            } 
+                          )
+                        );
+                      
+                    },
+                  ),
+                  HomeButtonWidget(
+                    icon: Icons.book,
+                    buttonName: 'Anamnese',
+                    notificacao: false,
+                    color: Colors.black,
+                    onPressed: () {
+
+                      Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AnamneseListarAnamnese(
+                                alunoIdGlobal: alunoIdLocal,
+                                alunoNomeGlobal: alunoNomeLocal,
+                              );
+                            } 
+                          )
+                        );
+                      
+                    },
+                  ),
+                  HomeButtonWidget(
+                    icon: Icons.auto_graph,
+                    buttonName: 'Progressão',
+                    notificacao: false,
+                    color: Colors.black,
+                    onPressed: () {
+
+                      Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return CargaListarMusculos(
+                                alunoIdGlobal: alunoIdLocal,
+                                personalIdGlobal: professorIdLocal,
+                              );
+                            } 
+                          )
+                        );
+                      
+                    },
+                  ),
+                ],
               ),
-            ),
+            )
+            /*Container(
+              width: MediaQuery.of(context).size.width/1.15,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.grey,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    child: GestureDetector(
+                      onTap: (){
+                        print("Clicou");
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AlunosListarTreino(
+                                alunoIdGlobal: alunoIdLocal,
+                                alunoNomeGlobal: alunoNomeLocal,
+                                objetivoIdGlobal: 1,
+                              );
+                            } 
+                          )
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.black,
+                        ),
+                        height: 33,
+                        width: MediaQuery.of(context).size.width/2,
+                        child: Center(
+                          child: Text(
+                            "Treinos",
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    child: GestureDetector(
+                      onTap: (){
+                        print("Clicou");
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AlunosListarTreino(
+                                alunoIdGlobal: alunoIdLocal,
+                                alunoNomeGlobal: alunoNomeLocal,
+                                objetivoIdGlobal: 1,
+                              );
+                            } 
+                          )
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.black,
+                        ),
+                        height: 33,
+                        width: MediaQuery.of(context).size.width/2,
+                        child: Center(
+                          child: Text(
+                            "Avaliações",
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    child: GestureDetector(
+                      onTap: (){
+                        print("Clicou");
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AlunosListarTreino(
+                                alunoIdGlobal: alunoIdLocal,
+                                alunoNomeGlobal: alunoNomeLocal,
+                                objetivoIdGlobal: 1,
+                              );
+                            } 
+                          )
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.black,
+                        ),
+                        height: 33,
+                        width: MediaQuery.of(context).size.width/2,
+                        child: Center(
+                          child: Text(
+                            "Anamnese",
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 30),
+                    child: GestureDetector(
+                      onTap: (){
+                        print("Clicou");
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AlunosListarTreino(
+                                alunoIdGlobal: alunoIdLocal,
+                                alunoNomeGlobal: alunoNomeLocal,
+                                objetivoIdGlobal: 1,
+                              );
+                            } 
+                          )
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.black,
+                        ),
+                        height: 33,
+                        width: MediaQuery.of(context).size.width/2,
+                        child: Center(
+                          child: Text(
+                            "Progressão",
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ),
+                  //widgetRolagemAlunos(),
+                ],
+              ),
+            ),*/
           ]
           ),
         )

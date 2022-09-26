@@ -71,6 +71,7 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
   String documento = "";
   String entidadeId = "";
   String linkImage = "";
+  String linkImageFixo = "";
   String senhaAtualQuery = "";
 
   bool isCheck = false;
@@ -319,6 +320,7 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
           documento = result['obterPersonalPorId']['cref'];
           senhaAtualQuery = result['obterPersonalPorId']['senha'];
           linkImage = result['obterPersonalPorId']['foto'];
+          linkImageFixo = linkImage;
           clicouSalvar = false;
           loading = false;
           loadingFoto = false;
@@ -489,6 +491,7 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
     }else{
       setState(() {
         loadingFoto = false;
+        linkImage = linkImageFixo;
       });
     }
   }
@@ -535,13 +538,14 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: SizedBox(
+        physics: NeverScrollableScrollPhysics(),
+        child: Container(
           width: MediaQuery.of(context)
               .size
               .width, //Pegar a largura da tela quando usamos o SingleChildScrollView
           height: MediaQuery.of(context).size.height,
           child: Container(
-            color: Colors.blue,
+            color: Colors.black,
             child:Column(children: [
                     Expanded(
                         child: Center(
@@ -567,6 +571,7 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
                                       style: const TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
+                                        color: Colors.black
                                       ),
                                     ),
                                     const SizedBox(
@@ -653,6 +658,13 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
                                                   focusedBorder: OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(50.0)
                                                   ),
+                                                  enabledBorder: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(25.0),
+                                                    borderSide: BorderSide(
+                                                      color: Colors.black,
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
                                                   hintText: "Senha Atual",
                                                   hintStyle: TextStyle(
                                                     color: Colors.grey
@@ -692,10 +704,17 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
                                                   fillColor: Colors.white,
                                                   filled: true,
                                                   border: OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(25.0)
+                                                    borderRadius: BorderRadius.circular(25.0),
                                                   ),
                                                   focusedBorder: OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(50.0)
+                                                  ),
+                                                  enabledBorder: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(25.0),
+                                                    borderSide: BorderSide(
+                                                      color: Colors.black,
+                                                      width: 1.0,
+                                                    ),
                                                   ),
                                                   hintText: "Nova Senha",
                                                   hintStyle: TextStyle(
@@ -739,6 +758,13 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
                                                   focusedBorder: OutlineInputBorder(
                                                     borderRadius: BorderRadius.circular(50.0)
                                                   ),
+                                                  enabledBorder: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(25.0),
+                                                    borderSide: BorderSide(
+                                                      color: Colors.black,
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
                                                   hintText: "Confirmação",
                                                   hintStyle: TextStyle(
                                                     color: Colors.grey
@@ -762,12 +788,12 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
                                       Expanded(
                                         child: MaterialButton(
                                           onPressed: (){
-
+      
                                             if(editarPerfil){
                                               if(senhaAtual.text != senhaAtualQuery){
-
+      
                                               print("Senha atual não confere!");
-
+      
                                               }else if (novaSenha.text != confirmacaoSenha.text){
                                                 print("Nova senha e confirmação de senha não confere");
                                               }else{
@@ -783,7 +809,9 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
                                           child: const Text(
                                             'Salvar',
                                             style: TextStyle(
-                                                fontWeight: FontWeight.w600),
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -798,7 +826,9 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
                                           child: const Text(
                                             'Mudar senha',
                                             style: TextStyle(
-                                                fontWeight: FontWeight.w600),
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black
+                                            ),
                                           ),
                                         ),
                                       ) : Container()

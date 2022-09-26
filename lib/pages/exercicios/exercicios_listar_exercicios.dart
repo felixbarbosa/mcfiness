@@ -264,52 +264,34 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
     return Scaffold(
       floatingActionButton: Padding(
         padding: const EdgeInsets.fromLTRB(8, 8, 8, 60),
-        child: SpeedDial(
-          backgroundColor: Colors.blue[400],
-          animatedIcon: AnimatedIcons.menu_home,
-          animatedIconTheme: IconThemeData(
-            size: 22,
-            color: Colors.white
+        child: FloatingActionButton(
+          backgroundColor: Colors.black,
+          onPressed: () async {
+
+            var tela = await Navigator.push(
+              context, MaterialPageRoute(
+                builder: (context) => ExerciciosNovoExercicio(
+                  personalIdGlobal: personalIdLocal,
+                  editandoGlobal: false,
+                  exercicioIdGlobal: idSelecionado,
+                  musculoIdGlobal: musculoId,
+                  nomeExercicioGlobal: nomeExercicio,
+                  nomeMusculoGlobal: nomeMusculo,
+                  urlGlobal: "",
+                )
+              )
+            );
+
+            if(tela == 1){
+              _exerciciosPorMusculo();
+            }
+
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
           ),
-          curve: Curves.bounceIn,
-          children: [
-            SpeedDialChild(
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              backgroundColor: Colors.blue[400],
-              onTap: () async { 
-
-                var tela = await Navigator.push(
-                  context, MaterialPageRoute(
-                    builder: (context) => ExerciciosNovoExercicio(
-                      personalIdGlobal: personalIdLocal,
-                      editandoGlobal: false,
-                      exercicioIdGlobal: idSelecionado,
-                      musculoIdGlobal: musculoId,
-                      nomeExercicioGlobal: nomeExercicio,
-                      nomeMusculoGlobal: nomeMusculo,
-                      urlGlobal: "",
-                    )
-                  )
-                );
-
-                if(tela == 1){
-                  _exerciciosPorMusculo();
-                }
-
-              },
-              label: 'Novo Exercicio',
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0
-              ),
-              labelBackgroundColor: Colors.blue[400]
-            ),
-          ]
-        )
+        ),
       ),
         appBar: AppBar(
           title: Column(
@@ -335,11 +317,22 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
         body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black,
+                Color.fromARGB(255, 132, 136, 139)
+              ],
+            )
+            //color: Colors.black
+          ),
           child: Column(children: [
             SizedBox(
               height: 5,
@@ -350,7 +343,7 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
             ),
             ButtonTheme(
               child: Container(
-                color: Colors.blue[400],
+                color: Colors.black,
                 child: ButtonBar(
                   buttonMinWidth: 100,
                   alignment: MainAxisAlignment.center,
@@ -383,11 +376,11 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
                         }
                         
                       },
-                      color: (exercicioSelecionado && criadorExercicio) ? Colors.black : Colors.grey,
+                      color: (exercicioSelecionado && criadorExercicio) ? Colors.white : Color.fromARGB(255, 107, 107, 107),
                       child: Text(
                         'Editar',
                         style: TextStyle(
-                          color: (exercicioSelecionado && criadorExercicio) ? Colors.white : Colors.black 
+                          color: Colors.black 
                         ),
                       ),
                       shape: RoundedRectangleBorder(
@@ -404,11 +397,11 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
                         }
                         
                       },
-                      color: (exercicioSelecionado && criadorExercicio) ? Colors.black : Colors.grey,
+                      color: (exercicioSelecionado && criadorExercicio) ? Colors.white : Color.fromARGB(255, 107, 107, 107),
                       child: Text(
                         'Remover',
                         style: TextStyle(
-                          color: (exercicioSelecionado && criadorExercicio) ? Colors.white : Colors.black 
+                          color: Colors.black 
                         ),
                       ),
                       shape: RoundedRectangleBorder(
@@ -433,11 +426,11 @@ class _ExerciciosPorMusculoListarExerciciosState extends State<ExerciciosListarE
                           );
                         }
                       },
-                      color: (exercicioSelecionado && isVariacao == 0) ? Colors.black : Colors.grey,
+                      color: (exercicioSelecionado && isVariacao == 0) ? Colors.white : Color.fromARGB(255, 107, 107, 107),
                       child: Text(
                         'Variações',
                         style: TextStyle(
-                          color: (exercicioSelecionado && isVariacao == 0) ? Colors.white : Colors.black 
+                          color: Colors.black 
                         ),
                       ),
                       shape: RoundedRectangleBorder(

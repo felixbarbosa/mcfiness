@@ -273,49 +273,6 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*floatingActionButton: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 60),
-        child: SpeedDial(
-          animatedIcon: AnimatedIcons.menu_home,
-          animatedIconTheme: IconThemeData(
-            size: 22,
-            color: Colors.white
-          ),
-          curve: Curves.bounceIn,
-          children: [
-            SpeedDialChild(
-              child: Icon(
-                Icons.shop,
-                color: Colors.white,
-              ),
-              backgroundColor: CustomColorTheme.primaryColor,
-              onTap: () async { 
-
-                var tela = await Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => ClientesListarCanaisVendas(
-                    entidadeGlobal: entidadeId, 
-                    usuarioGlobal: usuarioId,
-                    usuarioNomeGlobal: usuarioNomeLocal,
-                    )));
-
-                if(tela == 1){
-                  setState(() {
-                    _treinosAluno();
-                  });
-                }
-
-              },
-              label: 'Canal de Vendas',
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0
-              ),
-              labelBackgroundColor: CustomColorTheme.primaryColor
-            ),
-          ]
-        )
-      ),*/
         appBar: AppBar(
           title: Column(
             children: [
@@ -340,13 +297,24 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
         body: Stack(
           children: [
             Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black,
+                  Color.fromARGB(255, 132, 136, 139)
+                ],
+              )
+              //color: Colors.black
+            ),
             child: Column(children: [
               SizedBox(
                 height: 5,
@@ -357,7 +325,7 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  color: Colors.blue[400],
+                  color: Color.fromARGB(255, 132, 136, 139),
                   child: Center(
                     heightFactor: 1.5,
                     child: Column(
@@ -385,7 +353,7 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
               ),
               ButtonTheme(
                 child: Container(
-                  color: Colors.blue[400],
+                  color: Colors.black,
                   child: ButtonBar(
                     buttonMinWidth: 100,
                     alignment: MainAxisAlignment.center,
@@ -410,11 +378,11 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
                             _treinosPorMusculoAluno();
                           }
                         },
-                        color: Colors.black,
+                        color: Colors.white,
                         child: Text(
                           'Adicionar Exercicio',
                           style: TextStyle(
-                            color: Colors.white
+                            color: Colors.black
                           ),
                         ),
                         shape: RoundedRectangleBorder(

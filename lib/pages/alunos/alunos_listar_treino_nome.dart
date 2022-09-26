@@ -161,49 +161,31 @@ class _AlunosListarTreinoNomeState extends State<AlunosListarTreinoNome> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 60),
-        child: SpeedDial(
-          backgroundColor: Colors.blue[400],
-          animatedIcon: AnimatedIcons.menu_home,
-          animatedIconTheme: IconThemeData(
-            size: 22,
-            color: Colors.white
+        padding: const EdgeInsets.fromLTRB(0, 0, 15, 20),
+        child: FloatingActionButton(
+          backgroundColor: Colors.black,
+          onPressed: () async {
+
+            var tela = await Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AlunosNovoTreino(
+                alunoIdGlobal: alunoIdLocal,
+                alunoNomeGlobal: alunoNomeLocal,
+                diaSemanaIdGlobal: diaSemanaIdLocal,
+                nomeTreinoGlobal: treinoNomeLocal,
+                )));
+
+            if(tela == 1){
+              setState(() {
+                _treinosAluno();
+              });
+            }
+
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
           ),
-          curve: Curves.bounceIn,
-          children: [
-            SpeedDialChild(
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              backgroundColor: Colors.blue[400],
-              onTap: () async { 
-
-                var tela = await Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => AlunosNovoTreino(
-                    alunoIdGlobal: alunoIdLocal,
-                    alunoNomeGlobal: alunoNomeLocal,
-                    diaSemanaIdGlobal: diaSemanaIdLocal,
-                    nomeTreinoGlobal: treinoNomeLocal,
-                    )));
-
-                if(tela == 1){
-                  setState(() {
-                    _treinosAluno();
-                  });
-                }
-
-              },
-              label: 'Adicionar Exercício',
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0
-              ),
-              labelBackgroundColor: Colors.blue[400]
-            ),
-          ]
-        )
+        ),
       ),
         appBar: AppBar(
           title: Column(
@@ -229,11 +211,22 @@ class _AlunosListarTreinoNomeState extends State<AlunosListarTreinoNome> {
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
         body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black,
+                Color.fromARGB(255, 132, 136, 139)
+              ],
+            )
+            //color: Colors.black
+          ),
           child: Column(children: [
             SizedBox(
               height: 5,
@@ -244,7 +237,7 @@ class _AlunosListarTreinoNomeState extends State<AlunosListarTreinoNome> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                color: Colors.blue[400],
+                color: Color.fromARGB(255, 132, 136, 139),
                 child: Center(
                   heightFactor: 1.5,
                   child: Text(
@@ -259,48 +252,6 @@ class _AlunosListarTreinoNomeState extends State<AlunosListarTreinoNome> {
             loading ? indicadorProgresso() : widgetListaRolagem(),
             SizedBox(
               height: 2,
-            ),
-            ButtonTheme(
-              child: Container(
-                color: Colors.blue[400],
-                child: ButtonBar(
-                  buttonMinWidth: 100,
-                  alignment: MainAxisAlignment.center,
-                  children: [
-                    RaisedButton(
-                      onPressed: () {
-                        if(treinoSelecionado){
-                          Navigator.push(
-                          context, MaterialPageRoute(
-                            builder: (context) => AlunosListarTreinosMusculo(
-                              alunoIdGlobal: alunoIdLocal,
-                              alunoNomeGlobal: alunoNomeLocal,
-                              musculoIdGlobal: idSelecionado,
-                              urlImagemGlobal: urlImagemLocal,
-                              musculoNomeGlobal: musculoNomeLocal,
-                              diaSemanaDiaGlobal: diaSemanaDia,
-                              diaSemanaIdGlobal: diaSemanaId,
-                              nomeTreinoGlobal: nomeTreino,
-                              objetivoGlobal: objetivoLocal,
-                            )
-                          )
-                        );
-                        }
-                      },
-                      color: treinoSelecionado ? Colors.black : Colors.grey,
-                      child: Text(
-                        'Ver Treino',
-                        style: TextStyle(
-                          color: treinoSelecionado ? Colors.white : Colors.black 
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ]
           ),
@@ -334,6 +285,21 @@ class _AlunosListarTreinoNomeState extends State<AlunosListarTreinoNome> {
                                           treinoSelecionado = !treinoSelecionado;
                                           idSelecionado = 0;
                                         }else{
+                                          Navigator.push(
+                                            context, MaterialPageRoute(
+                                              builder: (context) => AlunosListarTreinosMusculo(
+                                                alunoIdGlobal: alunoIdLocal,
+                                                alunoNomeGlobal: alunoNomeLocal,
+                                                musculoIdGlobal: treinos[index]['musculoAlvo']['id'],
+                                                urlImagemGlobal: "assets/ombro.jpg",
+                                                musculoNomeGlobal: treinos[index]['musculoAlvo']['descricao'],
+                                                diaSemanaDiaGlobal: treinos[index]['diaSemana']['dia'],
+                                                diaSemanaIdGlobal: treinos[index]['diaSemana']['id'],
+                                                nomeTreinoGlobal: nomeTreino,
+                                                objetivoGlobal: objetivoLocal,
+                                              )
+                                            )
+                                          );
                                           treinoSelecionado = true;
                                           idSelecionado = treinos[index]['musculoAlvo']['id'];
                                           musculoNomeLocal = treinos[index]['musculoAlvo']['descricao'];

@@ -283,11 +283,22 @@ class _musculosListarMusculosState extends State<CargaListarMusculos> {
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
         body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black,
+                Color.fromARGB(255, 132, 136, 139)
+              ],
+            )
+            //color: Colors.black
+          ),
           child: Column(children: [
             SizedBox(
               height: 5,
@@ -298,7 +309,7 @@ class _musculosListarMusculosState extends State<CargaListarMusculos> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                color: Color.fromARGB(255, 51, 51, 51),
+                color: Color.fromARGB(255, 132, 136, 139),
                 child: Center(
                     //padding: const EdgeInsets.fromLTRB(10.0, 10.0, 6.5, 10.0),
                     heightFactor: 1.5,
@@ -320,53 +331,6 @@ class _musculosListarMusculosState extends State<CargaListarMusculos> {
             loading ? indicadorProgresso() : widgetListaRolagem(),
             SizedBox(
               height: 2,
-            ),
-            ButtonTheme(
-              child: Container(
-                color: Colors.blue[400],
-                child: ButtonBar(
-                  buttonMinWidth: 100,
-                  alignment: MainAxisAlignment.center,
-                  children: [
-                    RaisedButton(
-                      onPressed: () async {
-
-                        if(musculoSelecionado){
-
-                          var tela = await Navigator.push(
-                            context, MaterialPageRoute(
-                              builder: (context) => CargaListarExercicios(
-                                personalIdGlobal: personalIdLocal,
-                                musculoIdGlobal: idSelecionado,
-                                urlGlobal: urlImagemLocal,
-                                alunoIdGlobal: alunoIdLocal,
-                              )
-                            )
-                          );
-
-                          if(tela == 1){
-                            idSelecionado = 0;
-                            musculoSelecionado = false;
-                            _musculos();
-                          }
-
-                        }
-                        
-                      },
-                      color: (musculoSelecionado) ? Colors.black : Colors.grey,
-                      child: Text(
-                        'Ver Exercicios',
-                        style: TextStyle(
-                          color: musculoSelecionado ? Colors.white : Colors.black 
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ]
           ),
@@ -423,7 +387,18 @@ class _musculosListarMusculosState extends State<CargaListarMusculos> {
                                     setState(() {
                                         if(idSelecionado == musculos[index]['id']){
                                           musculoSelecionado = !musculoSelecionado;
+                                          idSelecionado = 0;
                                         }else{
+                                          Navigator.push(
+                                            context, MaterialPageRoute(
+                                              builder: (context) => CargaListarExercicios(
+                                                personalIdGlobal: personalIdLocal,
+                                                musculoIdGlobal: musculos[index]['id'],
+                                                urlGlobal: listaUrls[index],
+                                                alunoIdGlobal: alunoIdLocal,
+                                              )
+                                            )
+                                          );
                                           musculoSelecionado = true;
                                           idSelecionado = musculos[index]['id'];
                                           urlImagemLocal = listaUrls[index];

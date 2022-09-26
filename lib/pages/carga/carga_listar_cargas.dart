@@ -380,11 +380,22 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
         body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black,
+                Color.fromARGB(255, 132, 136, 139)
+              ],
+            )
+            //color: Colors.black
+          ),
           child: Column(children: [
             SizedBox(
               height: 5,
@@ -395,14 +406,14 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                color: Color.fromARGB(255, 51, 51, 51),
+                color: Color.fromARGB(255, 132, 136, 139),
                 child: Center(
                     //padding: const EdgeInsets.fromLTRB(10.0, 10.0, 6.5, 10.0),
                     heightFactor: 1.5,
                     child: Column(
                       children: [
                         Text(
-                          'Musculos',
+                          'Histórico de Carga',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -417,53 +428,6 @@ class _musculosListarMusculosState extends State<CargaListarCargas> {
             loading ? indicadorProgresso() : widgetListaRolagem(),
             SizedBox(
               height: 2,
-            ),
-            ButtonTheme(
-              child: Container(
-                color: Colors.blue[400],
-                child: ButtonBar(
-                  buttonMinWidth: 100,
-                  alignment: MainAxisAlignment.center,
-                  children: [
-                    RaisedButton(
-                      onPressed: () async {
-
-                        if(cargaSelecionada){
-
-                          var tela = await Navigator.push(
-                            context, MaterialPageRoute(
-                              builder: (context) => CargaListarExercicios(
-                                personalIdGlobal: personalIdLocal,
-                                musculoIdGlobal: idSelecionado,
-                                urlGlobal: urlImagemLocal,
-                                alunoIdGlobal: alunoIdLocal,
-                              )
-                            )
-                          );
-
-                          if(tela == 1){
-                            idSelecionado = 0;
-                            cargaSelecionada = false;
-                            //_musculos();
-                          }
-
-                        }
-                        
-                      },
-                      color: (cargaSelecionada) ? Colors.black : Colors.grey,
-                      child: Text(
-                        'Ver Exercicios',
-                        style: TextStyle(
-                          color: cargaSelecionada ? Colors.white : Colors.black 
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ]
           ),
