@@ -37,6 +37,8 @@ class _LoginState extends State<Login> {
   bool selecionouUsuario = false;
   bool isPersonal = false;
   bool isAluno = false;
+  bool isCheckPersonal = false;
+  bool isCheckAluno = false;
   int idUsuarioLocal = 0;
   String nomeUsuarioLocal = "";
   String fotoLocal = "";
@@ -67,65 +69,107 @@ class _LoginState extends State<Login> {
 
         print("${result['obterUsuario'][0]['id']}");
 
-        idUsuarioLocal = result['obterUsuario'][0]['pessoa']['aluno'] == null ? 
+        if(isCheckAluno && result['obterUsuario'][0]['pessoa']['aluno'] == null){
+
+          setState(() {
+            clicouEntrar = false;
+          });
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: const Text('Conexão Inválida'),
+                    content: const Text('E-mail ou senha incorretos'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Fechar'),
+                      ),
+                    ],
+                  ));
+
+        }else if (isCheckPersonal && result['obterUsuario'][0]['pessoa']['personal'] == null){
+
+          setState(() {
+            clicouEntrar = false;
+          });
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: const Text('Conexão Inválida'),
+                    content: const Text('E-mail ou senha incorretos'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Fechar'),
+                      ),
+                    ],
+                  ));
+
+        }else{
+
+          idUsuarioLocal = result['obterUsuario'][0]['pessoa']['aluno'] == null ? 
                           result['obterUsuario'][0]['pessoa']['personal']['id'] :
                           result['obterUsuario'][0]['pessoa']['aluno']['id'];
 
-        nomeUsuarioLocal = result['obterUsuario'][0]['pessoa']['nome'];
-        fotoLocal = result['obterUsuario'][0]['foto'] == null ? "" : result['obterUsuario'][0]['foto'];
+          nomeUsuarioLocal = result['obterUsuario'][0]['pessoa']['nome'];
+          fotoLocal = result['obterUsuario'][0]['foto'] == null ? "" : result['obterUsuario'][0]['foto'];
 
-        print("${result['obterUsuario'][0]['pessoa']['nome']}");
+          print("${result['obterUsuario'][0]['pessoa']['nome']}");
 
-        if(result['obterUsuario'][0]['pessoa']['cref'] == null){
-          isPersonal = false;
-          documentoUsuarioLocal = result['obterUsuario'][0]['pessoa']['cpf'];
-        }else{
-          isPersonal = true;
-          documentoUsuarioLocal = result['obterUsuario'][0]['pessoa']['cref'];
-        }
+          if(result['obterUsuario'][0]['pessoa']['cref'] == null){
+            isPersonal = false;
+            documentoUsuarioLocal = result['obterUsuario'][0]['pessoa']['cpf'];
+          }else{
+            isPersonal = true;
+            documentoUsuarioLocal = result['obterUsuario'][0]['pessoa']['cref'];
+          }
 
-        if (_store.saveCredentials) {
-          await _loginController.salvarCredenciais(
-              login.text.trim());
-          context.read<User>().credentialSaved = true;
-        } else {
-          await _loginController.apagarCredenciais();
-          context.read<User>().credentialSaved = false;
-        }
+          if (_store.saveCredentials) {
+            await _loginController.salvarCredenciais(
+                login.text.trim());
+            context.read<User>().credentialSaved = true;
+          } else {
+            await _loginController.apagarCredenciais();
+            context.read<User>().credentialSaved = false;
+          }
 
-        setState(() {
-          clicouEntrar = false;
-        });
+          setState(() {
+            clicouEntrar = false;
+          });
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) { 
-              if(isPersonal){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) { 
+                if(isPersonal){
 
-                return Home_Page_Professor(
-                  documentoUsuarioGlobal: documentoUsuarioLocal,
-                  idUsuarioGlobal: idUsuarioLocal,
-                  isPersonalGlobal: isPersonal,
-                  nomeUsuarioGlobal: nomeUsuarioLocal,
-                  fotoGlobal: fotoLocal,
-                  senhaGlobal: senha.text,
-                );
+                  return Home_Page_Professor(
+                    documentoUsuarioGlobal: documentoUsuarioLocal,
+                    idUsuarioGlobal: idUsuarioLocal,
+                    isPersonalGlobal: isPersonal,
+                    nomeUsuarioGlobal: nomeUsuarioLocal,
+                    fotoGlobal: fotoLocal,
+                    senhaGlobal: senha.text,
+                  );
 
-              }else{
+                }else{
 
-                return Home_Page_Aluno(
-                  documentoUsuarioGlobal: documentoUsuarioLocal,
-                  idUsuarioGlobal: idUsuarioLocal,
-                  isPersonalGlobal: isPersonal,
-                  nomeUsuarioGlobal: nomeUsuarioLocal,
-                );
+                  return Home_Page_Aluno(
+                    documentoUsuarioGlobal: documentoUsuarioLocal,
+                    idUsuarioGlobal: idUsuarioLocal,
+                    isPersonalGlobal: isPersonal,
+                    nomeUsuarioGlobal: nomeUsuarioLocal,
+                  );
 
+                }
+                
               }
-              
-            }
-          ),
-        );
+            ),
+          );
+
+        }
+
+        
       } else {
         setState(() {
           clicouEntrar = false;
@@ -444,7 +488,7 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            isPersonal ?
+                            isCheckPersonal ?
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 15),
                               child: SizedBox(
@@ -528,8 +572,8 @@ class _LoginState extends State<Login> {
                                         onChanged: (SingingCharacter? value) {
                                           setState(() {
                                             print("Personal Ativo");
-                                            isAluno = false;
-                                            isPersonal = true;
+                                            isCheckAluno = false;
+                                            isCheckPersonal = true;
                                             selecionouUsuario = true;
                                             _character = value;
                                           });
@@ -550,8 +594,8 @@ class _LoginState extends State<Login> {
                                         onChanged: (SingingCharacter? value) {
                                           setState(() {
                                             print("Aluno Ativo");
-                                            isAluno = true;
-                                            isPersonal = false;
+                                            isCheckAluno = true;
+                                            isCheckPersonal = false;
                                             selecionouUsuario = true;
                                             _character = value;
                                           });

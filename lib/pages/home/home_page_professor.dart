@@ -61,6 +61,7 @@ class _Homemodulestate extends State<Home_Page_Professor> {
 
   bool loading = false;
   bool alunoSelecionado = false;
+  String linkImage = "";
   
   int idSelecionadoAluno = 0;
 
@@ -68,9 +69,73 @@ class _Homemodulestate extends State<Home_Page_Professor> {
   
 
   void _changePage(int index) {
+    print("Index da pagina = $index");
     if (_pageIndex != index) {
+      if(index == 0){
+        _obterPersonal();
+      }
       setState(() => _pageIndex = index);
       _pageCtrl.jumpToPage(index);
+    }
+  }
+
+  Future<void> _obterPersonal() async {
+    setState(() {
+      loading = true;
+    });
+    try {
+      Map<String, dynamic> result = await Graphql.obterPersonalPorId(
+        idUsuarioLocal
+      );
+
+      if (result['obterPersonalPorId']['id'] >= 0) {
+        setState(() {
+          linkImage = result['obterPersonalPorId']['foto'];
+          loading = false;
+        });
+      }
+    } catch (erro) {
+      if (erro.toString().contains("Connection failed")) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            duration: Duration(milliseconds: 1000),
+            backgroundColor: Colors.red,
+            content: Icon(Icons.highlight_remove),
+          ),
+        );
+
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: const Text('Você está sem conexão com a internet'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Fechar'),
+                    ),
+                  ],
+                ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            duration: Duration(milliseconds: 1000),
+            backgroundColor: Colors.red,
+            content: Icon(Icons.highlight_remove),
+          ),
+        );
+
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: const Text('Não foi possivel realizar a edição'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Fechar'),
+                    ),
+                  ],
+                ));
+      }
     }
   }
 
@@ -145,6 +210,7 @@ class _Homemodulestate extends State<Home_Page_Professor> {
   @override
   void initState() {
     super.initState();
+    linkImage = fotoLocal;
     _alunosPorPersonal();
   }
 
@@ -195,7 +261,7 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100),
                             image: DecorationImage(
-                              image: NetworkImage(fotoLocal),
+                              image: NetworkImage(linkImage),
                               fit: BoxFit.fill
                             )
                           ),

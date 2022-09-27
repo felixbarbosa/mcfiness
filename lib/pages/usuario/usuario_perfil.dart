@@ -91,6 +91,7 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
       loading = true;
       loadingFoto = true;
     });
+    print("Salvando Personal...");
     print("Id = ${widget.usuarioGlobal}");
     print("Link Imagem = ${linkImage}");
     print("Senha = ${senhaAtual.text}");
@@ -499,7 +500,7 @@ class _UsuarioPerfilState extends State<UsuarioPerfil> {
   Future<UploadTask> uploadImage(String path) async {
     File file = File(path);
     try {
-      String ref = 'images/Perfil-${nomeTxt.text}.jpeg';
+      String ref = 'images/Perfil-${nome}.jpeg';
       //String ref = 'images/img-${DateTime.now().toString()}.mp4';
       final storageRef = FirebaseStorage.instance.ref();
       return storageRef.child(ref).putFile(
