@@ -269,7 +269,8 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
 
       Map<String, dynamic> result = await Graphql.treinoPorAlunoPorDia(
         alunoIdLocal,
-        diaSemanaIdLocal
+        diaSemanaIdLocal,
+        nomeTreinoLocal
       );
 
       print("aqui");

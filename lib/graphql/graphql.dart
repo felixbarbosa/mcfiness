@@ -29,12 +29,12 @@ class Graphql {
     );
   }
 
-  static Future<Map<String, dynamic>> treinoPorAlunoPorMusculo(int alunoId, int musculoId) async {
+  static Future<Map<String, dynamic>> treinoPorAlunoPorMusculo(int alunoId, int musculoId, String nomeTreino) async {
     GraphQLClient client = getClient();
     QueryResult result = await client.query(QueryOptions(
       document: gql(r'''
-      query($alunoId: Int!, $musculoId: Int!){
-        obterTreinoAlunoPorMusculo(alunoId:$alunoId, musculoId: $musculoId){
+      query($alunoId: Int!, $musculoId: Int!, $nomeTreino: String!){
+        obterTreinoAlunoPorMusculo(alunoId:$alunoId, musculoId: $musculoId, nomeTreino: $nomeTreino){
           exercicio{
             descricao,
             urlImagem,
@@ -50,7 +50,8 @@ class Graphql {
       '''),
       variables: {
         "alunoId": alunoId,
-        "musculoId": musculoId
+        "musculoId": musculoId,
+        "nomeTreino": nomeTreino
       },
     ));
     if(result.isLoading){
@@ -119,12 +120,12 @@ class Graphql {
     }
   }
 
-  static Future<Map<String, dynamic>> treinoPorAlunoPorDia(int alunoId, int dia) async {
+  static Future<Map<String, dynamic>> treinoPorAlunoPorDia(int alunoId, int dia, String nomeTreino) async {
     GraphQLClient client = getClient();
     QueryResult result = await client.query(QueryOptions(
       document: gql(r'''
-      query($alunoId: Int!, $diaSemanaId: Int!){
-        obterTreinoAlunoPorDia(alunoId:$alunoId, diaSemanaId: $diaSemanaId){
+      query($alunoId: Int!, $diaSemanaId: Int!, $nomeTreino: String!){
+        obterTreinoAlunoPorDia(alunoId:$alunoId, diaSemanaId: $diaSemanaId, nomeTreino: $nomeTreino){
           exercicio{
             id,
             descricao,
@@ -141,7 +142,8 @@ class Graphql {
       '''),
       variables: {
         "alunoId": alunoId,
-        "diaSemanaId": dia
+        "diaSemanaId": dia,
+        "nomeTreino": nomeTreino
       },
     ));
     if(result.isLoading){

@@ -122,7 +122,8 @@ class _TreinosListarTreinosMusculoState extends State<TreinosListarTreinosMuscul
 
       Map<String, dynamic> result = await Graphql.treinoPorAlunoPorMusculo(
         alunoIdLocal,
-        musculoIdLocal
+        musculoIdLocal,
+        nomeTreinoLocal
       );
 
       print("aqui");
