@@ -543,7 +543,8 @@ class Graphql {
       query{
         obterMusculos{
           id,
-          descricao
+          descricao,
+          imagem
         }
       }
       ''')

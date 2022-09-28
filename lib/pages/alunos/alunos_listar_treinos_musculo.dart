@@ -96,6 +96,7 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
   bool alunoSelecionado = false;
   bool mostrarExplicacao = false;
   bool abrirVideo = false;
+  bool temVideo = false;
   int idSelecionado = 0;
   bool isButtonDisable = false;
 
@@ -111,6 +112,7 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
 
       setState(() {
         loading = true;
+        temVideo = true;
         _controllerLocal = VideoPlayerController.network(urlPassada);
         
       });
@@ -141,6 +143,7 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
     }else{
       setState(() {
         abrirVideo = false;
+        temVideo = false;
       });
     }
 
@@ -425,7 +428,7 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
                                 setState(() {
                                   mostrarExplicacao = false;
                                   abrirVideo = false;
-                                  if(chewieController.videoPlayerController.value.isInitialized){
+                                  if(temVideo == true){
                                     chewieController.pause();
                                   }
                                 });
@@ -440,7 +443,7 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
-                        child: loading ? indicadorProgresso() : abrirVideo ? video(urlPassada) : semVideo()
+                        child: loading ? indicadorProgresso() : abrirVideo ? urlPassada != "" ? video(urlPassada) : semVideo() : semVideo()
                       ),
                       Container(
                         height: 100,
@@ -544,6 +547,7 @@ class _AlunosListarTreinosMusculoState extends State<AlunosListarTreinosMusculo>
                                                         
                                                         setState(() {
                                                           urlPassada = treinos[index]['exercicio']['urlVideo'] == null ? "" : treinos[index]['exercicio']['urlVideo'];
+                                                          print("Url video = $urlPassada");
                                                           carregarUrlVideo(urlPassada);
                                                           mostrarExplicacao = true;
                                                           instrucao = treinos[index]['exercicio']['instrucao'] == null ? "Sem Instrução" : treinos[index]['exercicio']['instrucao'];

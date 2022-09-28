@@ -146,10 +146,9 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
         preferredSize: Size.fromHeight(50),
         child: AppBar(
           title: Center(
-            child: Text(
-              "MC Fitness",
-              style: TextStyle(
-                fontSize: 30
+            child: Image(
+              image: AssetImage(
+                "assets/logo_mc_fitness.png"
               ),
             ),
           ),

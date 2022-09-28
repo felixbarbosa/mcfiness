@@ -149,6 +149,36 @@ flutter:
    - assets/medicao_quadril.jpg
    - assets/login_background.jpg
    - assets/medicoes_avaliacao_fisica.webp
+   - assets/agachamento_afundo.webp
+   - assets/agachamento_bulgaro.gif
+   - assets/agachamento_livre.gif
+   - assets/agachamento_rack.webp
+   - assets/agachamento_sumo.webp
+   - assets/barra_fixa_supinada.gif
+   - assets/cadeira_abdutora.webp
+   - assets/cadeira_adutora.gif
+   - assets/cadeira_extensora.gif
+   - assets/cadeira_flexora.gif
+   - assets/desenvolvimento_arnold.webp
+   - assets/elevacao_lateral.webp
+   - assets/exercicio_ombro.gif
+   - assets/leg45.gif
+   - assets/levantamento_terra.webp
+   - assets/mesa_flexora.webp
+   - assets/panturrilha_maquina.webp
+   - assets/puxada_alta.gif
+   - assets/puxada_triangulo.webp
+   - assets/remada_baixa.webp
+   - assets/remada_cavalinho.webp
+   - assets/remada_curvada.webp
+   - assets/remada_unilateral.webp
+   - assets/rosca_alternada.gif
+   - assets/rosca_concentrada.gif
+   - assets/rosca_direta.gif
+   - assets/rosca_scott.gif
+   - assets/triceps_banco.webp
+   - assets/triceps_testa.webp
+   - assets/logo_mc_fitness.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

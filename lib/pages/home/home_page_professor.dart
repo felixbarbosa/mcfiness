@@ -243,15 +243,19 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                   SizedBox(
                     height: 50,
                   ),
-                  Text(
-                    "MC Fitness",
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.white
+                  Container(
+                    height: 150,
+                    width: MediaQuery.of(context).size.width,
+                    //color: Colors.white,
+                    child: Image(
+                      image: AssetImage(
+                        "assets/logo_mc_fitness.png"
+                      ),
+                      fit: BoxFit.fitWidth,
                     ),
-                  ),         
+                  ),       
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 50, 0, 10),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

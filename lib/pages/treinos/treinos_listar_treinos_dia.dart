@@ -587,16 +587,38 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.stretch,
                                           children: [
+                                            (treinos[index]['exercicio']['urlImagem'] == null  || treinos[index]['exercicio']['urlImagem'].toString().contains("assets")) ?
                                             Container(
                                               width: MediaQuery.of(context).size.width/6,
                                               height: 200,
                                               padding: EdgeInsets.all(2.0),
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
-                                                  image: AssetImage(treinos[index]['exercicio']['urlImagem'] == null ? 
-                                                  "assets/Erro.png" :
-                                                  treinos[index]['exercicio']['urlImagem']
+                                                  image: 
+                                                  AssetImage(
+                                                    treinos[index]['exercicio']['urlImagem'] == null ? 
+                                                    "assets/Erro.png" :
+                                                    treinos[index]['exercicio']['urlImagem']
+                                                  ),
+                                                  fit: BoxFit.contain
                                                 ),
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(4.0),
+                                                  bottomLeft: Radius.circular(4.0)
+                                                ),
+                                                color: Colors.white
+                                              ),
+                                            ):
+                                            Container(
+                                              width: MediaQuery.of(context).size.width/6,
+                                              height: 200,
+                                              padding: EdgeInsets.all(2.0),
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: 
+                                                  NetworkImage(
+                                                    treinos[index]['exercicio']['urlImagem']
+                                                  ),
                                                   fit: BoxFit.contain
                                                 ),
                                                 borderRadius: BorderRadius.only(
