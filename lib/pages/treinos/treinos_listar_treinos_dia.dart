@@ -375,7 +375,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
             icon: Icon(Icons.undo, ),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          backgroundColor: Colors.blue[400],
+          backgroundColor: Colors.black,
           centerTitle: true,
           elevation: 0,
         ),
@@ -383,6 +383,16 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
           children: 
           [
             Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black,
+                  Color.fromARGB(255, 132, 136, 139)
+                ],
+              )
+            ),
             child: Column(children: [
               SizedBox(
                 height: 5,
@@ -393,7 +403,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  color: Colors.blue[400],
+                  color: Color.fromARGB(255, 132, 136, 139),
                   child: Center(
                     heightFactor: 1.5,
                     child: Column(
@@ -421,7 +431,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
               ),
               ButtonTheme(
                 child: Container(
-                  color: Colors.blue[400],
+                  color: Colors.black,
                   child: ButtonBar(
                     buttonMinWidth: 100,
                     alignment: MainAxisAlignment.center,
@@ -432,11 +442,11 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                             Navigator.pop(context);
                           }
                         },
-                        color: (treinos.length == exerciciosFinalizados.length) ? Colors.black : Colors.grey,
+                        color: (treinos.length == exerciciosFinalizados.length) ? Colors.white : Colors.grey,
                         child: Text(
                           'Finalizar Treino',
                           style: TextStyle(
-                            color: (treinos.length == exerciciosFinalizados.length) ? Colors.white : Colors.black
+                            color: (treinos.length == exerciciosFinalizados.length) ? Colors.black : Colors.white
                           ),
                         ),
                         shape: RoundedRectangleBorder(
@@ -463,7 +473,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.blue[400],
+                    color: Colors.white,
                   ),
                   child: Column(
                     children: [
@@ -487,7 +497,7 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                               }, 
                               icon: Icon(
                                 Icons.close,
-                                color: Colors.white,
+                                color: Colors.black,
                               )
                             )
                           ],
@@ -498,9 +508,12 @@ class _TreinosListarTreinosDiaState extends State<TreinosListarTreinosDia> with 
                         child: loading ? indicadorProgresso() : abrirVideo ? video(urlPassada) : semVideo()
                       ),
                       Container(
-                        height: 100,
+                        height: 100.4,
                         width: MediaQuery.of(context).size.width,
-                        color: Colors.grey.withOpacity(0.7),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color.fromARGB(255, 132, 136, 139),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(

@@ -351,27 +351,7 @@ class _musculosListarMusculosState extends State<CargaListarMusculos> {
               child: ListView.builder(
                   itemBuilder: (BuildContext context, int index) {
 
-                    urlTeste = musculos[index]['descricao'] == "Ombro" ? 
-                      "assets/ombro.jpg" : 
-                      musculos[index]['descricao'] == "Peito" ?
-                      "assets/peito.jpg" : musculos[index]['descricao'] == "Tríceps" ?
-                      "assets/triceps.jpg" : 
-                      musculos[index]['descricao'] == "Costas" ?
-                      "assets/costas.jpg" : 
-                      musculos[index]['descricao'] == "Biceps" ?
-                      "assets/biceps.jpg" : 
-                      musculos[index]['descricao'] == "Quadriceps" ?
-                      "assets/quadriceps.png" : 
-                      musculos[index]['descricao'] == "Posterior de Coxa" ?
-                      "assets/posterior.jpg" : 
-                      musculos[index]['descricao'] == "Panturrilha" ?
-                      "assets/panturrilha.jpg" : 
-                      musculos[index]['descricao'] == "Abdomen" ?
-                      "assets/abdomen.jpg" :
-                      musculos[index]['descricao'] == "Trapezio" ?
-                      "assets/trapezio.jpg" :
-                      musculos[index]['descricao'] == "Ante Braço" ?
-                      "assets/antebraco.jpg" : "assets/Erro.png";
+                    urlTeste = musculos[index]['imagem'];
 
                     listaUrls.add(urlTeste);
 

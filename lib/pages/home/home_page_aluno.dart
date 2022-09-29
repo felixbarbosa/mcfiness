@@ -11,17 +11,19 @@ import 'widgets/home_button_widget.dart';
 
 class Home_Page_Aluno extends StatefulWidget {
 
-  final bool isPersonalGlobal;
+  final String personalNomeGlobal;
+  final int personalIdGlobal;
   final int idUsuarioGlobal;
   final String nomeUsuarioGlobal;
   final String documentoUsuarioGlobal;
 
   const Home_Page_Aluno({
     Key? key,
-    required this.isPersonalGlobal,
+    required this.personalNomeGlobal,
     required this.idUsuarioGlobal,
     required this.nomeUsuarioGlobal,
-    required this.documentoUsuarioGlobal
+    required this.documentoUsuarioGlobal,
+    required this.personalIdGlobal
     
   }) : super(key: key);
 
@@ -29,8 +31,9 @@ class Home_Page_Aluno extends StatefulWidget {
   _Homemodulestate createState() => _Homemodulestate(
     documentoUsuarioLocal: documentoUsuarioGlobal,
     idUsuarioLocal: idUsuarioGlobal,
-    isPersonalLocal: isPersonalGlobal,
-    nomeUsuarioLocal: nomeUsuarioGlobal
+    personalNomeLocal: personalNomeGlobal,
+    nomeUsuarioLocal: nomeUsuarioGlobal,
+    personalIdLocal: personalIdGlobal
   );
 }
 
@@ -38,22 +41,23 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
   int _pageIndex = 0;
   final PageController _pageCtrl = PageController();
 
-  final bool isPersonalLocal;
+  final String personalNomeLocal;
+  final int personalIdLocal;
   final int idUsuarioLocal;
   final String nomeUsuarioLocal;
   final String documentoUsuarioLocal;
 
   _Homemodulestate(
     {
-      required this.isPersonalLocal, 
+      required this.personalNomeLocal, 
       required this.idUsuarioLocal, 
       required this.nomeUsuarioLocal, 
-      required this.documentoUsuarioLocal
+      required this.documentoUsuarioLocal,
+      required this.personalIdLocal
     }
   );
 
   bool anamnesePreenchida = false;
-  int personalIdLocal = 0;
 
   
 
@@ -95,42 +99,6 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
     
   }
 
-  Future<void> _obterAlunoPorId() async {
-
-    try{
-
-      Map<String, dynamic> result = await Graphql.obterAlunoPorId(idUsuarioLocal);
-
-      print("aqui");
-      
-
-      if (result['obterAlunoPorId']['id'] >= 0) {
-        print("Resultado buscado");
-
-        personalIdLocal = result['obterAlunoPorId']['personal']['id'];
-
-        Navigator.push(
-          context, MaterialPageRoute(
-            builder: (context) => CargaListarMusculos(
-              alunoIdGlobal: idUsuarioLocal,
-              personalIdGlobal: personalIdLocal,
-            )
-          )
-        );
-
-      } else {
-
-      }
-
-    }catch(erro){
-
-      print("Erro = ${erro.toString()}");
-
-    }
-
-    
-  }
-
   @override
   void initState() {
     super.initState();
@@ -142,19 +110,6 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50),
-        child: AppBar(
-          title: Center(
-            child: Image(
-              image: AssetImage(
-                "assets/logo_mc_fitness.png"
-              ),
-            ),
-          ),
-          backgroundColor: Colors.blue[400],
-        ),
-      ),
       body: Container(
         width: MediaQuery.of(context).size.width, //Pegar a largura da tela quando usamos o SingleChildScrollView
         height: MediaQuery.of(context).size.height,
@@ -163,8 +118,8 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.blue[400]!,
-              Colors.grey,
+              Colors.black,
+              Color.fromARGB(255, 132, 136, 139)
             ],
           )
         ),
@@ -176,11 +131,25 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
               padding: const EdgeInsets.only(top: 10),
               child: Column(
                 children: [
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Container(
+                    height: 150,
+                    width: MediaQuery.of(context).size.width,
+                    //color: Colors.white,
+                    child: Image(
+                      image: AssetImage(
+                        "assets/logo_mc_fitness.png"
+                      ),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),    
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Professor(a): ',
+                        'Professor(a): $personalNomeLocal',
                         style: TextStyle(
                             fontWeight: FontWeight.w500),
                       ),
@@ -206,7 +175,7 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
                         child: Text(
                           'Sair',
                           style: TextStyle(
-                            color: Colors.black
+                            color: Colors.white
                           ),
                         ),
                       ),
@@ -237,6 +206,7 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
                         notificacao: false,
                         icon: Icons.person,
                         buttonName: 'Treino',
+                        color: Colors.black,
                         onPressed: () {
 
                           if(!anamnesePreenchida){
@@ -274,6 +244,7 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
                         notificacao: false,
                         icon: Icons.sports_gymnastics,
                         buttonName: 'Meu Progresso',
+                        color: Colors.black,
                         onPressed: () {
 
                           if(!anamnesePreenchida){
@@ -295,7 +266,14 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
 
                           }else{
 
-                            _obterAlunoPorId();
+                            Navigator.push(
+                              context, MaterialPageRoute(
+                                builder: (context) => CargaListarMusculos(
+                                  alunoIdGlobal: idUsuarioLocal,
+                                  personalIdGlobal: personalIdLocal,
+                                )
+                              )
+                            );
 
 
                           }
@@ -306,6 +284,7 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
                         notificacao: !anamnesePreenchida,
                         icon: Icons.analytics,
                         buttonName: 'Anamnese',
+                        color: Colors.black,
                         onPressed: () async {
 
                           if(anamnesePreenchida){
@@ -347,6 +326,7 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
                         notificacao: false,
                         icon: Icons.analytics,
                         buttonName: 'Avaliação Fisica',
+                        color: Colors.black,
                         onPressed: (){
                           
                           Navigator.push(
@@ -379,7 +359,7 @@ class _Homemodulestate extends State<Home_Page_Aluno> {
         ),
       ),
       bottomNavigationBar: NavigationBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.black,
         selectedIndex: _pageIndex,
         onDestinationSelected: _changePage,
         destinations: const [

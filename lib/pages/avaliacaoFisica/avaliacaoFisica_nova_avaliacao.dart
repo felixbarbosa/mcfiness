@@ -447,7 +447,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
               icon: Icon(Icons.undo, ),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            backgroundColor: Colors.blue[400],
+            backgroundColor: Colors.black,
             centerTitle: true,
             elevation: 0,
           ),
@@ -462,8 +462,8 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.blue[400]!,
-                      Colors.grey,
+                      Colors.black,
+                    Color.fromARGB(255, 132, 136, 139)
                     ],
                   )
                 ),
@@ -489,7 +489,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              color: Colors.black,
+                              color: Color.fromARGB(255, 132, 136, 139),
                               child: Center(
                                 //padding: const EdgeInsets.fromLTRB(10.0, 10.0, 6.5, 10.0),
                                 child: Padding(
@@ -713,7 +713,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
-                                                  color: Colors.red,
+                                                  color: Colors.black,
                                                 )
                                               )
                                             ],
@@ -764,7 +764,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
-                                                  color: Colors.red,
+                                                  color: Colors.black,
                                                 )
                                               )
                                             ],
@@ -815,7 +815,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
-                                                  color: Colors.red,
+                                                  color: Colors.black,
                                                 )
                                               )
                                             ],
@@ -866,7 +866,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
-                                                  color: Colors.red,
+                                                  color: Colors.black,
                                                 )
                                               )
                                             ],
@@ -917,7 +917,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
-                                                  color: Colors.red,
+                                                  color: Colors.black,
                                                 )
                                               )
                                             ],
@@ -968,7 +968,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
-                                                  color: Colors.red,
+                                                  color: Colors.black,
                                                 )
                                               )
                                             ],
@@ -1019,7 +1019,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                                                 }, 
                                                 icon: Icon(
                                                   Icons.smart_display_rounded,
-                                                  color: Colors.red,
+                                                  color: Colors.black,
                                                 )
                                               )
                                             ],

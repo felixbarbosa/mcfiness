@@ -43,6 +43,8 @@ class _LoginState extends State<Login> {
   String nomeUsuarioLocal = "";
   String fotoLocal = "";
   String documentoUsuarioLocal = "";
+  String nomePersonalAluno = "";
+  int idPersonalAluno = 0;
 
   Future<void> _login() async {
 
@@ -119,6 +121,9 @@ class _LoginState extends State<Login> {
           if(result['obterUsuario'][0]['pessoa']['cref'] == null){
             isPersonal = false;
             documentoUsuarioLocal = result['obterUsuario'][0]['pessoa']['cpf'];
+            nomePersonalAluno = result['obterUsuario'][0]['pessoa']['aluno']['personal']['nome'];
+            idPersonalAluno = result['obterUsuario'][0]['pessoa']['aluno']['personal']['id'];
+            print("Nome personal do aluno = $nomePersonalAluno");
           }else{
             isPersonal = true;
             documentoUsuarioLocal = result['obterUsuario'][0]['pessoa']['cref'];
@@ -157,8 +162,9 @@ class _LoginState extends State<Login> {
                   return Home_Page_Aluno(
                     documentoUsuarioGlobal: documentoUsuarioLocal,
                     idUsuarioGlobal: idUsuarioLocal,
-                    isPersonalGlobal: isPersonal,
+                    personalNomeGlobal: nomePersonalAluno,
                     nomeUsuarioGlobal: nomeUsuarioLocal,
+                    personalIdGlobal: idPersonalAluno,
                   );
 
                 }

@@ -435,7 +435,7 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
               icon: Icon(Icons.undo, ),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            backgroundColor: Colors.blue[400],
+            backgroundColor: Colors.black,
             centerTitle: true,
             elevation: 0,
           ),
@@ -450,8 +450,8 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.blue[400]!,
-                      Colors.grey,
+                      Colors.black,
+                      Color.fromARGB(255, 132, 136, 139)
                     ],
                   )
                 ),
@@ -477,7 +477,7 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              color: Colors.black,
+                              color: Color.fromARGB(255, 132, 136, 139),
                               child: Center(
                                 //padding: const EdgeInsets.fromLTRB(10.0, 10.0, 6.5, 10.0),
                                 child: Padding(
@@ -909,6 +909,13 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
                                                   borderRadius: BorderRadius.all(Radius.circular(30))
                                                 ),
                                                 fillColor: Colors.white,
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(30.0),
+                                                  borderSide: BorderSide(
+                                                    width: 1,
+                                                    color: Colors.black
+                                                  )
+                                                ),
                                                 filled: true,
                                                 hintText: "Sexo",
                                                 hintStyle: TextStyle(
@@ -952,6 +959,13 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
                                               filled: true,
                                               border: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(25.0)
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(30.0),
+                                                borderSide: BorderSide(
+                                                  width: 1,
+                                                  color: Colors.black
+                                                )
                                               ),
                                               focusedBorder: OutlineInputBorder(
                                                 borderRadius: BorderRadius.circular(50.0)
