@@ -463,7 +463,7 @@ class _AvaliacaoFisicaNovaAvaliacaoState extends State<AvaliacaoFisicaNovaAvalia
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.black,
-                    Color.fromARGB(255, 132, 136, 139)
+                      Color.fromARGB(255, 132, 136, 139)
                     ],
                   )
                 ),
