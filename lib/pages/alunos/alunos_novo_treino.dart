@@ -159,7 +159,6 @@ class _AlunosNovoTreinoState extends State<AlunosNovoTreino> {
           series: numeroSeries.toString(),
           repeticoes: numeroRepeticoes.toString(),
           velocidade: velocidadeSelecionada,
-          instrucao: instrucao.text,
           exercicio: exercicioIdSelecionado,
           nome: nomeTreinoLocal != "" ? nomeTreinoLocal : nomePadrao ? treinoPadraoSelecionado : nome.text,
           descanso: numeroDescansoMin.toString() + "'" + numeroDescansoSec.toString() + "''"

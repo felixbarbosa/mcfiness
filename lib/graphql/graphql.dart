@@ -978,7 +978,6 @@ class Graphql {
           "musculoAlvo": treino.musculo,
           "diaSemana": treino.diaSemana,
           "series": treino.series,
-          "variacaoExercicio": treino.variacaoExercicio
         }
       },
     ));
@@ -1051,7 +1050,8 @@ class Graphql {
           "professor": exercicio.professor,
           "urlImagem": exercicio.urlImagem,
           "urlVideo": exercicio.urlVideo,
-          "instrucao": exercicio.instrucao
+          "instrucao": exercicio.instrucao,
+          "isVariacao": exercicio.isVariacao
         }
       },
     ));

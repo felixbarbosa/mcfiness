@@ -6,6 +6,7 @@ class Exercicio {
   String? urlImagem;
   String? urlVideo;
   String? instrucao;
+  int? isVariacao;
 
   Exercicio(
       {
@@ -15,7 +16,8 @@ class Exercicio {
         this.professor,
         this.urlImagem,
         this.urlVideo,
-        this.instrucao
+        this.instrucao,
+        this.isVariacao
       }
   );
 }

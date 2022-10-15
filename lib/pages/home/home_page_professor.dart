@@ -259,6 +259,7 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        (!linkImage.isEmpty) ?
                         Container(
                           height: 70,
                           width: 70,
@@ -266,6 +267,17 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                             borderRadius: BorderRadius.circular(100),
                             image: DecorationImage(
                               image: NetworkImage(linkImage),
+                              fit: BoxFit.fill
+                            )
+                          ),
+                        ) :
+                        Container(
+                          height: 70,
+                          width: 70,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            image: DecorationImage(
+                              image: AssetImage("assets/Erro.png"),
                               fit: BoxFit.fill
                             )
                           ),
@@ -333,15 +345,19 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                                           width: MediaQuery.of(context).size.width/2.8,
                                         ),
                                         TextButton(
-                                          onPressed: (){
+                                          onPressed: () async {
 
-                                            Navigator.push(
+                                            var tela = await Navigator.push(
                                               context, MaterialPageRoute(
                                                 builder: (context) => AlunosNovoAluno(
                                                   professorIdGlobal: idUsuarioLocal,
                                                 )
                                               )
                                             );
+
+                                            if(tela == 1){
+                                              _alunosPorPersonal();
+                                            }
                                             
                                           }, 
                                           child: Text(
@@ -486,7 +502,7 @@ class _Homemodulestate extends State<Home_Page_Professor> {
                                             borderRadius: BorderRadius.circular(50),
                                             image: DecorationImage(
                                               image: NetworkImage(
-                                                alunos[index]['foto'] == null ? "https://banner2.cleanpng.com/20180329/lqq/kisspng-computer-icons-person-clip-art-font-5abd6e0bd0e9a2.3426644315223639158557.jpg" : alunos[index]['foto']
+                                                (alunos[index]['foto'] == null || alunos[index]['foto'] == "") ? "https://banner2.cleanpng.com/20180329/lqq/kisspng-computer-icons-person-clip-art-font-5abd6e0bd0e9a2.3426644315223639158557.jpg" : alunos[index]['foto']
                                               ),
                                               fit: BoxFit.fill
                                             ),

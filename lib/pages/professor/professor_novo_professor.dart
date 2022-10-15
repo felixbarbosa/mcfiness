@@ -1077,7 +1077,12 @@ class _Professor_novo_professorState extends State<Professor_novo_professor> {
                                                           ],
                                                         ));
                                                 }else{
-                                                  pickAndUploadImage(fileImage);
+                                                  if(fileImage == null){
+                                                    _novoProfessor();
+                                                  }else{
+                                                    pickAndUploadImage(fileImage);
+                                                  }
+                                                  
                                                 }
 
                                               }

@@ -124,6 +124,7 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
         personal: professorIdLocal,
         idade: idade,
         sexo: generoSelecionado,
+        foto: ""
       ));
 
       if (result['salvarAluno']['id'] > 0) {
@@ -150,14 +151,14 @@ class _AlunosNovoAlunoState extends State<AlunosNovoAluno> {
                   Text(
                     "Login: ${email.text}",
                     style: TextStyle(
-                      color: Colors.pink[100],
+                      color: Colors.black,
                       fontSize: 20
                     ),
                   ),
                   Text(
                     "Senha: ${codigoGerado}",
                     style: TextStyle(
-                      color: Colors.pink[100],
+                      color: Colors.black,
                       fontSize: 20
                     ),
                   ),

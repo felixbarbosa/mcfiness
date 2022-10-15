@@ -149,7 +149,8 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
           professor: personalIdLocal,
           urlImagem: linkImage,
           urlVideo: linkVideo,
-          instrucao: instrucao.text
+          instrucao: instrucao.text,
+          isVariacao: 0
         )
       );
 
@@ -408,6 +409,7 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
     }else{
       setState(() {
         loading = false;
+        _novoExercicio();
       });
     }
   }
@@ -878,7 +880,6 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
                               SizedBox(
                                 height: 20,
                               ),
-                              clicouSalvar ? indicadorProgresso() : SizedBox()
                                 ],
                               ),
                             ),
@@ -890,281 +891,11 @@ class _ExerciciosNovoExercicioState extends State<ExerciciosNovoExercicio> {
                 ),
               ),
             ),
-              ),
-              loading ?
-              indicadorProgresso() : Container()
+          ),
+          loading ?
+          indicadorProgresso() : Container()
           ]
         ),
-        /*body: SingleChildScrollView(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width, //Pegar a largura da tela quando usamos o SingleChildScrollView
-            height: MediaQuery.of(context).size.height,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.blue[400]!,
-                    Colors.grey,
-                  ],
-                )
-              ),
-              child: Column(children: [
-                SizedBox(
-                  height: 5,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    color: Color.fromARGB(255, 51, 51, 51),
-                    child: Center(
-                        //padding: const EdgeInsets.fromLTRB(10.0, 10.0, 6.5, 10.0),
-                        heightFactor: 1.5,
-                        child: Column(
-                          children: [
-                            Text(
-                              'Novo Exercicio',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.white
-                              ),
-                            ),
-                          ],
-                        )
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.fromLTRB(50.0, 70.0, 50, 8.0),
-                      child: Center(
-                        child: Column(
-                          children: [
-                            Text(
-                              'Nome',
-                              style: TextStyle(
-                                fontSize: 23.0
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8.0,
-                            ),
-                            TextFormField(
-                              controller: nome,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.black
-                              ),
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                prefixIcon: Icon(
-                                  Icons.account_circle,
-                                  color: Colors.black
-                                ),
-                                fillColor: Colors.white,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25.0)
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(50.0)
-                                ),
-                                hintText: "Nome do Exercicio",
-                                hintStyle: TextStyle(
-                                  color: Colors.grey
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              'Musculo Alvo',
-                              style: TextStyle(
-                                fontSize: 23.0
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8.0,
-                            ),
-                            SizedBox(
-                              height: 50.0,
-                              child: DropdownButtonFormField<String>(
-                                isExpanded: true,
-                                dropdownColor: Colors.white,
-                                iconEnabledColor: Colors.black,
-                                iconDisabledColor: Colors.black,
-                                items: musculos.map((String value){
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      
-                                    ),
-                                    value: value,
-                                  );
-                                }).toList(),  
-                                onChanged: (valorSelecionado){
-            
-                                  if(valorSelecionado != null){
-            
-                                    FocusScope.of(context).requestFocus(new FocusNode());
-  
-                                    List <String> valorSeparado = valorSelecionado.split(" - ");
-                                    print("\"${valorSeparado[0]}\"");
-                                    musculoId = int.parse(valorSeparado[0]);
-                                  }
-                                  
-                                  
-                                },
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.location_on,
-                                    color: Colors.black,
-                                  ),
-                                  contentPadding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(30))
-                                  ),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  hintText: editandoLocal ? "$musculoIdLocal - $nomeMusculoLocal" : "Musculo Alvo",
-                                  hintStyle: TextStyle(
-                                    color: Colors.black,
-                                  )
-                                ),
-                              )
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              'Imagem Ilustrativa',
-                              style: TextStyle(
-                                fontSize: 23.0
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8.0,
-                            ),
-                            SizedBox(
-                              height: 50.0,
-                              child: Container(
-                                child: Column(
-                                  children: [
-                                    DropdownButtonFormField<String>(
-                                      isExpanded: true,
-                                      dropdownColor: Colors.white,
-                                      iconEnabledColor: Colors.black,
-                                      iconDisabledColor: Colors.black,
-                                      items: urls.map((String value){
-                                        return DropdownMenuItem(
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                height: 80,
-                                                child: Image(
-                                                  image: AssetImage(
-                                                    value,
-                                                  ),
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                              Text(
-                                                value,
-                                                style: TextStyle(
-                                                  color: Colors.black
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              )
-                                            ],
-                                          ),
-                                          value: value,
-                                        );
-                                      }).toList(),  
-                                      onChanged: (valorSelecionado){
-
-                                        print("URl selecionada = $valorSelecionado");
-
-                                        selecionouImagem = true;
-                                        if(valorSelecionado != ""){
-                                          urlSelecionada = valorSelecionado!;
-                                        }
-                                        
-                                      },
-                                      decoration: InputDecoration(
-                                        prefixIcon: Icon(
-                                          Icons.location_on,
-                                          color: Colors.black,
-                                        ),
-                                        contentPadding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(30))
-                                        ),
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        hintText: editandoLocal ? "$musculoIdLocal - $nomeMusculoLocal" : "Imagem do Exercicio",
-                                        hintStyle: TextStyle(
-                                          color: Colors.black,
-                                        )
-                                      ),
-                                    ),
-                                    selecionouImagem ? 
-                                    Container(
-                                      height: 300,
-                                      child: Image(
-                                        image: AssetImage(
-                                          urlSelecionada,
-                                        ),
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ) : Container()
-                                  ],
-                                ),
-                              )
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            MaterialButton(
-                              shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(17.0)),
-                              color: clicouSalvar ? Colors.grey : Colors.grey[900],
-                              textColor: Colors.white,
-                              minWidth: double.infinity,
-                              height: 42,
-                              onPressed: () {
-                                _novoExercicio();
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text(
-                                  "Salvar",
-                                  style: TextStyle(
-                                    fontSize: 17.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            clicouSalvar ? indicadorProgresso() : SizedBox()
-                          ],
-                        ),
-                      ),
-                  )
-                ),
-              ]
-              ),
-            ),
-          ),
-        ),*/
     );
   }
 
